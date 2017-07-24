@@ -98,7 +98,7 @@ namespace VapeRPG.UI.States
             for(int i = 0; i < this.miscStatControls.Length; i++)
             {
                 this.miscStatControls[i] = new UIStatInfo(VapeRPG.minorStats[i], this.miscPanel.Width.Pixels / 2, 20, true);
-                this.miscStatControls[i].Left.Set(this.miscPanel.Width.Pixels / 8, 0);
+                this.miscStatControls[i].Left.Set(this.miscPanel.Width.Pixels / 6, 0);
                 this.miscStatControls[i].Top.Set(20 + 1.2f * i * this.miscStatControls[i].Height.Pixels + 5, 0);
                 this.miscStatControls[i].TextColor = Color.LightGray;
                 this.miscPanel.Append(this.miscStatControls[i]);

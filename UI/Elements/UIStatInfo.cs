@@ -36,7 +36,7 @@ namespace VapeRPG.UI.Elements
 
             if(this.isMinorStat)
             {
-                this.button.Left.Set(width + this.button.Width.Pixels + 30, 0);
+                this.button.Left.Set(width + this.button.Width.Pixels + 50, 0);
             }
             else
             {
@@ -91,7 +91,15 @@ namespace VapeRPG.UI.Elements
 
         public override void Update(GameTime gameTime)
         {
-            this.SetText(String.Format("{0}: {1}{2}", this.stat, this.statValue, this.isMinorStat ? "%" : ""));
+            if(this.isMinorStat)
+            {
+                this.SetText(String.Format("{0}: {1:0.00}%", this.stat, this.statValue));
+            }
+            else
+            {
+                this.SetText(String.Format("{0}: {1}", this.stat, this.statValue));
+            }
+
             if (this.bonusValue > 0)
             {
                 this.bonusText.SetText(String.Format("+ {0}", this.bonusValue));

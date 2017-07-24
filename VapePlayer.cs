@@ -130,8 +130,8 @@ namespace VapeRPG
                 this.xp = tag.GetAsLong("Xp");
                 Vector2 expUIPos = tag.Get<Vector2>("expUIPos");
 
-                VapeRPG vmod = (this.mod as VapeRPG);
-                vmod.ExpUI.SetPanelPosition(expUIPos);
+                VapeRPG vapeMod = (this.mod as VapeRPG);
+                vapeMod.ExpUI.SetPanelPosition(expUIPos);
             }
             // If it doesn't, create a new player
             else
@@ -191,7 +191,7 @@ namespace VapeRPG
             if (this.xp < (this.mod as VapeRPG).XpNeededForLevel[VapeRPG.maxLevel])
             {
                 // Fancy text above the player
-                CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.DeepPink, String.Format("+{0} XP", value));
+                CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
                 this.xp += (long)(value * this.xpMultiplier);
             }
         }
@@ -200,7 +200,7 @@ namespace VapeRPG
         {
             if (this.xp < (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.maxLevel])
             {
-                CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 50, 50), Color.Violet, String.Format("+{0} Chaos XP", value));
+                CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 50, 50), Color.DeepPink, String.Format("+{0} Chaos XP", value));
                 this.chaosXp += value;
             }
         }
@@ -255,6 +255,10 @@ namespace VapeRPG
         {
             this.dodgeChance = 0;
 
+            this.player.meleeDamage = 0.6f;
+            this.player.magicDamage = 0.65f;
+            this.player.rangedDamage = 0.625f;
+
             foreach (var x in VapeRPG.baseStats)
             {
                 if (this.BaseStats.ContainsKey(x))
@@ -270,7 +274,7 @@ namespace VapeRPG
             this.player.statManaMax2 += this.EffectiveStats["Intellect"] + this.level / 2;
 
             this.player.meleeDamage += this.EffectiveStats["Strength"] / 500f;
-            this.player.magicDamage += this.EffectiveStats["Magic power"] / 435f;
+            this.player.magicDamage += this.EffectiveStats["Magic power"] / 430f;
             this.player.rangedDamage += this.EffectiveStats["Dexterity"] / 465f;
 
             this.player.meleeCrit += this.EffectiveStats["Strength"] / 10;

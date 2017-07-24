@@ -21,21 +21,23 @@ namespace VapeRPG
         {
             if (modPlayer.HasSkill("Snail armor"))
             {
-                float amount = modPlayer.SkillLevels["Snail armor"] / 15;
+                float amount = modPlayer.SkillLevels["Snail armor"] / 15f;
                 modPlayer.player.moveSpeed -= amount;
                 modPlayer.player.statDefense += 1;
-                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount));
+                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount / 2));
             }
             if (modPlayer.HasSkill("Damage to defense"))
             {
-                float amount = modPlayer.SkillLevels["Damage to defense"] / 15;
+                float amount = modPlayer.SkillLevels["Damage to defense"] / 15f;
                 modPlayer.player.meleeDamage -= amount;
                 modPlayer.player.statDefense += 1;
-                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount));
+                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount / 2));
             }
             if (modPlayer.HasSkill("Sacrifice") && !modPlayer.player.dead)
             {
-                modPlayer.player.meleeDamage += (1 - modPlayer.player.statLife / modPlayer.player.statLifeMax2) * modPlayer.SkillLevels["Sacrifice"];
+                float amount = modPlayer.SkillLevels["Sacrifice"] / 15f;
+                modPlayer.player.statLifeMax2 = (int)Math.Floor(modPlayer.player.statLifeMax2 * (1 - amount / 2));
+                modPlayer.player.meleeDamage += amount;
             }
             if (modPlayer.HasSkill("Longer flight"))
             {
@@ -90,7 +92,7 @@ namespace VapeRPG
                 Projectile explosionDummy = Projectile.NewProjectileDirect(target.position, Vector2.Zero, ProjectileID.RocketI, damage * modPlayer.SkillLevels["Explosive shots"] / 10, 20, Main.myPlayer);
                 explosionDummy.timeLeft = 10;
             }
-            if(modPlayer.HasSkill("Incendiary shots") && proj.ranged && !proj.magic && !proj.Name.Contains("Rocket"))
+            if (modPlayer.HasSkill("Incendiary shots") && proj.ranged && !proj.magic && !proj.Name.Contains("Rocket"))
             {
                 target.AddBuff(24, 300);
             }

@@ -26,8 +26,16 @@ namespace VapeRPG
         private static Color uncommonColor = Color.LimeGreen;
         private static Color rareColor = Color.Blue;
         private static Color epicColor = Color.BlueViolet;
+        private static Color uniqueColor = Color.SkyBlue;
 
         private static Hashtable reforgeBuffer = new Hashtable();
+
+        private static string[,] uniqueStatPairs =
+        {
+            {"Strength", "Agility" },
+            {"Dexterity", "Agility" },
+            {"Intellect", "Magic Power" }
+        };
 
         public override bool InstancePerEntity
         {
@@ -79,53 +87,61 @@ namespace VapeRPG
 
         public void Qualify(ItemQuality newQuality)
         {
-            if(newQuality == ItemQuality.Unique)
-            {
-
-            }
-            else
-            {
-                this.quality = newQuality;
-                this.GenerateStatBonuses(newQuality);
-            }
+            this.quality = newQuality;
+            this.GenerateStatBonuses(newQuality);
         }
 
         private void GenerateStatBonuses(ItemQuality newQuality)
         {
             if (newQuality != ItemQuality.Common)
             {
-                int statNumChance = rnd.Next(0, 100);
-
-                for (int i = 0; i < (int)newQuality; i++)
+                if (newQuality == ItemQuality.Unique)
                 {
-                    int stat = 0;
-                    do
-                    {
-                        stat = rnd.Next(0, VapeRPG.baseStats.Length);
-                    }
-                    while (this.statBonus.ContainsKey(VapeRPG.baseStats[stat]));
+                    this.statBonus.Clear();
 
-                    int statMin = (i + this.parent.rare) * 5;
-                    int statMax = (i + this.parent.rare + ((int)newQuality - 1)) * 10;
+                    int statMin = (this.parent.rare + 1) * 10;
+                    int statMax = (this.parent.rare + 1) * 15;
+                    int statPairIndex = rnd.Next(0, uniqueStatPairs.GetLength(0));
 
-                    this.statBonus[VapeRPG.baseStats[stat]] = rnd.Next(statMin, statMax);
-                    int newstat = 0;
-                    if (statNumChance <= 20)
+                    this.statBonus[uniqueStatPairs[statPairIndex, 0]] = rnd.Next(statMin, statMax);
+                    this.statBonus[uniqueStatPairs[statPairIndex, 1]] = rnd.Next(statMin, statMax);
+                    this.statBonus["Vitality"] = rnd.Next(statMin, statMax);
+                }
+                else
+                {
+                    int statNumChance = rnd.Next(0, 100);
+
+                    for (int i = 0; i < (int)newQuality; i++)
                     {
-                        while (newstat == stat)
+                        int stat = 0;
+                        do
                         {
-                            newstat = rnd.Next(0, VapeRPG.baseStats.Length);
+                            stat = rnd.Next(0, VapeRPG.baseStats.Length);
                         }
-                        this.statBonus[VapeRPG.baseStats[newstat]] = rnd.Next(statMin, statMax);
-                    }
-                    else if (statNumChance <= 5)
-                    {
-                        int newstat2 = 0;
-                        while (newstat2 == stat || newstat2 == newstat)
+                        while (this.statBonus.ContainsKey(VapeRPG.baseStats[stat]));
+
+                        int statMin = (this.parent.rare + 1) * 5;
+                        int statMax = (this.parent.rare + 1 + ((int)newQuality - 1)) * 10;
+
+                        this.statBonus[VapeRPG.baseStats[stat]] = rnd.Next(statMin, statMax);
+                        int newstat = 0;
+                        if (statNumChance <= 20)
                         {
-                            newstat2 = rnd.Next(0, VapeRPG.baseStats.Length);
+                            while (newstat == stat)
+                            {
+                                newstat = rnd.Next(0, VapeRPG.baseStats.Length);
+                            }
+                            this.statBonus[VapeRPG.baseStats[newstat]] = rnd.Next(statMin, statMax);
                         }
-                        this.statBonus[VapeRPG.baseStats[newstat2]] = rnd.Next(statMin, statMax);
+                        else if (statNumChance <= 5)
+                        {
+                            int newstat2 = 0;
+                            while (newstat2 == stat || newstat2 == newstat)
+                            {
+                                newstat2 = rnd.Next(0, VapeRPG.baseStats.Length);
+                            }
+                            this.statBonus[VapeRPG.baseStats[newstat2]] = rnd.Next(statMin, statMax);
+                        }
                     }
                 }
             }
@@ -134,25 +150,33 @@ namespace VapeRPG
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
-            TooltipLine itemQuality = new TooltipLine(global.mod, "Quality", global.quality.ToString());
-            Color qualityColor = Color.White;
-            switch (global.quality)
+
+            if (global.quality != ItemQuality.Common)
             {
-                case ItemQuality.Uncommon:
-                    qualityColor = uncommonColor;
-                    break;
+                TooltipLine itemQuality = new TooltipLine(global.mod, "Quality", global.quality.ToString());
+                Color qualityColor = Color.White;
+                switch (global.quality)
+                {
+                    case ItemQuality.Uncommon:
+                        qualityColor = uncommonColor;
+                        break;
 
-                case ItemQuality.Rare:
-                    qualityColor = rareColor;
-                    break;
+                    case ItemQuality.Rare:
+                        qualityColor = rareColor;
+                        break;
 
-                case ItemQuality.Epic:
-                    qualityColor = epicColor;
-                    break;
+                    case ItemQuality.Epic:
+                        qualityColor = epicColor;
+                        break;
+
+                    case ItemQuality.Unique:
+                        qualityColor = uniqueColor;
+                        break;
+                }
+
+                itemQuality.overrideColor = qualityColor;
+                tooltips.Add(itemQuality);
             }
-
-            itemQuality.overrideColor = qualityColor;
-            tooltips.Add(itemQuality);
 
             foreach (var x in global.statBonus)
             {
@@ -200,6 +224,11 @@ namespace VapeRPG
                 foreach (var x in statBonusTC)
                 {
                     global.statBonus.Add(x.Key, (int)x.Value);
+                }
+
+                if (global.quality == ItemQuality.Unique)
+                {
+                    item.expert = true;
                 }
             }
         }

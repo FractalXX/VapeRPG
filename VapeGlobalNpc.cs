@@ -63,7 +63,8 @@ namespace VapeRPG
             NPCID.GlowingSnail,
             NPCID.SeaSnail,
             NPCID.Butterfly,
-            NPCID.GoldButterfly
+            NPCID.GoldButterfly,
+            NPCID.Firefly
         };
 
         public override bool InstancePerEntity
@@ -76,7 +77,7 @@ namespace VapeRPG
 
         public override void SetDefaults(NPC npc)
         {
-            if (Main.rand.Next(0, 101) <= chaosChance && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredType(npc.type))
+            if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredType(npc.type) && Main.rand.Next(0, 101) <= chaosChance)
             {
                 ChaosTransform(npc);
             }
@@ -93,9 +94,12 @@ namespace VapeRPG
                 {
                     foreach (Player player in Main.player)
                     {
-                        VapePlayer vp = player.GetModPlayer<VapePlayer>();
-                        gainedXp = npc.lifeMax * (1 + (Math.Abs(npc.defDefense) + 1) / npc.defDamage);
-                        vp.GainExperience((int)gainedXp);
+                        if (player.active)
+                        {
+                            VapePlayer vp = player.GetModPlayer<VapePlayer>();
+                            gainedXp = npc.lifeMax * (1 + (Math.Abs(npc.defDefense) + 1) / npc.defDamage);
+                            vp.GainExperience((int)gainedXp);
+                        }
                     }
                 }
                 else
@@ -122,6 +126,192 @@ namespace VapeRPG
                 }
             }
             return base.CheckDead(npc);
+        }
+
+        public override void NPCLoot(NPC npc)
+        {
+            VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
+
+            #region UniqueDrops
+
+            int chance;
+            int spawnID;
+            int itemID;
+
+            if (npc.type == NPCID.EyeofCthulhu)
+            {
+                chance = Main.rand.Next(0, 3);
+
+                if (chance == 0)
+                {
+                    spawnID = ItemID.GoldChainmail;
+                }
+                else if (chance == 1)
+                {
+                    spawnID = ItemID.GoldHelmet;
+                }
+                else
+                {
+                    spawnID = ItemID.GoldGreaves;
+                }
+
+                itemID = Item.NewItem(npc.position, spawnID);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+            }
+
+            if (npc.type == NPCID.SkeletronHead)
+            {
+
+                chance = Main.rand.Next(0, 9);
+
+                if (chance == 0)
+                {
+                    spawnID = ItemID.AncientShadowScalemail;
+                }
+                else if (chance == 1)
+                {
+                    spawnID = ItemID.AncientShadowHelmet;
+                }
+                else if (chance == 2)
+                {
+                    spawnID = ItemID.AncientShadowGreaves;
+                }
+                else if (chance == 3)
+                {
+                    spawnID = ItemID.AncientCobaltBreastplate;
+                }
+                else if (chance == 4)
+                {
+                    spawnID = ItemID.AncientCobaltHelmet;
+                }
+                else if (chance == 5)
+                {
+                    spawnID = ItemID.AncientCobaltLeggings;
+                }
+                else if (chance == 6)
+                {
+                    spawnID = ItemID.NecroBreastplate;
+                }
+                else if (chance == 7)
+                {
+                    spawnID = ItemID.NecroHelmet;
+                }
+                else
+                {
+                    spawnID = ItemID.NecroGreaves;
+                }
+
+                itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+            }
+            if (npc.type == NPCID.WallofFlesh)
+            {
+                chance = Main.rand.Next(0, 3);
+
+                if (chance == 0)
+                {
+                    spawnID = ItemID.MoltenBreastplate;
+                }
+                else if (chance == 1)
+                {
+                    spawnID = ItemID.MoltenHelmet;
+                }
+                else
+                {
+                    spawnID = ItemID.MoltenGreaves;
+                }
+
+                itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+            }
+            if (npc.type == NPCID.Retinazer || npc.type == NPCID.TheDestroyer || npc.type == NPCID.SkeletronPrime)
+            {
+                chance = Main.rand.Next(0, 3);
+
+                if (chance == 0)
+                {
+                    spawnID = ItemID.HallowedPlateMail;
+                }
+                else if (chance == 1)
+                {
+                    spawnID = ItemID.HallowedHelmet;
+                }
+                else if (chance == 2)
+                {
+                    spawnID = ItemID.HallowedHeadgear;
+                }
+                else if (chance == 3)
+                {
+                    spawnID = ItemID.HallowedMask;
+                }
+                else
+                {
+                    spawnID = ItemID.HallowedGreaves;
+                }
+
+                itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+            }
+            if (npc.type == NPCID.Plantera)
+            {
+                chance = Main.rand.Next(0, 12);
+
+                if (chance == 0)
+                {
+                    spawnID = ItemID.ShroomiteBreastplate;
+                }
+                else if (chance == 1)
+                {
+                    spawnID = ItemID.ShroomiteMask;
+                }
+                else if (chance == 2)
+                {
+                    spawnID = ItemID.ShroomiteHelmet;
+                }
+                else if (chance == 3)
+                {
+                    spawnID = ItemID.ShroomiteHeadgear;
+                }
+                else if (chance == 4)
+                {
+                    spawnID = ItemID.ShroomiteLeggings;
+                }
+                else if (chance == 5)
+                {
+                    spawnID = ItemID.SpectreRobe;
+                }
+                else if (chance == 6)
+                {
+                    spawnID = ItemID.SpectreHood;
+                }
+                else if (chance == 7)
+                {
+                    spawnID = ItemID.SpectreMask;
+                }
+                else if (chance == 8)
+                {
+                    spawnID = ItemID.SpectrePants;
+                }
+                else if (chance == 9)
+                {
+                    spawnID = ItemID.TurtleScaleMail;
+                }
+                else if (chance == 10)
+                {
+                    spawnID = ItemID.TurtleHelmet;
+                }
+                else
+                {
+                    spawnID = ItemID.TurtleLeggings;
+                }
+
+                itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+            }
+
+            #endregion
+
+            base.NPCLoot(npc);
         }
 
         public void ChaosTransform(NPC npc)

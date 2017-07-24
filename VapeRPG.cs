@@ -90,7 +90,7 @@ namespace VapeRPG
 
                 //Melee
                 new Skill("Hemorrhage", "Additional damage is dealt to your enemies over time (after hit).", 10, SkillType.Melee, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameHemorrhage")),
-                new Skill("Sacrifice", "Your damage increases as your life decreases.", 10, SkillType.Melee, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSacrifice")),
+                new Skill("Sacrifice", "Trade part of your life for additional melee damage.", 10, SkillType.Melee, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSacrifice")),
 
                 //Magic
                 new Skill("Magic clusters", "Weapon hits explode into additional magic stars.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameMagicClusters")),
