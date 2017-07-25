@@ -395,6 +395,11 @@ namespace VapeRPG
             return true;
         }
 
+        public override bool ConsumeAmmo(Item weapon, Item ammo)
+        {
+            return SkillController.ConsumeAmmo(this, weapon, ammo);
+        }
+
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
         {
             SkillController.ModifyHitByNPC(this, npc, ref damage, ref crit);

@@ -12,17 +12,18 @@ namespace VapeRPG
 {
     class VapeGlobalNpc : GlobalNPC
     {
-        private const int expGainDistance = 3000;
+        private const int expGainDistance = 3000; // The maximum distance at which players gain experience from mob kills
 
-        private static int chaosChance = 20;
+        private static int chaosChance = 10; // Percent chance of a mob becoming a chaos mob
 
-        public bool hemorrhage = false;
+        public bool hemorrhage = false; // For the Hemorrhage skill
         public int hemorrhageDamage = 0;
 
-        public bool isChaos = false;
+        public bool isChaos = false; // Is it a Chaos mob?
 
-        private int chaosMultiplier = 1;
+        private int chaosMultiplier = 1; // Determines the stat scale of this npc if it's a chaos mob
 
+        // Types to be ignored by experience gain/chaos transform
         private static int[] ignoredTypes =
         {
             NPCID.DungeonGuardian,

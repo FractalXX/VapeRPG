@@ -14,12 +14,12 @@ namespace VapeRPG
 {
     class VapeRPG : Mod
     {
-        public const int maxLevel = 200;
+        public const int maxLevel = 200; // Self-explanatory
         public int[] XpNeededForLevel { get; private set; }
         public int[] XpNeededForChaosRank { get; private set; }
-        public ExpUIState ExpUI { get; private set; }
-        public CharUIState CharUI { get; private set; }
-        public CustomBuffUIState BuffUI { get; private set; }
+        public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
+        public CharUIState CharUI { get; private set; } // For the character panel
+        public CustomBuffUIState BuffUI { get; private set; } // For the custom buff indicator
         private UserInterface userInterface;
 
         public static Texture2D itemQualityFrame;
@@ -47,7 +47,7 @@ namespace VapeRPG
             "Dodge Chance"
         };
 
-        public static List<Skill> skills { get; private set; }
+        public static List<Skill> skills { get; private set; } // Add new skills to that list under Load()
 
         public static ModHotKey charWindowHotKey;
 
@@ -94,10 +94,13 @@ namespace VapeRPG
 
                 //Magic
                 new Skill("Magic clusters", "Weapon hits explode into additional magic stars.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameMagicClusters")),
+                new Skill("Mana crits", "Your critical hits restore some mana.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameManaCrits")),
+                new Skill("Regenerating kills", "Gain mana regen after kills.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameRegenKills")),
 
                 //Ranged
                 new Skill("Explosive shots", "Your weapons fire explosive projectiles.", 10, SkillType.Ranged, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameExplosiveShots")),
                 new Skill("Incendiary shots", "Your shots ignite your enemies.", 1, SkillType.Ranged, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameIncendiaryShots")),
+                new Skill("Ammo hoarding", "Increase your chance not to consume ammo.", 10, SkillType.Ranged, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameAmmoHoarding")),
 
                 //Utility
                 new Skill("Longer invulnerability", "You remain invulnerable longer after getting hit.", 10, SkillType.Utility, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameLongerInvulnerability")),

@@ -18,18 +18,20 @@ namespace VapeRPG
     {
         private static Random rnd = new Random();
 
-        public ItemQuality quality;
-        public Dictionary<string, int> statBonus;
-        public bool wasQualified;
-        public Item parent;
+        public ItemQuality quality; // The quality of the item
+        public Dictionary<string, int> statBonus; // To store the statbonuses for this item
+        public bool wasQualified; // To prevent the item from being re qualified
+        public Item parent; // The parent item instance of this GlobalItem
 
+        // Quality Colors
         private static Color uncommonColor = Color.LimeGreen;
         private static Color rareColor = Color.Blue;
         private static Color epicColor = Color.BlueViolet;
         private static Color uniqueColor = Color.SkyBlue;
 
-        private static Hashtable reforgeBuffer = new Hashtable();
+        private static Hashtable reforgeBuffer = new Hashtable(); // For storing, then loading the item's properties when it's reforged
 
+        // Stat paris for unique items
         private static string[,] uniqueStatPairs =
         {
             {"Strength", "Agility" },

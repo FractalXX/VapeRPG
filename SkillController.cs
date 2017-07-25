@@ -26,19 +26,22 @@ namespace VapeRPG
                 modPlayer.player.statDefense += 1;
                 modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount / 2));
             }
+
             if (modPlayer.HasSkill("Damage to defense"))
             {
                 float amount = modPlayer.SkillLevels["Damage to defense"] / 15f;
                 modPlayer.player.meleeDamage -= amount;
                 modPlayer.player.statDefense += 1;
-                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount / 2));
+                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount));
             }
+
             if (modPlayer.HasSkill("Sacrifice") && !modPlayer.player.dead)
             {
                 float amount = modPlayer.SkillLevels["Sacrifice"] / 15f;
                 modPlayer.player.statLifeMax2 = (int)Math.Floor(modPlayer.player.statLifeMax2 * (1 - amount / 2));
                 modPlayer.player.meleeDamage += amount;
             }
+
             if (modPlayer.HasSkill("Longer flight"))
             {
                 modPlayer.player.wingTimeMax += 10 * modPlayer.SkillLevels["Longer flight"];
@@ -64,7 +67,7 @@ namespace VapeRPG
 
         public static void ModifyHitNPCWithProj(VapePlayer modPlayer, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (modPlayer.HasSkill("Magic clusters") && proj.type != modPlayer.mod.ProjectileType<MagicSpark>() && proj.magic)
+            if (proj.type != modPlayer.mod.ProjectileType<MagicSpark>() && modPlayer.HasSkill("Magic clusters") && proj.magic)
             {
                 for (int i = 0; i < modPlayer.SkillLevels["Magic clusters"]; i++)
                 {
@@ -87,14 +90,26 @@ namespace VapeRPG
                     Main.projectile[spark].tileCollide = false;
                 }
             }
-            if (modPlayer.HasSkill("Explosive shots") && proj.ranged && !proj.magic && !proj.Name.Contains("Rocket"))
+
+            if (!proj.magic && proj.ranged && !proj.Name.Contains("Rocket") && modPlayer.HasSkill("Explosive shots"))
             {
                 Projectile explosionDummy = Projectile.NewProjectileDirect(target.position, Vector2.Zero, ProjectileID.RocketI, damage * modPlayer.SkillLevels["Explosive shots"] / 10, 20, Main.myPlayer);
                 explosionDummy.timeLeft = 10;
             }
-            if (modPlayer.HasSkill("Incendiary shots") && proj.ranged && !proj.magic && !proj.Name.Contains("Rocket"))
+
+            if (!proj.magic && proj.ranged && !proj.Name.Contains("Rocket") && modPlayer.HasSkill("Incendiary shots"))
             {
                 target.AddBuff(24, 300);
+            }
+
+            if (crit)
+            {
+                if (modPlayer.HasSkill("Mana crits"))
+                {
+                    int amount = 5 * modPlayer.SkillLevels["Mana crits"];
+                    modPlayer.player.statMana += amount;
+                    modPlayer.player.ManaEffect(amount);
+                }
             }
         }
 
@@ -109,10 +124,16 @@ namespace VapeRPG
             {
                 modPlayer.player.immuneTime += 30 * modPlayer.SkillLevels["Longer invulnerability"];
             }
+
             if (modPlayer.HasSkill("Steroids"))
             {
                 modPlayer.player.AddBuff(modPlayer.mod.BuffType<Steroids>(), 300);
             }
+        }
+
+        public static bool ConsumeAmmo(VapePlayer modPlayer, Item weapon, Item ammo)
+        {
+            return !(modPlayer.HasSkill("Ammo hoarding") && Main.rand.Next(0, 101) <= modPlayer.SkillLevels["Ammo hoarding"] * 5);
         }
     }
 }
