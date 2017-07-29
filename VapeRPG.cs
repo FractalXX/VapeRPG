@@ -17,12 +17,14 @@ namespace VapeRPG
     enum VapeRPGMessageType : byte
     {
         ClientTransformChaosNPC,
-        test
+        ClientSyncXp,
+        ClientSyncStats,
+        ClientSyncLevel
     };
 
     class VapeRPG : Mod
     {
-        public const int maxLevel = 200; // Self-explanatory
+        public const int MaxLevel = 200; // Self-explanatory
         public int[] XpNeededForLevel { get; private set; }
         public int[] XpNeededForChaosRank { get; private set; }
         public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
@@ -30,9 +32,9 @@ namespace VapeRPG
         public CustomBuffUIState BuffUI { get; private set; } // For the custom buff indicator
         private UserInterface userInterface;
 
-        public static Texture2D itemQualityFrame;
+        //public static Texture2D itemQualityFrame;
 
-        public static string[] baseStats =
+        public static string[] BaseStats =
         {
             "Strength",
             "Magic power",
@@ -42,22 +44,23 @@ namespace VapeRPG
             "Vitality"
         };
 
-        public static string[] minorStats =
+        public static string[] MinorStats =
         {
             "Melee Damage",
-            "Magic Damage",
-            "Ranged Damage",
             "Melee Crit",
-            "Magic Crit",
-            "Ranged Crit",
             "Melee Speed",
+            "Ranged Damage",
+            "Ranged Crit",
+            "Magic Damage",
+            "Magic Crit",
             "Movement Speed",
-            "Dodge Chance"
+            "Dodge Chance",
+            "Block Chance"
         };
 
-        public static List<Skill> skills { get; private set; } // Add new skills to that list under Load()
+        public static List<Skill> Skills { get; private set; } // Add new skills to that list under Load()
 
-        public static ModHotKey charWindowHotKey;
+        public static ModHotKey CharWindowHotKey;
 
         public VapeRPG()
         {
@@ -72,8 +75,8 @@ namespace VapeRPG
 
         public override void Load()
         {
-            XpNeededForLevel = new int[maxLevel + 1];
-            XpNeededForChaosRank = new int[maxLevel + 1];
+            XpNeededForLevel = new int[MaxLevel + 1];
+            XpNeededForChaosRank = new int[MaxLevel + 1];
 
             XpNeededForLevel[0] = 0;
             XpNeededForLevel[1] = 0;
@@ -89,7 +92,7 @@ namespace VapeRPG
                 XpNeededForChaosRank[i] = (int)(value / 2);
             }
 
-            skills = new List<Skill>()
+            Skills = new List<Skill>()
             {
                 //Tank
                 new Skill("Snail armor", "Movement speed decreases but armor is increased.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSnailArmor")),
@@ -116,9 +119,9 @@ namespace VapeRPG
                 new Skill("Steroids", "Taking damage increases your movement speed.", 10, SkillType.Utility, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSteroids"))
             };
 
-            itemQualityFrame = ModLoader.GetTexture("VapeRPG/Textures/UI/QualityFrame");
+            //itemQualityFrame = ModLoader.GetTexture("VapeRPG/Textures/UI/QualityFrame");
 
-            charWindowHotKey = RegisterHotKey("Character window", "C");
+            CharWindowHotKey = RegisterHotKey("Character window", "C");
 
             if(Main.netMode != NetmodeID.Server)
             {
@@ -219,6 +222,51 @@ namespace VapeRPG
                         npc.stepSpeed *= global.chaosMultiplier / 2f;
 
                         global.isChaos = true;
+                    }
+                    break;
+
+                case VapeRPGMessageType.ClientSyncStats:
+                    Player player = Main.player[reader.ReadInt32()];
+
+                    if(!player.Equals(Main.LocalPlayer) || Main.netMode == NetmodeID.Server)
+                    {
+                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
+
+                        for (int i = 0; i < BaseStats.Length; i++)
+                        {
+                            string[] keyValuePair = reader.ReadString().Split(' ');
+                            modPlayer.BaseStats[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+                        }
+
+                        for (int i = 0; i < BaseStats.Length; i++)
+                        {
+                            string[] keyValuePair = reader.ReadString().Split(' ');
+                            modPlayer.EffectiveStats[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+                        }
+                    }
+
+                    break;
+
+                case VapeRPGMessageType.ClientSyncXp:
+                    player = Main.player[reader.ReadInt32()];
+
+                    if (Main.netMode == NetmodeID.Server || !player.Equals(Main.LocalPlayer))
+                    {
+                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
+
+                        modPlayer.xp = reader.ReadInt32();
+                        modPlayer.chaosXp = reader.ReadInt32();
+                    }
+                    break;
+
+                case VapeRPGMessageType.ClientSyncLevel:
+                    player = Main.player[reader.ReadInt32()];
+
+                    if (Main.netMode == NetmodeID.Server || !player.Equals(Main.LocalPlayer))
+                    {
+                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
+
+                        modPlayer.level = reader.ReadInt32();
                     }
                     break;
             }

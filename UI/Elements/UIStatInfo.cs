@@ -17,9 +17,21 @@ namespace VapeRPG.UI.Elements
         private bool isMinorStat;
 
         public string stat;
-        public int statValue;
+        public float statValue;
 
-        public int bonusValue;
+        public float bonusValue;
+
+        public bool ButtonVisible
+        {
+            get
+            {
+                return this.button.visible;
+            }
+            set
+            {
+                this.button.visible = value;
+            }
+        }
 
         public UIStatInfo(string stat, float width, float height, bool isMinorStat = false) : base(stat)
         {

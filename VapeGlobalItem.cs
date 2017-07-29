@@ -21,7 +21,8 @@ namespace VapeRPG
         public ItemQuality quality; // The quality of the item
         public Dictionary<string, int> statBonus; // To store the statbonuses for this item
         public bool wasQualified; // To prevent the item from being re qualified
-        public Item parent; // The parent item instance of this GlobalItem
+
+        public float blockChance;
 
         // Quality Colors
         private static Color uncommonColor = Color.LimeGreen;
@@ -57,43 +58,59 @@ namespace VapeRPG
 
         public override void SetDefaults(Item item)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
-            global.parent = item;
-
-            if (!global.wasQualified)
+            switch(item.type)
             {
-                global.quality = ItemQuality.Common;
-                global.statBonus = new Dictionary<string, int>();
+                case ItemID.EoCShield:
+                    this.blockChance = 0.15f;
+                    break;
+
+                case ItemID.CobaltShield:
+                    this.blockChance = 0.06f;
+                    break;
+
+                case ItemID.ObsidianShield:
+                    this.blockChance = 0.08f;
+                    break;
+
+                case ItemID.AnkhShield:
+                    this.blockChance = 0.12f;
+                    break;
+            }
+
+            if (!this.wasQualified)
+            {
+                this.quality = ItemQuality.Common;
+                this.statBonus = new Dictionary<string, int>();
 
                 if (item.accessory || item.defense > 0)
                 {
                     int chance = rnd.Next(0, 100);
 
-                    if (chance <= 10)
+                    if (chance <= 5)
                     {
-                        global.Qualify(ItemQuality.Epic);
+                        this.Qualify(item, ItemQuality.Epic);
                     }
-                    else if (chance <= 30)
+                    else if (chance <= 15)
                     {
-                        global.Qualify(ItemQuality.Rare);
+                        this.Qualify(item, ItemQuality.Rare);
                     }
-                    else if (chance <= 60)
+                    else if (chance <= 35)
                     {
-                        global.Qualify(ItemQuality.Uncommon);
+                        this.Qualify(item, ItemQuality.Uncommon);
                     }
                 }
 
-                global.wasQualified = true;
+                this.wasQualified = true;
             }
         }
 
-        public void Qualify(ItemQuality newQuality)
+        public void Qualify(Item item, ItemQuality newQuality)
         {
             this.quality = newQuality;
-            this.GenerateStatBonuses(newQuality);
+            this.GenerateStatBonuses(item, newQuality);
         }
 
-        private void GenerateStatBonuses(ItemQuality newQuality)
+        private void GenerateStatBonuses(Item item, ItemQuality newQuality)
         {
             if (newQuality != ItemQuality.Common)
             {
@@ -101,8 +118,8 @@ namespace VapeRPG
                 {
                     this.statBonus.Clear();
 
-                    int statMin = (this.parent.rare + 1) * 10;
-                    int statMax = (this.parent.rare + 1) * 15;
+                    int statMin = (item.rare + 1) * 10;
+                    int statMax = (item.rare + 1) * 15;
                     int statPairIndex = rnd.Next(0, uniqueStatPairs.GetLength(0));
 
                     this.statBonus[uniqueStatPairs[statPairIndex, 0]] = rnd.Next(statMin, statMax);
@@ -118,31 +135,31 @@ namespace VapeRPG
                         int stat = 0;
                         do
                         {
-                            stat = rnd.Next(0, VapeRPG.baseStats.Length);
+                            stat = rnd.Next(0, VapeRPG.BaseStats.Length);
                         }
-                        while (this.statBonus.ContainsKey(VapeRPG.baseStats[stat]));
+                        while (this.statBonus.ContainsKey(VapeRPG.BaseStats[stat]));
 
-                        int statMin = (this.parent.rare + 1) * 5;
-                        int statMax = (this.parent.rare + 1 + ((int)newQuality - 1)) * 10;
+                        int statMin = (item.rare + 1) * 5;
+                        int statMax = (item.rare + 1 + ((int)newQuality - 1)) * 10;
 
-                        this.statBonus[VapeRPG.baseStats[stat]] = rnd.Next(statMin, statMax);
+                        this.statBonus[VapeRPG.BaseStats[stat]] = rnd.Next(statMin, statMax);
                         int newstat = 0;
                         if (statNumChance <= 20)
                         {
                             while (newstat == stat)
                             {
-                                newstat = rnd.Next(0, VapeRPG.baseStats.Length);
+                                newstat = rnd.Next(0, VapeRPG.BaseStats.Length);
                             }
-                            this.statBonus[VapeRPG.baseStats[newstat]] = rnd.Next(statMin, statMax);
+                            this.statBonus[VapeRPG.BaseStats[newstat]] = rnd.Next(statMin, statMax);
                         }
                         else if (statNumChance <= 5)
                         {
                             int newstat2 = 0;
                             while (newstat2 == stat || newstat2 == newstat)
                             {
-                                newstat2 = rnd.Next(0, VapeRPG.baseStats.Length);
+                                newstat2 = rnd.Next(0, VapeRPG.BaseStats.Length);
                             }
-                            this.statBonus[VapeRPG.baseStats[newstat2]] = rnd.Next(statMin, statMax);
+                            this.statBonus[VapeRPG.BaseStats[newstat2]] = rnd.Next(statMin, statMax);
                         }
                     }
                 }
@@ -151,13 +168,11 @@ namespace VapeRPG
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
-
-            if (global.quality != ItemQuality.Common)
+            if (this.quality != ItemQuality.Common)
             {
-                TooltipLine itemQuality = new TooltipLine(global.mod, "Quality", global.quality.ToString());
+                TooltipLine itemQuality = new TooltipLine(this.mod, "Quality", this.quality.ToString());
                 Color qualityColor = Color.White;
-                switch (global.quality)
+                switch (this.quality)
                 {
                     case ItemQuality.Uncommon:
                         qualityColor = uncommonColor;
@@ -180,11 +195,11 @@ namespace VapeRPG
                 tooltips.Add(itemQuality);
             }
 
-            foreach (var x in global.statBonus)
+            foreach (var x in this.statBonus)
             {
                 if(x.Value > 0)
                 {
-                    TooltipLine bonus = new TooltipLine(global.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
+                    TooltipLine bonus = new TooltipLine(this.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
                     bonus.overrideColor = Color.Yellow;
                     tooltips.Add(bonus);
                 }
@@ -199,39 +214,36 @@ namespace VapeRPG
 
         public override TagCompound Save(Item item)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
             TagCompound itemTC = new TagCompound();
             TagCompound statBonusTC = new TagCompound();
 
-            foreach (var x in global.statBonus)
+            foreach (var x in this.statBonus)
             {
                 statBonusTC.Add(x.Key, x.Value);
             }
 
-            itemTC.Add("Quality", Convert.ToString(global.quality));
+            itemTC.Add("Quality", Convert.ToString(this.quality));
             itemTC.Add("StatBonuses", statBonusTC);
-            itemTC.Add("WasQualified", global.wasQualified);
+            itemTC.Add("WasQualified", this.wasQualified);
 
             return itemTC;
         }
 
         public override void Load(Item item, TagCompound tag)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
             TagCompound statBonusTC = tag.GetCompound("StatBonuses");
-            global.statBonus = new Dictionary<string, int>();
-            global.parent = item;
-            global.wasQualified = tag.GetBool("WasQualified");
+            this.statBonus = new Dictionary<string, int>();
+            this.wasQualified = tag.GetBool("WasQualified");
 
-            if (global.wasQualified)
+            if (this.wasQualified)
             {
-                global.quality = (ItemQuality)Enum.Parse(ItemQuality.Common.GetType(), tag.GetString("Quality"));
+                this.quality = (ItemQuality)Enum.Parse(ItemQuality.Common.GetType(), tag.GetString("Quality"));
                 foreach (var x in statBonusTC)
                 {
-                    global.statBonus.Add(x.Key, (int)x.Value);
+                    this.statBonus.Add(x.Key, (int)x.Value);
                 }
 
-                if (global.quality == ItemQuality.Unique)
+                if (this.quality == ItemQuality.Unique)
                 {
                     item.expert = true;
                 }
@@ -240,11 +252,10 @@ namespace VapeRPG
 
         public override void UpdateEquip(Item item, Player player)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
             VapePlayer vp = player.GetModPlayer<VapePlayer>();
-            if (global.statBonus.Count > 0)
+            if (this.statBonus.Count > 0)
             {
-                foreach (var x in global.statBonus)
+                foreach (var x in this.statBonus)
                 {
                     vp.EffectiveStats[x.Key] += x.Value;
                 }
@@ -273,41 +284,34 @@ namespace VapeRPG
 
         public override void PreReforge(Item item)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
-
             Hashtable itemProperties = new Hashtable();
-            itemProperties.Add("StatBonus", global.statBonus);
-            itemProperties.Add("Quality", global.quality);
-            itemProperties.Add("WasQualified", global.wasQualified);
-            itemProperties.Add("Parent", global.parent);
+            itemProperties.Add("StatBonus", this.statBonus);
+            itemProperties.Add("Quality", this.quality);
+            itemProperties.Add("WasQualified", this.wasQualified);
 
             reforgeBuffer.Add(item, itemProperties);
         }
 
         public override void PostReforge(Item item)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
 
             Hashtable itemProperties = (Hashtable)reforgeBuffer[item];
-            global.statBonus = (Dictionary<string, int>)itemProperties["StatBonus"];
-            global.quality = (ItemQuality)itemProperties["Quality"];
-            global.wasQualified = (bool)itemProperties["WasQualified"];
-            global.parent = (Item)itemProperties["Parent"];
+            this.statBonus = (Dictionary<string, int>)itemProperties["StatBonus"];
+            this.quality = (ItemQuality)itemProperties["Quality"];
+            this.wasQualified = (bool)itemProperties["WasQualified"];
 
             reforgeBuffer.Remove(item);
         }
 
         public override void NetSend(Item item, BinaryWriter writer)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
-            writer.Write((int)global.quality);
-            writer.Write(global.wasQualified);
-            writer.Write(item.whoAmI);
+            writer.Write((int)this.quality);
+            writer.Write(this.wasQualified);
 
-            foreach (var x in VapeRPG.baseStats)
+            foreach (var x in VapeRPG.BaseStats)
             {
                 int value;
-                global.statBonus.TryGetValue(x, out value);
+                this.statBonus.TryGetValue(x, out value);
                 writer.Write(String.Format("{0} {1}", x, value));
             }
 
@@ -316,15 +320,17 @@ namespace VapeRPG
 
         public override void NetReceive(Item item, BinaryReader reader)
         {
-            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
-            global.quality = (ItemQuality)reader.ReadInt32();
-            global.wasQualified = reader.ReadBoolean();
-            global.parent = Main.item[reader.ReadInt32()];
+            this.quality = (ItemQuality)reader.ReadInt32();
+            this.wasQualified = reader.ReadBoolean();
 
-            for (int i = 0; i < VapeRPG.baseStats.Length; i++)
+            for (int i = 0; i < VapeRPG.BaseStats.Length; i++)
             {
                 string[] keyValuePair = reader.ReadString().Split(' ');
-                global.statBonus[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+                int value = int.Parse(keyValuePair[1]);
+                if(value > 0)
+                {
+                    this.statBonus[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+                }
             }
 
             base.NetReceive(item, reader);

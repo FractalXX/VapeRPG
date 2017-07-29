@@ -32,8 +32,8 @@ namespace VapeRPG.UI.States
 
         public override void OnInitialize()
         {
-            this.statControls = new UIStatInfo[VapeRPG.baseStats.Length];
-            this.miscStatControls = new UIStatInfo[VapeRPG.minorStats.Length];
+            this.statControls = new UIStatInfo[VapeRPG.BaseStats.Length];
+            this.miscStatControls = new UIStatInfo[VapeRPG.MinorStats.Length];
 
             this.charPanelWidth = 800;
             this.charPanelHeight = 600;
@@ -60,10 +60,10 @@ namespace VapeRPG.UI.States
 
             for (int i = 0; i < statControls.Length; i++)
             {
-                this.statControls[i] = new UIStatInfo(VapeRPG.baseStats[i], this.statPanel.Width.Pixels / 2, 20);
+                this.statControls[i] = new UIStatInfo(VapeRPG.BaseStats[i], this.statPanel.Width.Pixels / 2, 20);
                 this.statControls[i].Left.Set(this.statPanel.Width.Pixels / 8, 0);
                 this.statControls[i].Top.Set(20 + 1.2f * i * this.statControls[i].Height.Pixels + 5, 0);
-                this.statControls[i].TextColor = Color.LightGray;
+                this.statControls[i].TextColor = Color.Yellow;
                 this.statPanel.Append(this.statControls[i]);
             }
 
@@ -91,16 +91,23 @@ namespace VapeRPG.UI.States
             this.chaosPointsText.Height.Set(this.miscPanel.Height.Pixels / 6, 0);
             this.chaosPointsText.Left.Set(this.miscPanel.Width.Pixels / 2 - this.chaosPointsText.Width.Pixels / 2, 0);
             this.chaosPointsText.Top.Set(this.miscPanel.Height.Pixels - this.chaosPointsText.Height.Pixels, 0);
+            this.chaosPointsText.TextColor = Color.Violet;
             this.miscPanel.Append(this.chaosPointsText);
 
             #region miscPanel texts
 
-            for(int i = 0; i < this.miscStatControls.Length; i++)
+            for (int i = 0; i < this.miscStatControls.Length; i++)
             {
-                this.miscStatControls[i] = new UIStatInfo(VapeRPG.minorStats[i], this.miscPanel.Width.Pixels / 2, 20, true);
+                this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels / 2, 20, true);
+                this.miscStatControls[i].Height.Set(this.miscPanel.Height.Pixels / (0.8f * this.miscStatControls[i].Height.Pixels), 0);
                 this.miscStatControls[i].Left.Set(this.miscPanel.Width.Pixels / 6, 0);
                 this.miscStatControls[i].Top.Set(20 + 1.2f * i * this.miscStatControls[i].Height.Pixels + 5, 0);
-                this.miscStatControls[i].TextColor = Color.LightGray;
+
+                if (this.miscStatControls[i].Text.Contains("Block Chance"))
+                {
+                    this.miscStatControls[i].ButtonVisible = false;
+                }
+
                 this.miscPanel.Append(this.miscStatControls[i]);
             }
 
@@ -108,7 +115,7 @@ namespace VapeRPG.UI.States
 
             this.charPanel.Append(this.miscPanel);
 
-            this.skillPanel = new UIPagedPanel(ModLoader.GetTexture("VapeRPG/Textures/UI/VapeGUI"), 0, (byte)Math.Ceiling((double)VapeRPG.skills.Count / 9), 2 * this.charPanel.Width.Pixels / 3, this.charPanel.Height.Pixels);
+            this.skillPanel = new UIPagedPanel(ModLoader.GetTexture("VapeRPG/Textures/UI/VapeGUI"), 0, (byte)Math.Ceiling((double)VapeRPG.Skills.Count / 9), 2 * this.charPanel.Width.Pixels / 3, this.charPanel.Height.Pixels);
             this.skillPanel.SetPadding(0);
             this.skillPanel.Left.Set(0, 0);
             this.skillPanel.Top.Set(0, 0);
@@ -119,7 +126,7 @@ namespace VapeRPG.UI.States
 
             #region skills
 
-            foreach (Skill skill in VapeRPG.skills)
+            foreach (Skill skill in VapeRPG.Skills)
             {
                 UISkillInfo usi = new UISkillInfo(skill, 150, 130);
 
@@ -166,47 +173,61 @@ namespace VapeRPG.UI.States
             this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
         }
 
-        public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance)
+        public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance)
         {
             foreach (UIStatInfo usi in miscStatControls)
             {
-                if(usi.stat.Contains("Melee Damage"))
+                if (usi.stat.Contains("Melee Damage"))
                 {
-                    usi.statValue = (int)(meleeDamage * 100);
+                    usi.statValue = meleeDamage * 100;
+                    usi.TextColor = Color.Red;
                 }
                 if (usi.stat.Contains("Ranged Damage"))
                 {
-                    usi.statValue = (int)(rangedDamage * 100);
+                    usi.statValue = rangedDamage * 100;
+                    usi.TextColor = Color.Orange;
                 }
                 if (usi.stat.Contains("Magic Damage"))
                 {
-                    usi.statValue = (int)(magicDamage * 100);
+                    usi.statValue = magicDamage * 100;
+                    usi.TextColor = Color.Cyan;
                 }
 
                 if (usi.stat.Contains("Melee Crit"))
                 {
                     usi.statValue = meleeCrit;
+                    usi.TextColor = Color.Red;
                 }
                 if (usi.stat.Contains("Ranged Crit"))
                 {
                     usi.statValue = rangedCrit;
+                    usi.TextColor = Color.Orange;
                 }
                 if (usi.stat.Contains("Magic Crit"))
                 {
                     usi.statValue = magicCrit;
+                    usi.TextColor = Color.Cyan;
                 }
 
-                if(usi.stat.Contains("Melee Speed"))
+                if (usi.stat.Contains("Melee Speed"))
                 {
-                    usi.statValue = (int)(meleeSpeed * 100);
+                    usi.statValue = meleeSpeed * 100;
+                    usi.TextColor = Color.Red;
                 }
-                if(usi.stat.Contains("Movement Speed"))
+                if (usi.stat.Contains("Movement Speed"))
                 {
-                    usi.statValue = (int)(moveSpeed * 100);
+                    usi.statValue = moveSpeed * 100;
+                    usi.TextColor = Color.LimeGreen;
                 }
-                if(usi.stat.Contains("Dodge Chance"))
+                if (usi.stat.Contains("Dodge Chance"))
                 {
-                    usi.statValue = (int)(dodgeChance * 100);
+                    usi.statValue = dodgeChance * 100;
+                    usi.TextColor = Color.LimeGreen;
+                }
+                if (usi.stat.Contains("Block Chance"))
+                {
+                    usi.statValue = blockChance * 100;
+                    usi.TextColor = Color.LimeGreen;
                 }
 
                 this.chaosPointsText.SetText(String.Format("Chaos points: {0}", chaosPoints));

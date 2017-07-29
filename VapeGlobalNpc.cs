@@ -88,7 +88,6 @@ namespace VapeRPG
 
         public override bool CheckDead(NPC npc)
         {
-            VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
 
             if (!IsIgnoredType(npc.type) && !npc.SpawnedFromStatue && !npc.friendly)
             {
@@ -118,10 +117,10 @@ namespace VapeRPG
                             {
                                 gainedXp /= 2;
                             }
-                            if (global.isChaos)
+                            if (this.isChaos)
                             {
-                                gainedXp *= global.chaosMultiplier / 2f;
-                                vp.GainChaosExperience((int)(gainedXp / 3));
+                                gainedXp *= this.chaosMultiplier / 2f;
+                                vp.GainExperience((int)(gainedXp / 3), true);
                             }
                             vp.GainExperience((int)gainedXp);
                         }
@@ -133,8 +132,6 @@ namespace VapeRPG
 
         public override void NPCLoot(NPC npc)
         {
-            VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
-
             #region UniqueDrops
 
             int chance;
@@ -159,7 +156,7 @@ namespace VapeRPG
                 }
 
                 itemID = Item.NewItem(npc.position, spawnID);
-                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(Main.item[itemID], ItemQuality.Unique);
             }
 
             if (npc.type == NPCID.SkeletronHead)
@@ -205,7 +202,7 @@ namespace VapeRPG
                 }
 
                 itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
-                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(Main.item[itemID], ItemQuality.Unique);
             }
             if (npc.type == NPCID.WallofFlesh)
             {
@@ -225,7 +222,7 @@ namespace VapeRPG
                 }
 
                 itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
-                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(Main.item[itemID], ItemQuality.Unique);
             }
             if (npc.type == NPCID.Retinazer || npc.type == NPCID.TheDestroyer || npc.type == NPCID.SkeletronPrime)
             {
@@ -253,7 +250,7 @@ namespace VapeRPG
                 }
 
                 itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
-                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(Main.item[itemID], ItemQuality.Unique);
             }
             if (npc.type == NPCID.Plantera)
             {
@@ -309,7 +306,7 @@ namespace VapeRPG
                 }
 
                 itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
-                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(ItemQuality.Unique);
+                Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(Main.item[itemID], ItemQuality.Unique);
             }
 
             #endregion
@@ -319,23 +316,22 @@ namespace VapeRPG
 
         public void ChaosTransform(NPC npc)
         {
-            VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
-            global.chaosMultiplier = Main.rand.Next(3, 6);
-            npc.scale *= global.chaosMultiplier / 2.7f;
-            npc.lifeMax *= global.chaosMultiplier;
+            this.chaosMultiplier = Main.rand.Next(3, 6);
+            npc.scale *= this.chaosMultiplier / 2.7f;
+            npc.lifeMax *= this.chaosMultiplier;
             npc.life = npc.lifeMax;
-            npc.defDamage *= global.chaosMultiplier;
-            npc.defDefense *= global.chaosMultiplier / 2;
+            npc.defDamage *= this.chaosMultiplier;
+            npc.defDefense *= this.chaosMultiplier / 2;
             npc.color = ChaosColor;
-            npc.stepSpeed *= global.chaosMultiplier / 2f;
+            npc.stepSpeed *= this.chaosMultiplier / 2f;
 
-            global.isChaos = true;
+            this.isChaos = true;
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 ModPacket packet = this.mod.GetPacket();
                 packet.Write((byte)VapeRPGMessageType.ClientTransformChaosNPC);
-                packet.Write(global.chaosMultiplier);
+                packet.Write(this.chaosMultiplier);
                 packet.Write(npc.whoAmI);
                 packet.Send();
             }
@@ -343,8 +339,8 @@ namespace VapeRPG
 
         public override void ResetEffects(NPC npc)
         {
-            npc.GetGlobalNPC<VapeGlobalNpc>().hemorrhage = false;
-            if (npc.GetGlobalNPC<VapeGlobalNpc>().isChaos)
+            this.hemorrhage = false;
+            if (this.isChaos)
             {
                 npc.GivenName = String.Format("Chaos {0}", npc.TypeName);
             }
@@ -352,10 +348,9 @@ namespace VapeRPG
 
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
-            VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
-            if (global.hemorrhage)
+            if (this.hemorrhage)
             {
-                npc.lifeRegen -= global.hemorrhageDamage;
+                npc.lifeRegen -= this.hemorrhageDamage;
             }
         }
 
