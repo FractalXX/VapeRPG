@@ -1,6 +1,7 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Localization;
 
 namespace ExampleMod.Commands
 {
@@ -75,8 +76,8 @@ namespace ExampleMod.Commands
 			for (var k = 0; k < num; k++)
 			{
 				int slot = NPC.NewNPC(x, y, type);
-				//if (Main.netMode == 2 && slot < 200)
-				//	NetMessage.SendData(MessageID.SyncNPC, -1, -1, "", slot);
+				if (Main.netMode == 2 && slot < 200)
+					NetMessage.SendData(MessageID.SyncNPC, -1, -1, NetworkText.Empty, slot);
 			}
 		}
 	}

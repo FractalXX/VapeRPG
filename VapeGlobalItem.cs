@@ -182,9 +182,12 @@ namespace VapeRPG
 
             foreach (var x in global.statBonus)
             {
-                TooltipLine bonus = new TooltipLine(global.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
-                bonus.overrideColor = Color.Yellow;
-                tooltips.Add(bonus);
+                if(x.Value > 0)
+                {
+                    TooltipLine bonus = new TooltipLine(global.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
+                    bonus.overrideColor = Color.Yellow;
+                    tooltips.Add(bonus);
+                }
             }
         }
 
@@ -292,6 +295,39 @@ namespace VapeRPG
             global.parent = (Item)itemProperties["Parent"];
 
             reforgeBuffer.Remove(item);
+        }
+
+        public override void NetSend(Item item, BinaryWriter writer)
+        {
+            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
+            writer.Write((int)global.quality);
+            writer.Write(global.wasQualified);
+            writer.Write(item.whoAmI);
+
+            foreach (var x in VapeRPG.baseStats)
+            {
+                int value;
+                global.statBonus.TryGetValue(x, out value);
+                writer.Write(String.Format("{0} {1}", x, value));
+            }
+
+            base.NetSend(item, writer);
+        }
+
+        public override void NetReceive(Item item, BinaryReader reader)
+        {
+            VapeGlobalItem global = item.GetGlobalItem<VapeGlobalItem>();
+            global.quality = (ItemQuality)reader.ReadInt32();
+            global.wasQualified = reader.ReadBoolean();
+            global.parent = Main.item[reader.ReadInt32()];
+
+            for (int i = 0; i < VapeRPG.baseStats.Length; i++)
+            {
+                string[] keyValuePair = reader.ReadString().Split(' ');
+                global.statBonus[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+            }
+
+            base.NetReceive(item, reader);
         }
     }
 }

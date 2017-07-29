@@ -21,7 +21,9 @@ namespace VapeRPG
 
         public bool isChaos = false; // Is it a Chaos mob?
 
-        private int chaosMultiplier = 1; // Determines the stat scale of this npc if it's a chaos mob
+        public int chaosMultiplier = 1; // Determines the stat scale of this npc if it's a chaos mob
+
+        public static Color ChaosColor = new Color(179, 104, 255, 127);
 
         // Types to be ignored by experience gain/chaos transform
         private static int[] ignoredTypes =
@@ -324,10 +326,19 @@ namespace VapeRPG
             npc.life = npc.lifeMax;
             npc.defDamage *= global.chaosMultiplier;
             npc.defDefense *= global.chaosMultiplier / 2;
-            npc.color = new Color(179, 104, 255, 127);
+            npc.color = ChaosColor;
             npc.stepSpeed *= global.chaosMultiplier / 2f;
 
             global.isChaos = true;
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                ModPacket packet = this.mod.GetPacket();
+                packet.Write((byte)VapeRPGMessageType.ClientTransformChaosNPC);
+                packet.Write(global.chaosMultiplier);
+                packet.Write(npc.whoAmI);
+                packet.Send();
+            }
         }
 
         public override void ResetEffects(NPC npc)

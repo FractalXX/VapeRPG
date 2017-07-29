@@ -33,20 +33,15 @@ namespace VapeRPG
 
         private float dodgeChance;
 
-        public float xpMultiplier;
-
         private Vector2 expUIPos;
 
         private static int statPointsPerLevel;
         private static int skillPointsPerLevel;
 
-        private static float globalXpMultiplier;
-
         static VapePlayer()
         {
             statPointsPerLevel = 5;
             skillPointsPerLevel = 1;
-            globalXpMultiplier = 0;
         }
 
         public override TagCompound Save()
@@ -174,8 +169,6 @@ namespace VapeRPG
             {
                 this.ChaosBonuses.Add(stat, 0);
             }
-
-            this.xpMultiplier = 1 + globalXpMultiplier;
         }
 
         public override void ProcessTriggers(TriggersSet triggersSet)
@@ -192,7 +185,7 @@ namespace VapeRPG
             {
                 // Fancy text above the player
                 CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
-                this.xp += (long)(value * this.xpMultiplier);
+                this.xp += (long)value;
             }
         }
 

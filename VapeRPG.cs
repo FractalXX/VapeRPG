@@ -4,14 +4,22 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.Localization;
+using Terraria.ID;
 
 using VapeRPG.UI;
 using VapeRPG.UI.States;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 
 namespace VapeRPG
 {
+    enum VapeRPGMessageType : byte
+    {
+        ClientTransformChaosNPC,
+        test
+    };
+
     class VapeRPG : Mod
     {
         public const int maxLevel = 200; // Self-explanatory
@@ -112,20 +120,23 @@ namespace VapeRPG
 
             charWindowHotKey = RegisterHotKey("Character window", "C");
 
-            this.ExpUI = new ExpUIState();
-            this.ExpUI.Activate();
+            if(Main.netMode != NetmodeID.Server)
+            {
+                this.ExpUI = new ExpUIState();
+                this.ExpUI.Activate();
 
-            this.CharUI = new CharUIState();
-            this.CharUI.Activate();
+                this.CharUI = new CharUIState();
+                this.CharUI.Activate();
 
-            this.BuffUI = new CustomBuffUIState();
-            this.BuffUI.Activate();
+                this.BuffUI = new CustomBuffUIState();
+                this.BuffUI.Activate();
 
-            this.userInterface = new UserInterface();
-            this.userInterface.SetState(this.ExpUI);
+                this.userInterface = new UserInterface();
+                this.userInterface.SetState(this.ExpUI);
 
-            ExpUIState.visible = true;
-            CustomBuffUIState.visible = true;
+                ExpUIState.visible = true;
+                CustomBuffUIState.visible = true;
+            }
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -181,6 +192,35 @@ namespace VapeRPG
                     },
                     InterfaceScaleType.UI)
                 );
+            }
+        }
+
+        public override void HandlePacket(BinaryReader reader, int whoAmI)
+        {
+            VapeRPGMessageType msgType = (VapeRPGMessageType)reader.ReadByte();
+
+            switch(msgType)
+            {
+                case VapeRPGMessageType.ClientTransformChaosNPC:
+                    int chaosMultiplier = reader.ReadInt32();
+                    int index = reader.ReadInt32();
+                    if(index != -1)
+                    {
+                        NPC npc = Main.npc[index];
+                        VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
+
+                        global.chaosMultiplier = chaosMultiplier;
+                        npc.scale *= global.chaosMultiplier / 2.7f;
+                        npc.lifeMax *= global.chaosMultiplier;
+                        npc.life = npc.lifeMax;
+                        npc.defDamage *= global.chaosMultiplier;
+                        npc.defDefense *= global.chaosMultiplier / 2;
+                        npc.color = VapeGlobalNpc.ChaosColor;
+                        npc.stepSpeed *= global.chaosMultiplier / 2f;
+
+                        global.isChaos = true;
+                    }
+                    break;
             }
         }
 
