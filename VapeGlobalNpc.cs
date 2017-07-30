@@ -5,6 +5,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Localization;
 using Terraria.ModLoader.IO;
 using Microsoft.Xna.Framework;
 
@@ -328,8 +329,10 @@ namespace VapeRPG
 
             this.isChaos = true;
 
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.netMode == NetmodeID.Server)
             {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, NetworkText.Empty, npc.whoAmI);
+
                 ModPacket packet = this.mod.GetPacket();
                 packet.Write((byte)VapeRPGMessageType.ClientTransformChaosNPC);
                 packet.Write(this.chaosMultiplier);

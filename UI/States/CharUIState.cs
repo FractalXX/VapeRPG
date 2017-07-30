@@ -228,5 +228,16 @@ namespace VapeRPG.UI.States
                 this.chaosPointsText.SetText(String.Format("Chaos points: {0}", chaosPoints));
             }
         }
+
+        public override void Update(GameTime gameTime)
+        {
+            MouseState ms = Mouse.GetState();
+            if(this.charPanel.ContainsPoint(new Vector2(ms.X, ms.Y)))
+            {
+                Main.LocalPlayer.mouseInterface = true;
+            }
+
+            base.Update(gameTime);
+        }
     }
 }

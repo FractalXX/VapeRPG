@@ -212,14 +212,6 @@ namespace VapeRPG
                     VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
 
                     global.chaosMultiplier = chaosMultiplier;
-                    npc.scale *= global.chaosMultiplier / 2.7f;
-                    npc.lifeMax *= global.chaosMultiplier;
-                    npc.life = npc.lifeMax;
-                    npc.defDamage *= global.chaosMultiplier;
-                    npc.defDefense *= global.chaosMultiplier / 2;
-                    npc.color = VapeGlobalNpc.ChaosColor;
-                    npc.stepSpeed *= global.chaosMultiplier / 2f;
-
                     global.isChaos = true;
                     break;
 
