@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Buffs\Hemorrhage.cs" />
+    <Compile Include="Buffs\RegenKill.cs" />
     <Compile Include="Buffs\Steroids.cs" />
     <Compile Include="Commands\AddTimeCommand.cs" />
     <Compile Include="Commands\ItemCommand.cs" />

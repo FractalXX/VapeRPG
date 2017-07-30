@@ -67,49 +67,62 @@ namespace VapeRPG
 
         public static void ModifyHitNPCWithProj(VapePlayer modPlayer, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (proj.type != modPlayer.mod.ProjectileType<MagicSpark>() && modPlayer.HasSkill("Magic clusters") && proj.magic)
+            if(proj.magic)
             {
-                for (int i = 0; i < modPlayer.SkillLevels["Magic clusters"]; i++)
+                if (proj.type != modPlayer.mod.ProjectileType<MagicSpark>() && modPlayer.HasSkill("Magic clusters"))
                 {
-                    double angle = rnd.Next(1, 360) * Math.PI / 180;
-                    Vector2 sparkPosition = new Vector2(target.position.X + 10f * target.width * (float)Math.Cos(angle), target.position.Y + 10f * target.height * (float)Math.Sin(angle));
-                    Vector2 sparkVelocity = target.position - sparkPosition;
+                    for (int i = 0; i < modPlayer.SkillLevels["Magic clusters"]; i++)
+                    {
+                        double angle = rnd.Next(1, 360) * Math.PI / 180;
+                        Vector2 sparkPosition = new Vector2(target.position.X + 10f * target.width * (float)Math.Cos(angle), target.position.Y + 10f * target.height * (float)Math.Sin(angle));
+                        Vector2 sparkVelocity = target.position - sparkPosition;
 
-                    int v = 15;
-                    float speedMul = v / sparkVelocity.Length();
-                    sparkVelocity.X = speedMul * sparkVelocity.X;
-                    sparkVelocity.Y = speedMul * sparkVelocity.Y;
+                        int v = 15;
+                        float speedMul = v / sparkVelocity.Length();
+                        sparkVelocity.X = speedMul * sparkVelocity.X;
+                        sparkVelocity.Y = speedMul * sparkVelocity.Y;
 
-                    int spark = Projectile.NewProjectile(sparkPosition, sparkVelocity, modPlayer.mod.ProjectileType<MagicSpark>(), damage / 5, 0, Main.myPlayer);
+                        int spark = Projectile.NewProjectile(sparkPosition, sparkVelocity, modPlayer.mod.ProjectileType<MagicSpark>(), damage / 5, 0, Main.myPlayer);
 
-                    float d = Vector2.Distance(sparkPosition, target.position);
-                    float t = d / v;
-                    Main.projectile[spark].timeLeft = (int)Math.Ceiling(t);
+                        float d = Vector2.Distance(sparkPosition, target.position);
+                        float t = d / v;
+                        Main.projectile[spark].timeLeft = (int)Math.Ceiling(t);
 
-                    Main.projectile[spark].magic = true;
-                    Main.projectile[spark].tileCollide = false;
+                        Main.projectile[spark].magic = true;
+                        Main.projectile[spark].tileCollide = false;
+                    }
+                }
+
+                if (crit)
+                {
+                    if (modPlayer.HasSkill("Mana crits"))
+                    {
+                        int amount = 5 * modPlayer.SkillLevels["Mana crits"];
+                        modPlayer.player.statMana += amount;
+                        modPlayer.player.ManaEffect(amount);
+                    }
                 }
             }
-
-            if (!proj.magic && proj.ranged && !proj.Name.Contains("Rocket") && modPlayer.HasSkill("Explosive shots"))
+            else
             {
-                Projectile explosionDummy = Projectile.NewProjectileDirect(target.position, Vector2.Zero, ProjectileID.RocketI, damage * modPlayer.SkillLevels["Explosive shots"] / 10, 20, Main.myPlayer);
-                explosionDummy.timeLeft = 10;
-            }
-
-            if (!proj.magic && proj.ranged && !proj.Name.Contains("Rocket") && modPlayer.HasSkill("Incendiary shots"))
-            {
-                target.AddBuff(24, 300);
-            }
-
-            if (crit)
-            {
-                if (modPlayer.HasSkill("Mana crits"))
+                if (proj.ranged && !proj.Name.Contains("Rocket") && modPlayer.HasSkill("Explosive shots"))
                 {
-                    int amount = 5 * modPlayer.SkillLevels["Mana crits"];
-                    modPlayer.player.statMana += amount;
-                    modPlayer.player.ManaEffect(amount);
+                    Projectile explosionDummy = Projectile.NewProjectileDirect(target.position, Vector2.Zero, ProjectileID.RocketI, damage * modPlayer.SkillLevels["Explosive shots"] / 10, 20, Main.myPlayer);
+                    explosionDummy.timeLeft = 10;
                 }
+
+                if (proj.ranged && !proj.Name.Contains("Rocket") && modPlayer.HasSkill("Incendiary shots"))
+                {
+                    target.AddBuff(24, 300);
+                }
+            }
+        }
+
+        public static void OnHitNPCWithProj(VapePlayer modPlayer, Projectile proj, NPC target, int damage, float knockback, bool crit)
+        {
+            if (modPlayer.HasSkill("Regenerating Kills"))
+            {
+                modPlayer.player.AddBuff(modPlayer.mod.BuffType<RegenKill>(), 300);
             }
         }
 

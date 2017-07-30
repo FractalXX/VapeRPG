@@ -21,19 +21,7 @@ namespace VapeRPG.UI.Elements
 
         public float bonusValue;
 
-        public bool ButtonVisible
-        {
-            get
-            {
-                return this.button.visible;
-            }
-            set
-            {
-                this.button.visible = value;
-            }
-        }
-
-        public UIStatInfo(string stat, float width, float height, bool isMinorStat = false) : base(stat)
+        public UIStatInfo(string stat, float width, float height, bool isMinorStat = false, bool button = true) : base(stat)
         {
             this.stat = stat;
             this.statValue = 0;
@@ -42,11 +30,14 @@ namespace VapeRPG.UI.Elements
             this.Width.Set(width, 0);
             this.Height.Set(height, 0);
 
-            this.button = new UIVapeButton(ModLoader.GetTexture("VapeRPG/Textures/UI/AddButton"), ModLoader.GetTexture("VapeRPG/Textures/UI/AddButtonPressed"));
-            this.button.Width.Set(15, 0);
-            this.button.Height.Set(15, 0);
+            if(button)
+            {
+                this.button = new UIVapeButton(ModLoader.GetTexture("VapeRPG/Textures/UI/AddButton"), ModLoader.GetTexture("VapeRPG/Textures/UI/AddButtonPressed"));
+                this.button.Width.Set(15, 0);
+                this.button.Height.Set(15, 0);
+            }
 
-            if(this.isMinorStat)
+            if (this.isMinorStat)
             {
                 this.button.Left.Set(width + this.button.Width.Pixels + 50, 0);
             }
@@ -74,7 +65,7 @@ namespace VapeRPG.UI.Elements
                     if (vp.chaosPoints > 0)
                     {
                         float value = 0.02f;
-                        if(this.stat.Contains("Crit"))
+                        if (this.stat.Contains("Crit"))
                         {
                             value = 1;
                         }
@@ -103,7 +94,7 @@ namespace VapeRPG.UI.Elements
 
         public override void Update(GameTime gameTime)
         {
-            if(this.isMinorStat)
+            if (this.isMinorStat)
             {
                 this.SetText(String.Format("{0}: {1:0.00}%", this.stat, this.statValue));
             }

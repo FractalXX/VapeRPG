@@ -98,15 +98,10 @@ namespace VapeRPG.UI.States
 
             for (int i = 0; i < this.miscStatControls.Length; i++)
             {
-                this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels / 2, 20, true);
+                this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels / 2, 20, true, !VapeRPG.MinorStats[i].Contains("Block Chance"));
                 this.miscStatControls[i].Height.Set(this.miscPanel.Height.Pixels / (0.8f * this.miscStatControls[i].Height.Pixels), 0);
                 this.miscStatControls[i].Left.Set(this.miscPanel.Width.Pixels / 6, 0);
                 this.miscStatControls[i].Top.Set(20 + 1.2f * i * this.miscStatControls[i].Height.Pixels + 5, 0);
-
-                if (this.miscStatControls[i].Text.Contains("Block Chance"))
-                {
-                    this.miscStatControls[i].ButtonVisible = false;
-                }
 
                 this.miscPanel.Append(this.miscStatControls[i]);
             }

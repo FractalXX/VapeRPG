@@ -104,7 +104,7 @@ namespace VapeRPG
                 new Skill("Sacrifice", "Trade part of your life for additional melee damage.", 10, SkillType.Melee, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSacrifice")),
 
                 //Magic
-                new Skill("Magic clusters", "Weapon hits explode into additional magic stars.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameMagicClusters")),
+                new Skill("Magic clusters", "Weapon hits explode into additional magic sparks.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameMagicClusters")),
                 new Skill("Mana crits", "Your critical hits restore some mana.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameManaCrits")),
                 new Skill("Regenerating kills", "Gain mana regen after kills.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameRegenKills")),
 
@@ -123,7 +123,7 @@ namespace VapeRPG
 
             CharWindowHotKey = RegisterHotKey("Character window", "C");
 
-            if(Main.netMode != NetmodeID.Server)
+            if (Main.netMode != NetmodeID.Server)
             {
                 this.ExpUI = new ExpUIState();
                 this.ExpUI.Activate();
@@ -202,33 +202,31 @@ namespace VapeRPG
         {
             VapeRPGMessageType msgType = (VapeRPGMessageType)reader.ReadByte();
 
-            switch(msgType)
+            switch (msgType)
             {
                 case VapeRPGMessageType.ClientTransformChaosNPC:
                     int chaosMultiplier = reader.ReadInt32();
                     int index = reader.ReadInt32();
-                    if(index != -1)
-                    {
-                        NPC npc = Main.npc[index];
-                        VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
 
-                        global.chaosMultiplier = chaosMultiplier;
-                        npc.scale *= global.chaosMultiplier / 2.7f;
-                        npc.lifeMax *= global.chaosMultiplier;
-                        npc.life = npc.lifeMax;
-                        npc.defDamage *= global.chaosMultiplier;
-                        npc.defDefense *= global.chaosMultiplier / 2;
-                        npc.color = VapeGlobalNpc.ChaosColor;
-                        npc.stepSpeed *= global.chaosMultiplier / 2f;
+                    NPC npc = Main.npc[index];
+                    VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
 
-                        global.isChaos = true;
-                    }
+                    global.chaosMultiplier = chaosMultiplier;
+                    npc.scale *= global.chaosMultiplier / 2.7f;
+                    npc.lifeMax *= global.chaosMultiplier;
+                    npc.life = npc.lifeMax;
+                    npc.defDamage *= global.chaosMultiplier;
+                    npc.defDefense *= global.chaosMultiplier / 2;
+                    npc.color = VapeGlobalNpc.ChaosColor;
+                    npc.stepSpeed *= global.chaosMultiplier / 2f;
+
+                    global.isChaos = true;
                     break;
 
                 case VapeRPGMessageType.ClientSyncStats:
                     Player player = Main.player[reader.ReadInt32()];
 
-                    if(!player.Equals(Main.LocalPlayer) || Main.netMode == NetmodeID.Server)
+                    if (!player.Equals(Main.LocalPlayer) || Main.netMode == NetmodeID.Server)
                     {
                         VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
 

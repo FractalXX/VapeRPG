@@ -252,7 +252,7 @@ namespace VapeRPG
                 itemID = Item.NewItem(new Rectangle((int)npc.position.X, (int)npc.position.Y, 0, 0), spawnID);
                 Main.item[itemID].GetGlobalItem<VapeGlobalItem>().Qualify(Main.item[itemID], ItemQuality.Unique);
             }
-            if (npc.type == NPCID.Plantera)
+            if (npc.type == NPCID.Golem)
             {
                 chance = Main.rand.Next(0, 12);
 
@@ -317,6 +317,7 @@ namespace VapeRPG
         public void ChaosTransform(NPC npc)
         {
             this.chaosMultiplier = Main.rand.Next(3, 6);
+
             npc.scale *= this.chaosMultiplier / 2.7f;
             npc.lifeMax *= this.chaosMultiplier;
             npc.life = npc.lifeMax;

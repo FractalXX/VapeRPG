@@ -40,6 +40,8 @@ namespace VapeRPG
         private static int statPointsPerLevel;
         private static int skillPointsPerLevel;
 
+        public bool regenKill;
+
         static VapePlayer()
         {
             statPointsPerLevel = 5;
@@ -263,9 +265,14 @@ namespace VapeRPG
                 packet.Send();
             }
 
+            if(this.regenKill)
+            {
+                this.player.manaRegen += this.SkillLevels["Regenerating Kills"];
+            }
+
             // Updating the UI
 
-            if(Main.netMode != NetmodeID.Server)
+            if(!Main.dedServ)
             {
                 vapeMod.ExpUI.UpdateXpBar(this.xp, vapeMod.XpNeededForLevel[this.level], vapeMod.XpNeededForLevel[this.level + 1]);
                 vapeMod.ExpUI.UpdateChaosXpBar(this.chaosXp, vapeMod.XpNeededForChaosRank[this.chaosRank], vapeMod.XpNeededForChaosRank[this.chaosRank + 1]);
@@ -291,6 +298,8 @@ namespace VapeRPG
             this.player.meleeDamage = 0.6f;
             this.player.magicDamage = 0.65f;
             this.player.rangedDamage = 0.625f;
+
+            this.regenKill = false;
 
             foreach (var x in VapeRPG.BaseStats)
             {
@@ -452,6 +461,11 @@ namespace VapeRPG
             }
 
             return true;
+        }
+
+        public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
+        {
+            SkillController.OnHitNPCWithProj(this, proj, target, damage, knockback, crit);
         }
 
         public override bool ConsumeAmmo(Item weapon, Item ammo)
