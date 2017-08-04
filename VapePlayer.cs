@@ -327,7 +327,7 @@ namespace VapeRPG
 
             this.player.meleeCrit += this.EffectiveStats["Strength"] / 10;
             this.player.magicCrit += (int)(this.EffectiveStats["Magic power"] / 7f);
-            this.player.rangedCrit += (int)(this.EffectiveStats["Agility"] / 8.5f);
+            this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / 8.5f);
 
             this.player.meleeSpeed += this.EffectiveStats["Agility"] / 265f;
 
