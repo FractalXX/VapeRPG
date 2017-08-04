@@ -1,1 +1,16 @@
-Vape RPG is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+ATTENTION: Multiplayer is not complete. No support will be given for any bugs you may encounter in MP, but you may report them on the mod's thread.
+
+This mod is going to be an action RPG mod. It's in a very early alpha stage, so some features might not function as intended, bugs are common, use the mod at your own risk.
+
+Current features:
+ A simple RPG-like level system, XP can be gained from mob kills (the XP gain is determined by a function of the mob's HP, Defense, Damage)
+ On every level-up you get 5 stat points and 1 skill point. These can be spent on the Character Panel (default hotkey: C, set it in the options if it's not set).
+ Base stats: Strength (+Melee Damage, Crit), Magic Power (+Magic Damage, Crit), Dexterity (+Ranged Damage, Crit), Agility (+Melee Speed), Vitality (+HP), Intellect (+Mana).
+ Chaos mobs: When a hostile NPC spawns (if it's not a boss) it has a 10% chance of transforming to a Chaos mob. Killing these grants Chaos Experience.
+ Chaos rank: If you gain enough experience, you'll rank up and get 1 Chaos Point. These can be spent for minor bonuses ad the character panel.
+ Skills: They're all passive skills and I don't really intend to introduce active skills to the mod (they doesn't fit Terraria, imo). They are also on the character panel.
+ Red means melee, Cyan means magic, Orange means ranged, Brown means tank, Green means utility (they doesn't fit any class)
+ Despite the stats/skills there is no "class-restriction". You can make any kinds of hybrid builds.
+ Vape Loot's item qualities are implemented but they give base stat bonuses (like Strength, Dexterity) instead of basic Terraria bonuses.
+
+I repeat, the mod is highly volatile in Multiplayer. Don't expect tech support if you encounter any bugs with it. However, if you have time for testing MP, go ahead. You may report bugs here and when I have time, I'll try to fix it.
