@@ -17,13 +17,29 @@ namespace VapeRPG
 
         private static int chaosChance = 10; // Percent chance of a mob becoming a chaos mob
 
-        public bool hemorrhage = false; // For the Hemorrhage skill
+        /// <summary>
+        /// Returns true if the NPC has the hemorrhage debuff.
+        /// </summary>
+        public bool hemorrhage = false;
+
+        /// <summary>
+        /// The damage that should be inflicted by the hemorrhage.
+        /// </summary>
         public int hemorrhageDamage = 0;
 
-        public bool isChaos = false; // Is it a Chaos mob?
+        /// <summary>
+        /// Returns true if the mob is a chaos mob.
+        /// </summary>
+        public bool isChaos = false;
 
-        public int chaosMultiplier = 1; // Determines the stat scale of this npc if it's a chaos mob
+        /// <summary>
+        /// Determines the stat scale of the NPC if it's a chaos mob.
+        /// </summary>
+        public int chaosMultiplier = 1;
 
+        /// <summary>
+        /// The override color for chaos mobs.
+        /// </summary>
         public static Color ChaosColor = new Color(179, 104, 255, 127);
 
         // Types to be ignored by experience gain/chaos transform

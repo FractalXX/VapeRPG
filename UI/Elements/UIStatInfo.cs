@@ -25,6 +25,7 @@ namespace VapeRPG.UI.Elements
         {
             this.stat = stat;
             this.statValue = 0;
+            this.bonusValue = 0;
             this.isMinorStat = isMinorStat;
 
             this.Width.Set(width, 0);
@@ -35,61 +36,62 @@ namespace VapeRPG.UI.Elements
                 this.button = new UIVapeButton(ModLoader.GetTexture("VapeRPG/Textures/UI/AddButton"), ModLoader.GetTexture("VapeRPG/Textures/UI/AddButtonPressed"));
                 this.button.Width.Set(15, 0);
                 this.button.Height.Set(15, 0);
-            }
+                this.button.Top.Set(0, 0);
 
-            if (this.isMinorStat)
-            {
-                this.button.Left.Set(width + this.button.Width.Pixels + 50, 0);
-            }
-            else
-            {
-                this.button.Left.Set(width + this.button.Width.Pixels, 0);
-            }
+                Action onClick;
 
-            this.button.Top.Set(0, 0);
-
-            this.bonusText = new UIText("+ 0");
-            this.bonusText.Left.Set(this.button.Left.Pixels + this.button.Width.Pixels * 2, 0);
-            this.bonusText.Top.Set(0, 0);
-            this.bonusText.Width.Set(20, 0);
-            this.bonusText.Height.Set(this.Height.Pixels, 0);
-            this.bonusText.TextColor = Color.LimeGreen;
-
-            Action onClick;
-
-            if (this.isMinorStat)
-            {
-                onClick = delegate ()
+                if (this.isMinorStat)
                 {
-                    VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-                    if (vp.chaosPoints > 0)
+                    this.button.Left.Set(width + this.button.Width.Pixels + 50, 0);
+                    onClick = delegate ()
                     {
-                        float value = 0.02f;
-                        if (this.stat.Contains("Crit"))
+                        VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
+                        if (vp.chaosPoints > 0)
                         {
-                            value = 1;
+                            float value = 0.02f;
+                            if (this.stat.Contains("Crit"))
+                            {
+                                value = 1;
+                            }
+                            if(this.stat.Contains("Dodge"))
+                            {
+                                value = 0.005f;
+                            }
+                            vp.ChaosBonuses[this.stat] += value;
+                            vp.chaosPoints--;
                         }
-                        vp.ChaosBonuses[this.stat] += value;
-                        vp.chaosPoints--;
-                    }
-                };
-            }
-            else
-            {
-                onClick = delegate ()
+                    };
+                }
+                else
                 {
-                    VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-                    if (vp.statPoints > 0)
-                    {
-                        vp.BaseStats[this.stat]++;
-                        vp.statPoints--;
-                    }
-                };
-            }
-            this.button.OnClick += onClick;
+                    this.button.Left.Set(width + this.button.Width.Pixels, 0);
 
-            this.Append(this.button);
-            this.Append(this.bonusText);
+                    onClick = delegate ()
+                    {
+                        VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
+                        if (vp.statPoints > 0)
+                        {
+                            vp.BaseStats[this.stat]++;
+                            vp.statPoints--;
+                        }
+                    };
+                }
+                this.button.OnClick += onClick;
+
+                this.Append(this.button);
+            }
+
+            if(!this.isMinorStat)
+            {
+                this.bonusText = new UIText("+ 0");
+                this.bonusText.Left.Set(this.button.Left.Pixels + this.button.Width.Pixels * 2, 0);
+                this.bonusText.Top.Set(0, 0);
+                this.bonusText.Width.Set(20, 0);
+                this.bonusText.Height.Set(this.Height.Pixels, 0);
+                this.bonusText.TextColor = Color.LimeGreen;
+
+                this.Append(this.bonusText);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -101,15 +103,15 @@ namespace VapeRPG.UI.Elements
             else
             {
                 this.SetText(String.Format("{0}: {1}", this.stat, this.statValue));
-            }
 
-            if (this.bonusValue > 0)
-            {
-                this.bonusText.SetText(String.Format("+ {0}", this.bonusValue));
-            }
-            else
-            {
-                this.bonusText.SetText("");
+                if (this.bonusValue > 0)
+                {
+                    this.bonusText.SetText(String.Format("+ {0}", this.bonusValue));
+                }
+                else
+                {
+                    this.bonusText.SetText("");
+                }
             }
 
             base.Update(gameTime);

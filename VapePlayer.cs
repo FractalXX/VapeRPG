@@ -183,6 +183,12 @@ namespace VapeRPG
             }
         }
 
+
+        /// <summary>
+        /// Gives experience points for the player.
+        /// </summary>
+        /// <param name="value">The amount of experience given.</param>
+        /// <param name="chaos">Determines if the given xp should be chaos xp or not.</param>
         public void GainExperience(int value, bool chaos=false)
         {
             if(chaos)
@@ -267,7 +273,7 @@ namespace VapeRPG
 
             if(this.regenKill)
             {
-                this.player.manaRegen += this.SkillLevels["Regenerating Kills"];
+                this.player.manaRegenBonus += this.SkillLevels["Regenerating Kills"];
             }
 
             // Updating the UI
@@ -352,6 +358,9 @@ namespace VapeRPG
             this.UpdateStatBonuses();
         }
 
+        /// <summary>
+        /// Raises the player's level by one. (with effect)
+        /// </summary>
         public void LevelUp()
         {
             // Level up particle effect
@@ -387,6 +396,9 @@ namespace VapeRPG
             }
         }
 
+        /// <summary>
+        /// Raises the player's chaos rank by one. (with effect)
+        /// </summary>
         public void ChaosRankUp()
         {
             for (int i = 0; i < 50; i++)
@@ -402,6 +414,11 @@ namespace VapeRPG
             else NetMessage.SendData(25, -1, -1, NetworkText.FromLiteral(String.Format("{0} has reached chaos rank {1}!", this.player.name, this.chaosRank)), 179, 104, 255, 0, 0);
         }
 
+        /// <summary>
+        /// Returns true if the player has the skill with the given name.
+        /// </summary>
+        /// <param name="skillName">The name of the skill.</param>
+        /// <returns></returns>
         public bool HasSkill(string skillName)
         {
             return this.SkillLevels[skillName] > 0;

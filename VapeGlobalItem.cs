@@ -18,10 +18,24 @@ namespace VapeRPG
     {
         private static Random rnd = new Random();
 
-        public ItemQuality quality; // The quality of the item
-        public Dictionary<string, int> statBonus; // To store the statbonuses for this item
-        public bool wasQualified; // To prevent the item from being re qualified
+        /// <summary>
+        /// The quality of the item.
+        /// </summary>
+        public ItemQuality quality;
 
+        /// <summary>
+        /// Stores the stat bonuses this item gives for the player.
+        /// </summary>
+        public Dictionary<string, int> statBonus;
+
+        /// <summary>
+        /// Returns true if the item was already qualified.
+        /// </summary>
+        public bool wasQualified;
+
+        /// <summary>
+        /// The block chance bonus this item gives for the player.
+        /// </summary>
         public float blockChance;
 
         // Quality Colors
@@ -48,12 +62,28 @@ namespace VapeRPG
             }
         }
 
-        public override bool CloneNewInstances
+        public VapeGlobalItem()
         {
-            get
+            this.statBonus = new Dictionary<string, int>();
+            this.wasQualified = false;
+            this.blockChance = 0;
+            this.quality = ItemQuality.Common;
+        }
+
+        public override GlobalItem Clone(Item item, Item itemClone)
+        {
+            VapeGlobalItem global = (VapeGlobalItem)base.Clone(item, itemClone);
+            global.quality = this.quality;
+            global.wasQualified = this.wasQualified;
+            global.statBonus = new Dictionary<string, int>();
+            global.blockChance = this.blockChance;
+
+            foreach (var x in this.statBonus)
             {
-                return true;
+                global.statBonus[x.Key] = x.Value;
             }
+
+            return global;
         }
 
         public override void SetDefaults(Item item)
@@ -80,7 +110,6 @@ namespace VapeRPG
             if (!this.wasQualified)
             {
                 this.quality = ItemQuality.Common;
-                this.statBonus = new Dictionary<string, int>();
 
                 if (item.accessory || item.defense > 0)
                 {
@@ -204,6 +233,13 @@ namespace VapeRPG
                     tooltips.Add(bonus);
                 }
             }
+
+            if (this.blockChance > 0)
+            {
+                TooltipLine bonus = new TooltipLine(this.mod, "Block Chance", String.Format("{0} Block Chance", this.blockChance));
+                bonus.overrideColor = Color.White;
+                tooltips.Add(bonus);
+            }
         }
 
 
@@ -232,8 +268,8 @@ namespace VapeRPG
         public override void Load(Item item, TagCompound tag)
         {
             TagCompound statBonusTC = tag.GetCompound("StatBonuses");
-            this.statBonus = new Dictionary<string, int>();
             this.wasQualified = tag.GetBool("WasQualified");
+            this.statBonus.Clear();
 
             if (this.wasQualified)
             {
@@ -260,6 +296,11 @@ namespace VapeRPG
                     vp.EffectiveStats[x.Key] += x.Value;
                 }
             }
+        }
+
+        public override bool AltFunctionUse(Item item, Player player)
+        {
+            return base.AltFunctionUse(item, player);
         }
 
         public override void PostDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
@@ -307,12 +348,11 @@ namespace VapeRPG
         {
             writer.Write((int)this.quality);
             writer.Write(this.wasQualified);
+            writer.Write(this.statBonus.Count);
 
-            foreach (var x in VapeRPG.BaseStats)
+            foreach (var x in this.statBonus)
             {
-                int value;
-                this.statBonus.TryGetValue(x, out value);
-                writer.Write(String.Format("{0} {1}", x, value));
+                writer.Write(String.Format("{0}:{1}", x.Key, x.Value));
             }
 
             base.NetSend(item, writer);
@@ -322,15 +362,14 @@ namespace VapeRPG
         {
             this.quality = (ItemQuality)reader.ReadInt32();
             this.wasQualified = reader.ReadBoolean();
+            int statCount = reader.ReadInt32();
 
-            for (int i = 0; i < VapeRPG.BaseStats.Length; i++)
+            this.statBonus.Clear();
+
+            for (int i = 0; i < statCount; i++)
             {
-                string[] keyValuePair = reader.ReadString().Split(' ');
-                int value = int.Parse(keyValuePair[1]);
-                if(value > 0)
-                {
-                    this.statBonus[keyValuePair[0]] = int.Parse(keyValuePair[1]);
-                }
+                string[] keyValuePair = reader.ReadString().Split(':');
+                this.statBonus[keyValuePair[0]] = int.Parse(keyValuePair[1]);
             }
 
             base.NetReceive(item, reader);

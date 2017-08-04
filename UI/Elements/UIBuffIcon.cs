@@ -4,6 +4,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
+using Terraria.ID;
 using Terraria.GameContent.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,7 @@ namespace VapeRPG.UI.Elements
             this.buffType = buffType;
             this.timerText = new UIText("100s");
             this.timerText.Top.Set(this.Height.Pixels + 5, 0);
+
             this.Append(timerText);
         }
 
@@ -30,7 +32,7 @@ namespace VapeRPG.UI.Elements
 
             int index = 0;
 
-            if (!Main.vanityPet[this.buffType] && !Main.lightPet[this.buffType] && !Main.buffNoTimeDisplay[this.buffType] && (!Main.LocalPlayer.honeyWet || this.buffType != 48) && (!Main.LocalPlayer.wet || !Main.expertMode || this.buffType != 46))
+            if (!Main.vanityPet[this.buffType] && !Main.lightPet[this.buffType] && !Main.buffNoTimeDisplay[this.buffType] && (!Main.LocalPlayer.honeyWet || this.buffType != 48) && (!Main.LocalPlayer.wet || !Main.expertMode || this.buffType != 46) && this.buffType != BuffID.Sunflower)
             {
                 for(int i = 0; i < Main.LocalPlayer.buffType.Length; i++)
                 {
@@ -41,6 +43,10 @@ namespace VapeRPG.UI.Elements
                 }
                 this.timerText.SetText(String.Format("{0}s", (int)Math.Round(Main.LocalPlayer.buffTime[index] / 60f, 1)));
                 this.CenterTimerText();
+            }
+            else
+            {
+                this.timerText.SetText("");
             }
 
             MouseState ms = Mouse.GetState();
