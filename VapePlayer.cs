@@ -42,6 +42,8 @@ namespace VapeRPG
 
         public bool regenKill;
 
+        private static Random rnd = new Random();
+
         static VapePlayer()
         {
             statPointsPerLevel = 5;
@@ -153,7 +155,7 @@ namespace VapeRPG
 
             this.statPoints = 5;
             this.skillPoints = 1;
-            this.chaosPoints = 100;
+            this.chaosPoints = 0;
         }
 
         public override void Initialize()
@@ -284,15 +286,17 @@ namespace VapeRPG
                 vapeMod.ExpUI.UpdateChaosXpBar(this.chaosXp, vapeMod.XpNeededForChaosRank[this.chaosRank], vapeMod.XpNeededForChaosRank[this.chaosRank + 1]);
                 vapeMod.ExpUI.UpdateLevel(this.level, this.chaosRank);
 
-                vapeMod.ExpUI.UpdateHpMp(this.player.statLife, this.player.statMana, this.player.statLifeMax2, this.player.statManaMax2);
+                if (VapeConfig.UIEnabled)
+                {
+                    vapeMod.sBarUI.UpdateHpMp(this.player.statLife, this.player.statMana, this.player.statLifeMax2, this.player.statManaMax2);
+                    CustomBuffUIState.visible = !Main.playerInventory;
+                }
 
                 if (CharUIState.visible)
                 {
                     vapeMod.CharUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints, this.skillPoints);
                     vapeMod.CharUI.UpdateBonusPanel(this.chaosPoints, player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.moveSpeed, this.dodgeChance, this.blockChance);
                 }
-
-                CustomBuffUIState.visible = !Main.playerInventory;
             }
         }
 
@@ -366,11 +370,11 @@ namespace VapeRPG
             // Level up particle effect
             for (int i = 0; i < 50; i++)
             {
-                Dust.NewDust(this.player.position, Main.rand.Next(5, 15), Main.rand.Next(5, 15), 130, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10));
-                Dust.NewDust(this.player.position, Main.rand.Next(5, 15), Main.rand.Next(5, 15), 131, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10));
-                Dust.NewDust(this.player.position, Main.rand.Next(5, 15), Main.rand.Next(5, 15), 132, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10));
-                Dust.NewDust(this.player.position, Main.rand.Next(5, 15), Main.rand.Next(5, 15), 133, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10));
-                Dust.NewDust(this.player.position, Main.rand.Next(5, 15), Main.rand.Next(5, 15), 134, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 130, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 131, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 132, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 133, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 134, rnd.Next(-10, 10), rnd.Next(-10, 10));
             }
             CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 100, 100), Color.Cyan, "Level Up");
 
@@ -403,7 +407,7 @@ namespace VapeRPG
         {
             for (int i = 0; i < 50; i++)
             {
-                Dust.NewDust(this.player.position, Main.rand.Next(5, 15), Main.rand.Next(5, 15), 179, Main.rand.Next(-10, 10), Main.rand.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 179, rnd.Next(-10, 10), rnd.Next(-10, 10));
             }
             CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 100, 100), Color.Violet, "Chaos Rank Up");
 
@@ -449,13 +453,16 @@ namespace VapeRPG
 
         public override void PostUpdateBuffs()
         {
-            VapeRPG vapeMod = this.mod as VapeRPG;
-            vapeMod.BuffUI.UpdateBuffs(this.player.buffType);
+            if(VapeConfig.UIEnabled)
+            {
+                VapeRPG vapeMod = this.mod as VapeRPG;
+                vapeMod.BuffUI.UpdateBuffs(this.player.buffType);
+            }
         }
 
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
-            if (Main.rand.NextDouble() <= this.dodgeChance)
+            if (rnd.NextDouble() <= this.dodgeChance)
             {
                 this.player.immune = true;
                 this.player.immuneTime = 40;
@@ -466,7 +473,7 @@ namespace VapeRPG
                 return false;
             }
 
-            if(Main.rand.NextDouble() <= this.blockChance)
+            if(rnd.NextDouble() <= this.blockChance)
             {
                 this.player.immune = true;
                 this.player.immuneTime = 40;

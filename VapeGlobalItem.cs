@@ -151,6 +151,9 @@ namespace VapeRPG
                     int statMax = (item.rare + 1) * 15;
                     int statPairIndex = rnd.Next(0, uniqueStatPairs.GetLength(0));
 
+                    if (statMin < 0) statMin *= -1;
+                    if (statMax < 0) statMax *= -1;
+
                     this.statBonus[uniqueStatPairs[statPairIndex, 0]] = rnd.Next(statMin, statMax);
                     this.statBonus[uniqueStatPairs[statPairIndex, 1]] = rnd.Next(statMin, statMax);
                     this.statBonus["Vitality"] = rnd.Next(statMin, statMax);
@@ -170,6 +173,9 @@ namespace VapeRPG
 
                         int statMin = (item.rare + 1) * 5;
                         int statMax = (item.rare + 1 + ((int)newQuality - 1)) * 10;
+
+                        if (statMin < 0) statMin *= -1;
+                        if (statMax < 0) statMax *= -1;
 
                         this.statBonus[VapeRPG.BaseStats[stat]] = rnd.Next(statMin, statMax);
                         int newstat = 0;

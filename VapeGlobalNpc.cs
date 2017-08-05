@@ -42,6 +42,8 @@ namespace VapeRPG
         /// </summary>
         public static Color ChaosColor = new Color(179, 104, 255, 127);
 
+        private static Random rnd = new Random();
+
         // Types to be ignored by experience gain/chaos transform
         private static int[] ignoredTypes =
         {
@@ -97,15 +99,18 @@ namespace VapeRPG
 
         public override void SetDefaults(NPC npc)
         {
-            if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredType(npc.type) && Main.rand.Next(0, 101) <= chaosChance)
+            // Fix for incompatibility with other mods such as Calamity, etc.
+            if(npc != null)
             {
-                ChaosTransform(npc);
+                if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredType(npc.type) && rnd.Next(0, 101) <= chaosChance)
+                {
+                    ChaosTransform(npc);
+                }
             }
         }
 
         public override bool CheckDead(NPC npc)
         {
-
             if (!IsIgnoredType(npc.type) && !npc.SpawnedFromStatue && !npc.friendly)
             {
                 double gainedXp;
@@ -157,7 +162,7 @@ namespace VapeRPG
 
             if (npc.type == NPCID.EyeofCthulhu)
             {
-                chance = Main.rand.Next(0, 3);
+                chance = rnd.Next(0, 3);
 
                 if (chance == 0)
                 {
@@ -178,8 +183,7 @@ namespace VapeRPG
 
             if (npc.type == NPCID.SkeletronHead)
             {
-
-                chance = Main.rand.Next(0, 9);
+                chance = rnd.Next(0, 9);
 
                 if (chance == 0)
                 {
@@ -223,7 +227,7 @@ namespace VapeRPG
             }
             if (npc.type == NPCID.WallofFlesh)
             {
-                chance = Main.rand.Next(0, 3);
+                chance = rnd.Next(0, 3);
 
                 if (chance == 0)
                 {
@@ -243,7 +247,7 @@ namespace VapeRPG
             }
             if (npc.type == NPCID.Retinazer || npc.type == NPCID.TheDestroyer || npc.type == NPCID.SkeletronPrime)
             {
-                chance = Main.rand.Next(0, 3);
+                chance = rnd.Next(0, 3);
 
                 if (chance == 0)
                 {
@@ -271,7 +275,7 @@ namespace VapeRPG
             }
             if (npc.type == NPCID.Golem)
             {
-                chance = Main.rand.Next(0, 12);
+                chance = rnd.Next(0, 12);
 
                 if (chance == 0)
                 {
@@ -327,13 +331,13 @@ namespace VapeRPG
             }
 
             #endregion
-
+            
             base.NPCLoot(npc);
         }
 
         public void ChaosTransform(NPC npc)
         {
-            this.chaosMultiplier = Main.rand.Next(3, 6);
+            this.chaosMultiplier = rnd.Next(3, 6);
 
             npc.scale *= this.chaosMultiplier / 2.7f;
             npc.lifeMax *= this.chaosMultiplier;

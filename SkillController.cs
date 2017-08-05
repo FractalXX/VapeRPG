@@ -146,7 +146,7 @@ namespace VapeRPG
 
         public static bool ConsumeAmmo(VapePlayer modPlayer, Item weapon, Item ammo)
         {
-            return !(modPlayer.HasSkill("Ammo hoarding") && Main.rand.Next(0, 101) <= modPlayer.SkillLevels["Ammo hoarding"] * 5);
+            return !(modPlayer.HasSkill("Ammo hoarding") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Ammo hoarding"] * 5);
         }
     }
 }

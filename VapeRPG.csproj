@@ -63,6 +63,8 @@
     <Compile Include="UI\States\CustomBuffUIState.cs" />
     <Compile Include="UI\States\ExpUIState.cs" />
     <Compile Include="UI\Elements\UITexturedPanel.cs" />
+    <Compile Include="UI\States\StatusBarUIState.cs" />
+    <Compile Include="VapeConfig.cs" />
     <Compile Include="VapeGlobalItem.cs" />
     <Compile Include="VapeGlobalNpc.cs" />
     <Compile Include="VapePlayer.cs" />

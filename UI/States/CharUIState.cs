@@ -23,8 +23,6 @@ namespace VapeRPG.UI.States
         private UIText pointsText;
         private UIText chaosPointsText;
 
-        private UIVapeButton[] statAdderButtons;
-
         public static bool visible = false;
 
         private float charPanelWidth;
