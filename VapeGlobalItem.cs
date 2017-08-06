@@ -38,6 +38,8 @@ namespace VapeRPG
         /// </summary>
         public float blockChance;
 
+        public bool tooltipVisible;
+
         // Quality Colors
         private static Color uncommonColor = Color.LimeGreen;
         private static Color rareColor = Color.Blue;
@@ -68,6 +70,7 @@ namespace VapeRPG
             this.wasQualified = false;
             this.blockChance = 0;
             this.quality = ItemQuality.Common;
+            this.tooltipVisible = false;
         }
 
         public override GlobalItem Clone(Item item, Item itemClone)
@@ -77,6 +80,7 @@ namespace VapeRPG
             global.wasQualified = this.wasQualified;
             global.statBonus = new Dictionary<string, int>();
             global.blockChance = this.blockChance;
+            global.tooltipVisible = this.tooltipVisible;
 
             foreach (var x in this.statBonus)
             {
@@ -88,7 +92,7 @@ namespace VapeRPG
 
         public override void SetDefaults(Item item)
         {
-            switch(item.type)
+            switch (item.type)
             {
                 case ItemID.EoCShield:
                     this.blockChance = 0.15f;
@@ -131,6 +135,33 @@ namespace VapeRPG
 
                 this.wasQualified = true;
             }
+        }
+
+        public override void OnCraft(Item item, Recipe recipe)
+        {
+            this.quality = ItemQuality.Common;
+            this.statBonus.Clear();
+            this.tooltipVisible = true;
+
+            if (item.accessory || item.defense > 0)
+            {
+                int chance = rnd.Next(0, 100);
+
+                if (chance <= 5)
+                {
+                    this.Qualify(item, ItemQuality.Epic);
+                }
+                else if (chance <= 15)
+                {
+                    this.Qualify(item, ItemQuality.Rare);
+                }
+                else if (chance <= 35)
+                {
+                    this.Qualify(item, ItemQuality.Uncommon);
+                }
+            }
+
+            this.wasQualified = true;
         }
 
         public void Qualify(Item item, ItemQuality newQuality)
@@ -203,51 +234,59 @@ namespace VapeRPG
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (this.quality != ItemQuality.Common)
+            if(this.tooltipVisible)
             {
-                TooltipLine itemQuality = new TooltipLine(this.mod, "Quality", this.quality.ToString());
-                Color qualityColor = Color.White;
-                switch (this.quality)
+                if (this.quality != ItemQuality.Common)
                 {
-                    case ItemQuality.Uncommon:
-                        qualityColor = uncommonColor;
-                        break;
+                    TooltipLine itemQuality = new TooltipLine(this.mod, "Quality", this.quality.ToString());
+                    Color qualityColor = Color.White;
+                    switch (this.quality)
+                    {
+                        case ItemQuality.Uncommon:
+                            qualityColor = uncommonColor;
+                            break;
 
-                    case ItemQuality.Rare:
-                        qualityColor = rareColor;
-                        break;
+                        case ItemQuality.Rare:
+                            qualityColor = rareColor;
+                            break;
 
-                    case ItemQuality.Epic:
-                        qualityColor = epicColor;
-                        break;
+                        case ItemQuality.Epic:
+                            qualityColor = epicColor;
+                            break;
 
-                    case ItemQuality.Unique:
-                        qualityColor = uniqueColor;
-                        break;
+                        case ItemQuality.Unique:
+                            qualityColor = uniqueColor;
+                            break;
+                    }
+
+                    itemQuality.overrideColor = qualityColor;
+                    tooltips.Add(itemQuality);
                 }
 
-                itemQuality.overrideColor = qualityColor;
-                tooltips.Add(itemQuality);
-            }
-
-            foreach (var x in this.statBonus)
-            {
-                if(x.Value > 0)
+                foreach (var x in this.statBonus)
                 {
-                    TooltipLine bonus = new TooltipLine(this.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
-                    bonus.overrideColor = Color.Yellow;
+                    if (x.Value > 0)
+                    {
+                        TooltipLine bonus = new TooltipLine(this.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
+                        bonus.overrideColor = Color.Yellow;
+                        tooltips.Add(bonus);
+                    }
+                }
+
+                if (this.blockChance > 0)
+                {
+                    TooltipLine bonus = new TooltipLine(this.mod, "Block Chance", String.Format("{0} Block Chance", this.blockChance));
+                    bonus.overrideColor = Color.White;
                     tooltips.Add(bonus);
                 }
             }
-
-            if (this.blockChance > 0)
-            {
-                TooltipLine bonus = new TooltipLine(this.mod, "Block Chance", String.Format("{0} Block Chance", this.blockChance));
-                bonus.overrideColor = Color.White;
-                tooltips.Add(bonus);
-            }
         }
 
+        public override bool OnPickup(Item item, Player player)
+        {
+            this.tooltipVisible = true;
+            return base.OnPickup(item, player);
+        }
 
         public override bool NeedsSaving(Item item)
         {
@@ -290,6 +329,15 @@ namespace VapeRPG
                     item.expert = true;
                 }
             }
+        }
+
+        public override bool CanUseItem(Item item, Player player)
+        {
+            if(item.type == ItemID.LifeCrystal || item.type == ItemID.ManaCrystal || item.type == ItemID.LifeFruit)
+            {
+                return false;
+            }
+            return true;
         }
 
         public override void UpdateEquip(Item item, Player player)

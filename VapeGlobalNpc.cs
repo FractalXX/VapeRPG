@@ -15,7 +15,7 @@ namespace VapeRPG
     {
         private const int expGainDistance = 3000; // The maximum distance at which players gain experience from mob kills
 
-        private static int chaosChance = 10; // Percent chance of a mob becoming a chaos mob
+        private static int chaosChance = 5; // Percent chance of a mob becoming a chaos mob
 
         /// <summary>
         /// Returns true if the NPC has the hemorrhage debuff.
@@ -102,7 +102,7 @@ namespace VapeRPG
             // Fix for incompatibility with other mods such as Calamity, etc.
             if(npc != null)
             {
-                if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredType(npc.type) && rnd.Next(0, 101) <= chaosChance)
+                if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= chaosChance)
                 {
                     ChaosTransform(npc);
                 }
@@ -111,7 +111,7 @@ namespace VapeRPG
 
         public override bool CheckDead(NPC npc)
         {
-            if (!IsIgnoredType(npc.type) && !npc.SpawnedFromStatue && !npc.friendly)
+            if (!IsIgnoredType(npc) && !npc.SpawnedFromStatue && !npc.friendly)
             {
                 double gainedXp;
                 if (npc.boss)
@@ -121,7 +121,7 @@ namespace VapeRPG
                         if (player.active)
                         {
                             VapePlayer vp = player.GetModPlayer<VapePlayer>();
-                            gainedXp = npc.lifeMax * (1 + (Math.Abs(npc.defDefense) + 1) / npc.defDamage);
+                            gainedXp = npc.lifeMax / 2;
                             vp.GainExperience((int)gainedXp);
                         }
                     }
@@ -134,15 +134,15 @@ namespace VapeRPG
                         if (Vector2.Distance(player.position, npc.position) <= expGainDistance)
                         {
                             VapePlayer vp = player.GetModPlayer<VapePlayer>();
-                            gainedXp = Math.Pow(2, Math.Sqrt((2 * (1 + npc.defDamage / (2 * npc.lifeMax)) * npc.lifeMax) / Math.Pow(npc.lifeMax, 1 / 2.6)));
+                            gainedXp = 0.5 * Math.Pow(2, Math.Sqrt((2 * (1 + npc.defDamage / (2 * npc.lifeMax)) * npc.lifeMax) / Math.Pow(npc.lifeMax, 1 / 2.6)));
                             if (npc.lifeMax <= 20)
                             {
                                 gainedXp /= 2;
                             }
                             if (this.isChaos)
                             {
-                                gainedXp *= this.chaosMultiplier / 2f;
-                                vp.GainExperience((int)(gainedXp / 3), true);
+                                vp.GainExperience(1 + (int)(gainedXp / 3), true);
+                                gainedXp *= (2 - 1 / this.chaosMultiplier);
                             }
                             vp.GainExperience((int)gainedXp);
                         }
@@ -378,9 +378,17 @@ namespace VapeRPG
             }
         }
 
-        private static bool IsIgnoredType(int type)
+        private static bool IsIgnoredType(NPC npc)
         {
-            return ignoredTypes.Contains(type);
+            return ignoredTypes.Contains(npc.type);
+        }
+
+        private static bool IsIgnoredTypeChaos(NPC npc)
+        {
+            return  ignoredTypes.Contains(npc.type) ||
+                    npc.TypeName.ToLower().Contains("head") ||
+                    npc.TypeName.ToLower().Contains("tail") ||
+                    npc.TypeName.ToLower().Contains("body");
         }
     }
 }

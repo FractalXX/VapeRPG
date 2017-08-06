@@ -42,7 +42,8 @@ namespace VapeRPG
             "Dexterity",
             "Agility",
             "Intellect",
-            "Vitality"
+            "Vitality",
+            "Spirit"
         };
 
         public static string[] MinorStats =
@@ -54,6 +55,8 @@ namespace VapeRPG
             "Ranged Crit",
             "Magic Damage",
             "Magic Crit",
+            "Minion Damage",
+            "Max Minions",
             "Movement Speed",
             "Dodge Chance",
             "Block Chance"
@@ -85,14 +88,14 @@ namespace VapeRPG
             XpNeededForLevel[1] = 0;
 
             XpNeededForChaosRank[0] = 0;
-            XpNeededForChaosRank[1] = 20;
+            XpNeededForChaosRank[1] = 40;
 
             for (int i = 2; i < XpNeededForLevel.Length; i++)
             {
                 double value;
-                value = 12 * Math.Pow(i, 2) + 1.486 * i * Math.Pow(i, 1.6 * Math.Sqrt(1 - 1 / i)) * Math.Log(i);
+                value = 2 * (12 * Math.Pow(i, 2) + 1.486 * i * Math.Pow(i, 1.6 * Math.Sqrt(1 - 1 / i)) * Math.Log(i)) + XpNeededForLevel[i - 1];
                 XpNeededForLevel[i] = (int)value;
-                XpNeededForChaosRank[i] = (int)(value / 2);
+                XpNeededForChaosRank[i] = (int)(value / 1.5f);
             }
 
             Skills = new List<Skill>()
@@ -117,7 +120,6 @@ namespace VapeRPG
                 new Skill("Ammo hoarding", "Increase your chance not to consume ammo.", 10, SkillType.Ranged, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameAmmoHoarding")),
 
                 //Utility
-                new Skill("Longer invulnerability", "You remain invulnerable longer after getting hit.", 10, SkillType.Utility, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameLongerInvulnerability")),
                 new Skill("Longer flight", "You can fly longer.", 10, SkillType.Utility, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameLongerFlight")),
                 new Skill("Steroids", "Taking damage increases your movement speed.", 10, SkillType.Utility, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSteroids"))
             };

@@ -46,19 +46,30 @@ namespace VapeRPG.UI.Elements
                     onClick = delegate ()
                     {
                         VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-                        if (vp.chaosPoints > 0)
+                        if(this.stat.Contains("Max Minions"))
                         {
-                            float value = 0.02f;
-                            if (this.stat.Contains("Crit"))
+                            if(vp.chaosPoints >= 5)
                             {
-                                value = 1;
+                                vp.ChaosBonuses[this.stat] += 1;
+                                vp.chaosPoints -= 5;
                             }
-                            if(this.stat.Contains("Dodge"))
+                        }
+                        else
+                        {
+                            if (vp.chaosPoints > 0)
                             {
-                                value = 0.005f;
+                                float value = 0.02f;
+                                if (this.stat.Contains("Crit"))
+                                {
+                                    value = 1;
+                                }
+                                if (this.stat.Contains("Dodge"))
+                                {
+                                    value = 0.005f;
+                                }
+                                vp.ChaosBonuses[this.stat] += value;
+                                vp.chaosPoints--;
                             }
-                            vp.ChaosBonuses[this.stat] += value;
-                            vp.chaosPoints--;
                         }
                     };
                 }
@@ -96,7 +107,11 @@ namespace VapeRPG.UI.Elements
 
         public override void Update(GameTime gameTime)
         {
-            if (this.isMinorStat)
+            if(this.stat.Contains("Max Minions"))
+            {
+                this.SetText(String.Format("{0}: {1}", this.stat, (int)this.statValue));
+            }
+            else if (this.isMinorStat)
             {
                 this.SetText(String.Format("{0}: {1:0.00}%", this.stat, this.statValue));
             }

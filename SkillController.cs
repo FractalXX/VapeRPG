@@ -67,6 +67,10 @@ namespace VapeRPG
 
         public static void ModifyHitNPCWithProj(VapePlayer modPlayer, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            if(proj.type == modPlayer.mod.ProjectileType<MagicSpark>())
+            {
+                crit = false;
+            }
             if(proj.magic)
             {
                 if (proj.type != modPlayer.mod.ProjectileType<MagicSpark>() && modPlayer.HasSkill("Magic clusters"))
@@ -133,11 +137,6 @@ namespace VapeRPG
 
         public static void Hurt(VapePlayer modPlayer, bool pvp, bool quiet, double damage, int hitDirection, bool crit)
         {
-            if (modPlayer.HasSkill("Longer invulnerability"))
-            {
-                modPlayer.player.immuneTime += 30 * modPlayer.SkillLevels["Longer invulnerability"];
-            }
-
             if (modPlayer.HasSkill("Steroids"))
             {
                 modPlayer.player.AddBuff(modPlayer.mod.BuffType<Steroids>(), 300);

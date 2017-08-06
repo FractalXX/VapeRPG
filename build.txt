@@ -1,6 +1,6 @@
 author = FractalXX
 
-version = 0.1.3
+version = 0.2.1
 displayName = Vape RPG Alpha
 homepage = https://forums.terraria.org/index.php?threads/vapemods-by-fractalxx.60693/
 includeSource = true
