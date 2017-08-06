@@ -80,6 +80,7 @@ namespace VapeRPG.UI.Elements
                     onClick = delegate ()
                     {
                         VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
+                        if (this.stat.Contains("Intellect") && vp.BaseStats["Intellect"] >= 300) return;
                         if (vp.statPoints > 0)
                         {
                             vp.BaseStats[this.stat]++;

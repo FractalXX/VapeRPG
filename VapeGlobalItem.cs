@@ -92,6 +92,7 @@ namespace VapeRPG
 
         public override void SetDefaults(Item item)
         {
+
             switch (item.type)
             {
                 case ItemID.EoCShield:
@@ -340,9 +341,15 @@ namespace VapeRPG
             return true;
         }
 
+        public override void UpdateInventory(Item item, Player player)
+        {
+            this.tooltipVisible = true;
+        }
+
         public override void UpdateEquip(Item item, Player player)
         {
             VapePlayer vp = player.GetModPlayer<VapePlayer>();
+            this.tooltipVisible = true;
             if (this.statBonus.Count > 0)
             {
                 foreach (var x in this.statBonus)

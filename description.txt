@@ -1,31 +1,39 @@
 Changelog:
 
+v0.2.2:
+- Characters now only get skill points every 5 level. Choose wisely.
+- Buffed Longer Flight to make it more valuable.
+- Made Damage to Defense also take other damage from you (magic, ranged, etc.) instead of just melee.
+- Capped Intellect at 300 due to game limitations on Mana (you can have 400 at max, +100 comes from level).
+- Pillars can't become chaos npcs anymore.
+- Fixed that players couldn't get Chaos XP once they reached character level 200.
+
 v0.2.1:
-Life/Mana crystals and life fruits can no longer be used.
-Reaching the last level no longer crashes the game.
-Slightly reduced XP yield from mobs.
-Increased XP needed for levels.
-Reduced Chaos mob chance to 5%.
-Removed Longer Invulnerability due to being OP and also not working properly.
-Fixed some UI errors.
+- Life/Mana crystals and life fruits can no longer be used.
+- Reaching the last level no longer crashes the game.
+- Slightly reduced XP yield from mobs.
+- Increased XP needed for levels.
+- Reduced Chaos mob chance to 5%.
+- Removed Longer Invulnerability due to being OP and also not working properly.
+- Fixed some UI errors.
 
 v0.2.0.1 HOTFIX:
-Quickly fixed that new characters can't be loaded.
+- Quickly fixed that new characters can't be loaded.
 
 v0.2:
-Added basic summoner stats (Spirit). There are only stats for now, skills would be too complicated for that class at the moment.
-Items no longer get the same stats all over again when crafted.
+- Added basic summoner stats (Spirit). There are only stats for now, skills would be too complicated for that class at the moment.
+- Items no longer get the same stats all over again when crafted.
 
 v0.1.3: 
-Fixed numerous incompatibilities with bigger mods like Tremor, Calamity, etc.
-You can now use any UI mod like Unleveled. If you use another UI mod disable VapeRPG's UI in its config file
+- Fixed numerous incompatibilities with bigger mods like Tremor, Calamity, etc.
+- You can now use any UI mod like Unleveled. If you use another UI mod disable VapeRPG's UI in its config file
 (My Games/Terraria/ModLoader/ModConfig/VapeRPG.json) <- set EnableUI to false, then RELOAD/RESTART.
 
 v0.1.2: 
-Fixed incompatibility with Fargo's Mutant Mod.
+- Fixed incompatibility with Fargo's Mutant Mod.
 
 v0.1.1: 
-Players now won't start with 100 chaos points.
+- Players now won't start with 100 chaos points.
 
 ATTENTION: Multiplayer is not complete. No support will be given for any bugs you may encounter in MP, but you may report them on the mod's thread.
 You CAN use other UI mods such as Unleveled. All you have to do is to disable this mod's UI in its config file:

@@ -29,8 +29,6 @@ namespace VapeRPG
         public int[] XpNeededForChaosRank { get; private set; }
         public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
         public CharUIState CharUI { get; private set; } // For the character panel
-        public CustomBuffUIState BuffUI { get; private set; } // For the custom buff indicator
-        public StatusBarUIState sBarUI { get; private set; }
         private UserInterface userInterface;
 
         //public static Texture2D itemQualityFrame;
@@ -102,7 +100,7 @@ namespace VapeRPG
             {
                 //Tank
                 new Skill("Snail armor", "Movement speed decreases but armor is increased.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSnailArmor")),
-                new Skill("Damage to defense", "Convert part of your (melee) damage to defense.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameDamageToDefense")),
+                new Skill("Damage to defense", "Convert part of your damage to defense.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameDamageToDefense")),
                 new Skill("Thorns", "Enemies attacking you take damage.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameThorns")),
 
                 //Melee
@@ -133,38 +131,18 @@ namespace VapeRPG
                 this.ExpUI = new ExpUIState();
                 this.ExpUI.Activate();
 
-                this.sBarUI = new StatusBarUIState();
-                this.sBarUI.Activate();
-
                 this.CharUI = new CharUIState();
                 this.CharUI.Activate();
-
-                this.BuffUI = new CustomBuffUIState();
-                this.BuffUI.Activate();
 
                 this.userInterface = new UserInterface();
                 this.userInterface.SetState(this.ExpUI);
 
-                CustomBuffUIState.visible = VapeConfig.UIEnabled;
-                StatusBarUIState.visible = VapeConfig.UIEnabled;
                 ExpUIState.visible = true;
             }
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
-            if(VapeConfig.UIEnabled)
-            {
-                for (int i = 0; i < layers.Count; i++)
-                {
-                    //Remove Resource bars
-                    if (layers[i].Name.Contains("Resource Bars"))
-                    {
-                        layers.RemoveAt(i);
-                    }
-                }
-            }
-
             int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
             if (MouseTextIndex != -1)
             {
@@ -194,35 +172,6 @@ namespace VapeRPG
                     },
                     InterfaceScaleType.UI)
                 );
-                if(VapeConfig.UIEnabled)
-                {
-                    layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
-                        "VapeRPG: StatusBar",
-                        delegate
-                        {
-                            if (StatusBarUIState.visible)
-                            {
-                                sBarUI.Update(Main._drawInterfaceGameTime);
-                                sBarUI.Draw(Main.spriteBatch);
-                            }
-                            return true;
-                        },
-                        InterfaceScaleType.UI)
-                    );
-                    layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
-                        "VapeRPG: CustomBuffUI",
-                        delegate
-                        {
-                            if (CustomBuffUIState.visible)
-                            {
-                                BuffUI.Update(Main._drawInterfaceGameTime);
-                                BuffUI.Draw(Main.spriteBatch);
-                            }
-                            return true;
-                        },
-                        InterfaceScaleType.UI)
-                    );
-                }
             }
         }
 

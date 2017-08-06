@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -30,21 +32,27 @@ namespace VapeRPG
             if (modPlayer.HasSkill("Damage to defense"))
             {
                 float amount = modPlayer.SkillLevels["Damage to defense"] / 15f;
+
                 modPlayer.player.meleeDamage -= amount;
+                modPlayer.player.magicDamage -= amount;
+                modPlayer.player.rangedDamage -= amount;
+                modPlayer.player.minionDamage -= amount;
+                modPlayer.player.thrownDamage -= amount;
+
                 modPlayer.player.statDefense += 1;
-                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount));
+                modPlayer.player.statDefense = (int)Math.Floor(modPlayer.player.statDefense * (1 + amount / 2));
             }
 
             if (modPlayer.HasSkill("Sacrifice") && !modPlayer.player.dead)
             {
                 float amount = modPlayer.SkillLevels["Sacrifice"] / 15f;
-                modPlayer.player.statLifeMax2 = (int)Math.Floor(modPlayer.player.statLifeMax2 * (1 - amount / 2));
+                modPlayer.player.statLifeMax = (int)Math.Floor(modPlayer.player.statLifeMax * (1 - amount));
                 modPlayer.player.meleeDamage += amount;
             }
 
             if (modPlayer.HasSkill("Longer flight"))
             {
-                modPlayer.player.wingTimeMax += 10 * modPlayer.SkillLevels["Longer flight"];
+                modPlayer.player.wingTimeMax += 20 * modPlayer.SkillLevels["Longer flight"];
             }
         }
 

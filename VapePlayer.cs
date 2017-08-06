@@ -40,7 +40,6 @@ namespace VapeRPG
         private Vector2 expUIPos;
 
         private static int statPointsPerLevel;
-        private static int skillPointsPerLevel;
 
         public bool regenKill;
 
@@ -49,7 +48,6 @@ namespace VapeRPG
         static VapePlayer()
         {
             statPointsPerLevel = 5;
-            skillPointsPerLevel = 1;
         }
 
         public override TagCompound Save()
@@ -197,7 +195,7 @@ namespace VapeRPG
         {
             if (chaos)
             {
-                if (this.xp < (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
+                if (this.chaosXp < (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
                 {
                     CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 50, 50), Color.DeepPink, String.Format("+{0} Chaos XP", value));
                     this.chaosXp += value;
@@ -303,12 +301,6 @@ namespace VapeRPG
                 vapeMod.ExpUI.UpdateChaosXpBar(this.chaosXp, vapeMod.XpNeededForChaosRank[this.chaosRank], vapeMod.XpNeededForChaosRank[nextRank]);
                 vapeMod.ExpUI.UpdateLevel(this.level, this.chaosRank);
 
-                if (VapeConfig.UIEnabled)
-                {
-                    vapeMod.sBarUI.UpdateHpMp(this.player.statLife, this.player.statMana, this.player.statLifeMax2, this.player.statManaMax2);
-                    CustomBuffUIState.visible = !Main.playerInventory;
-                }
-
                 if (CharUIState.visible)
                 {
                     vapeMod.CharUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints, this.skillPoints);
@@ -343,7 +335,7 @@ namespace VapeRPG
         private void UpdateStatBonuses()
         {
             this.player.statLifeMax = 100 + (int)(this.level * 3.53172) + this.EffectiveStats["Vitality"] + this.EffectiveStats["Strength"] / 2;
-            this.player.statManaMax2 += this.EffectiveStats["Intellect"] + this.level / 2;
+            this.player.statManaMax2 = this.EffectiveStats["Intellect"] + this.level / 2;
 
             this.player.meleeDamage += this.EffectiveStats["Strength"] / 500f;
             this.player.magicDamage += this.EffectiveStats["Magic power"] / 430f + this.EffectiveStats["Spirit"] / 860f;
@@ -405,7 +397,7 @@ namespace VapeRPG
             CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 100, 100), Color.Cyan, "Level Up");
 
             this.statPoints += statPointsPerLevel;
-            this.skillPoints += skillPointsPerLevel;
+            if (this.level % 5 == 0) this.skillPoints++;
 
             this.level++;
             if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(String.Format("You have reached level {0}!", this.level), 127, 255, 0);
@@ -474,15 +466,6 @@ namespace VapeRPG
             if (expUIOverflow)
             {
                 vapeMod.ExpUI.SetPanelPosition(this.expUIPos);
-            }
-        }
-
-        public override void PostUpdateBuffs()
-        {
-            if (VapeConfig.UIEnabled)
-            {
-                VapeRPG vapeMod = this.mod as VapeRPG;
-                vapeMod.BuffUI.UpdateBuffs(this.player.buffType);
             }
         }
 

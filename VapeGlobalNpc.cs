@@ -380,7 +380,8 @@ namespace VapeRPG
 
         private static bool IsIgnoredType(NPC npc)
         {
-            return ignoredTypes.Contains(npc.type);
+            return ignoredTypes.Contains(npc.type) ||
+                npc.TypeName.ToLower().Contains("pillar");
         }
 
         private static bool IsIgnoredTypeChaos(NPC npc)
