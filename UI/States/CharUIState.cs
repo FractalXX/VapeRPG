@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.GameContent.UI.Elements;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 using VapeRPG.UI.Elements;
 
@@ -13,10 +13,10 @@ namespace VapeRPG.UI.States
 {
     class CharUIState : UIState
     {
-        private UITexturedPanel charPanel;
-        private UITexturedPanel statPanel;
-        private UITexturedPanel miscPanel;
-        private UIPagedPanel skillPanel;
+        private UIPanel mainPanel;
+        private UIPanel statPanel;
+        private UIPanel miscPanel;
+        private VapeSkillPanel skillPanel;
 
         private UIStatInfo[] statControls;
         private UIStatInfo[] miscStatControls;
@@ -35,31 +35,38 @@ namespace VapeRPG.UI.States
 
             this.charPanelWidth = 800;
             this.charPanelHeight = 600;
+            float mainPanelPadding = 10;
 
-            this.charPanel = new UITexturedPanel(ModLoader.GetTexture("VapeRPG/Textures/UI/VapeGUI"), 0);
-            this.charPanel.SetPadding(0);
-            this.charPanel.Left.Set(Main.screenWidth / 2 - this.charPanelWidth / 2, 0);
-            this.charPanel.Top.Set(Main.screenHeight / 2 - this.charPanelHeight / 2, 0);
-            this.charPanel.Width.Set(this.charPanelWidth, 0);
-            this.charPanel.Height.Set(this.charPanelHeight, 0);
-            this.charPanel.BackgroundColor = Color.White;
-            this.charPanel.BorderColor = Color.Black;
+            this.mainPanel = new UIPanel();
+            this.mainPanel.SetPadding(mainPanelPadding);
+            this.mainPanel.Width.Set(this.charPanelWidth, 0);
+            this.mainPanel.Height.Set(this.charPanelHeight, 0);
+            this.mainPanel.Left.Set(Main.screenWidth / 2 - this.charPanelWidth / 2, 0);
+            this.mainPanel.Top.Set(Main.screenHeight / 2 - this.charPanelHeight / 2, 0);
+            mainPanel.BackgroundColor = new Color(20, 38, 103);
 
-            this.statPanel = new UITexturedPanel(ModLoader.GetTexture("VapeRPG/Textures/UI/VapeGUI"), 0);
-            this.statPanel.SetPadding(0);
-            this.statPanel.Left.Set(2 * this.charPanel.Width.Pixels / 3, 0);
+            this.mainPanel.OnMouseDown += new MouseEvent(this.DragStart);
+            this.mainPanel.OnMouseUp += new MouseEvent(this.DragEnd);
+
+            this.skillPanel = new VapeSkillPanel(2 * (this.mainPanel.Width.Pixels - 2 * mainPanelPadding) / 3, this.mainPanel.Height.Pixels - 2 * mainPanelPadding);
+            this.skillPanel.SetPadding(0);
+            this.skillPanel.Left.Set(0, 0);
+            this.skillPanel.Top.Set(0, 0);
+
+            this.statPanel = new UIPanel();
+            this.statPanel.SetPadding(10);
+            this.statPanel.Left.Set(2 * (this.mainPanel.Width.Pixels - 2 * mainPanelPadding) / 3, 0);
             this.statPanel.Top.Set(0, 0);
-            this.statPanel.Width.Set(this.charPanel.Width.Pixels / 3, 0);
-            this.statPanel.Height.Set(this.charPanel.Height.Pixels / 2, 0);
-            this.statPanel.BackgroundColor = Color.LightBlue;
+            this.statPanel.Width.Set((this.mainPanel.Width.Pixels - 2 * mainPanelPadding) / 3, 0);
+            this.statPanel.Height.Set((this.mainPanel.Height.Pixels - 2 * mainPanelPadding) / 2, 0);
             this.statPanel.BorderColor = Color.Black;
+            this.statPanel.BackgroundColor = new Color(100, 118, 183);
 
             #region statPanel texts
 
             for (int i = 0; i < statControls.Length; i++)
             {
-                this.statControls[i] = new UIStatInfo(VapeRPG.BaseStats[i], this.statPanel.Width.Pixels / 2, 20);
-                this.statControls[i].Left.Set(this.statPanel.Width.Pixels / 8, 0);
+                this.statControls[i] = new UIStatInfo(VapeRPG.BaseStats[i], this.statPanel.Width.Pixels, 20);
                 this.statControls[i].Top.Set(20 + 1.2f * i * this.statControls[i].Height.Pixels + 5, 0);
                 this.statControls[i].TextColor = Color.Yellow;
                 this.statPanel.Append(this.statControls[i]);
@@ -68,28 +75,23 @@ namespace VapeRPG.UI.States
             this.pointsText = new UIText("Stat points: 0\nSkill points: 0");
             this.pointsText.Width.Set(this.statPanel.Width.Pixels / 3, 0);
             this.pointsText.Height.Set(this.statPanel.Height.Pixels / 5, 0);
-            this.pointsText.Left.Set(this.statPanel.Width.Pixels / 2 - this.pointsText.Width.Pixels / 2, 0);
+            this.pointsText.Left.Set(this.statPanel.Width.Pixels / 2 - this.pointsText.MinWidth.Pixels / 2, 0);
             this.pointsText.Top.Set(this.statPanel.Height.Pixels * 0.75f, 0);
             this.statPanel.Append(this.pointsText);
             #endregion
 
-            this.charPanel.Append(this.statPanel);
-
-            this.miscPanel = new UITexturedPanel(ModLoader.GetTexture("VapeRPG/Textures/UI/VapeGUI"), 0);
-            this.miscPanel.SetPadding(0);
-            this.miscPanel.Left.Set(2 * this.charPanel.Width.Pixels / 3, 0);
-            this.miscPanel.Top.Set(this.charPanel.Height.Pixels / 2, 0);
-            this.miscPanel.Width.Set(this.charPanel.Width.Pixels / 3, 0);
-            this.miscPanel.Height.Set(this.charPanel.Height.Pixels / 2, 0);
-            this.miscPanel.BackgroundColor = Color.LightBlue;
+            this.miscPanel = new UIPanel();
+            this.miscPanel.SetPadding(10);
+            this.miscPanel.Left.Set(2 * (this.mainPanel.Width.Pixels - 2 * mainPanelPadding) / 3, 0);
+            this.miscPanel.Top.Set((this.mainPanel.Height.Pixels - 2 * mainPanelPadding) / 2, 0);
+            this.miscPanel.Width.Set((this.mainPanel.Width.Pixels - 2 * mainPanelPadding) / 3, 0);
+            this.miscPanel.Height.Set((this.mainPanel.Height.Pixels - 2 * mainPanelPadding) / 2, 0);
             this.miscPanel.BorderColor = Color.Black;
+            this.miscPanel.BackgroundColor = new Color(100, 118, 183);
 
             this.chaosPointsText = new UIText("Chaos points: 0");
-            this.chaosPointsText.SetPadding(0);
-            this.chaosPointsText.Width.Set(this.miscPanel.Width.Pixels / 3, 0);
-            this.chaosPointsText.Height.Set(this.miscPanel.Height.Pixels / 6, 0);
-            this.chaosPointsText.Left.Set(this.miscPanel.Width.Pixels / 2 - this.chaosPointsText.Width.Pixels / 2, 0);
-            this.chaosPointsText.Top.Set(this.miscPanel.Height.Pixels - this.chaosPointsText.Height.Pixels / 2, 0);
+            this.chaosPointsText.Top.Set(-10, 1f);
+            this.chaosPointsText.HAlign = 0.5f;
             this.chaosPointsText.TextColor = Color.Violet;
             this.miscPanel.Append(this.chaosPointsText);
 
@@ -97,9 +99,8 @@ namespace VapeRPG.UI.States
 
             for (int i = 0; i < this.miscStatControls.Length; i++)
             {
-                this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels / 2, 20, true, !VapeRPG.MinorStats[i].Contains("Block Chance"));
+                this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels, 20, true, !VapeRPG.MinorStats[i].Contains("Block Chance"), 0.8f);
                 this.miscStatControls[i].Height.Set(this.miscPanel.Height.Pixels / (0.8f * this.miscStatControls[i].Height.Pixels), 0);
-                this.miscStatControls[i].Left.Set(this.miscPanel.Width.Pixels / 6, 0);
                 this.miscStatControls[i].Top.Set(1.2f * i * this.miscStatControls[i].Height.Pixels + 5, 0);
 
                 this.miscPanel.Append(this.miscStatControls[i]);
@@ -107,53 +108,11 @@ namespace VapeRPG.UI.States
 
             #endregion
 
-            this.charPanel.Append(this.miscPanel);
+            this.mainPanel.Append(this.statPanel);
+            this.mainPanel.Append(this.miscPanel);
+            this.mainPanel.Append(this.skillPanel);
 
-            this.skillPanel = new UIPagedPanel(ModLoader.GetTexture("VapeRPG/Textures/UI/VapeGUI"), 0, (byte)Math.Ceiling((double)VapeRPG.Skills.Count / 9), 2 * this.charPanel.Width.Pixels / 3, this.charPanel.Height.Pixels);
-            this.skillPanel.SetPadding(0);
-            this.skillPanel.Left.Set(0, 0);
-            this.skillPanel.Top.Set(0, 0);
-
-            int currentRow = 0;
-            int currentColumn = 0;
-            int currentPage = 0;
-
-            #region skills
-
-            foreach (Skill skill in VapeRPG.Skills)
-            {
-                UISkillInfo usi = new UISkillInfo(skill, 150, 130);
-
-                float padding = 10;
-
-                int numberOfColumns = (int)(this.skillPanel.Pages[currentPage].Width.Pixels / (usi.Width.Pixels + padding));
-                int numberOfRows = (int)((this.skillPanel.Pages[currentPage].Height.Pixels - 60) / (usi.Height.Pixels + padding));
-
-                usi.Left.Set(currentColumn * (padding + this.skillPanel.Pages[currentPage].Width.Pixels) / numberOfColumns, 0);
-                usi.Top.Set(currentRow * (padding + this.skillPanel.Pages[currentPage].Height.Pixels) / numberOfRows, 0);
-
-                this.skillPanel.Pages[currentPage].Append(usi);
-
-                currentColumn++;
-
-                if (currentColumn >= numberOfColumns)
-                {
-                    currentColumn = 0;
-                    currentRow++;
-
-                    if (currentRow >= numberOfRows)
-                    {
-                        currentPage++;
-                        currentRow = 0;
-                    }
-                }
-            }
-
-            this.charPanel.Append(this.skillPanel);
-
-            #endregion
-
-            base.Append(this.charPanel);
+            base.Append(this.mainPanel);
         }
 
         public void UpdateStats(Dictionary<string, int> baseStats, Dictionary<string, int> effStats, int statPoints, int skillPoints)
@@ -203,12 +162,12 @@ namespace VapeRPG.UI.States
                     usi.TextColor = Color.Cyan;
                 }
 
-                if(usi.stat.Contains("Minion Damage"))
+                if (usi.stat.Contains("Minion Damage"))
                 {
                     usi.statValue = minionDamage * 100;
                 }
 
-                if(usi.stat.Contains("Max Minions"))
+                if (usi.stat.Contains("Max Minions"))
                 {
                     usi.statValue = maxMinions;
                 }
@@ -238,15 +197,42 @@ namespace VapeRPG.UI.States
             }
         }
 
-        public override void Update(GameTime gameTime)
+        private Vector2 offset;
+        public bool dragging = false;
+
+        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
         {
-            MouseState ms = Mouse.GetState();
-            if(this.charPanel.ContainsPoint(new Vector2(ms.X, ms.Y)))
+            offset = new Vector2(evt.MousePosition.X - this.mainPanel.Left.Pixels, evt.MousePosition.Y - this.mainPanel.Top.Pixels);
+            dragging = true;
+        }
+
+        private void DragEnd(UIMouseEvent evt, UIElement listeningElement)
+        {
+            Vector2 end = evt.MousePosition;
+            dragging = false;
+
+            this.mainPanel.Left.Set(end.X - offset.X, 0f);
+            this.mainPanel.Top.Set(end.Y - offset.Y, 0f);
+
+            this.Recalculate();
+        }
+
+        protected override void DrawSelf(SpriteBatch spriteBatch)
+        {
+            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+            if (this.mainPanel.ContainsPoint(MousePosition))
             {
                 Main.LocalPlayer.mouseInterface = true;
             }
+            if (dragging)
+            {
+                this.mainPanel.Left.Set(MousePosition.X - offset.X, 0f);
+                this.mainPanel.Top.Set(MousePosition.Y - offset.Y, 0f);
+            }
 
-            base.Update(gameTime);
+            this.Recalculate();
+
+            base.DrawSelf(spriteBatch);
         }
     }
 }

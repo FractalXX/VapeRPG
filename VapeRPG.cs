@@ -12,11 +12,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 
+using VapeRPG.DataStructures;
+
 namespace VapeRPG
 {
     enum VapeRPGMessageType : byte
     {
-        ClientTransformChaosNPC,
+        ServerTransformChaosNPC,
         ClientSyncXp,
         ClientSyncStats,
         ClientSyncLevel
@@ -29,7 +31,8 @@ namespace VapeRPG
         public int[] XpNeededForChaosRank { get; private set; }
         public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
         public CharUIState CharUI { get; private set; } // For the character panel
-        private UserInterface userInterface;
+        private UserInterface expUserInterface;
+        private UserInterface charUserInterface;
 
         //public static Texture2D itemQualityFrame;
 
@@ -61,6 +64,8 @@ namespace VapeRPG
         };
 
         public static List<Skill> Skills { get; private set; } // Add new skills to that list under Load()
+        public static TreeNode<Skill> OnKillEffectTree;
+        public static TreeNode<Skill> OnHitEffectTree;
 
         public static ModHotKey CharWindowHotKey;
 
@@ -98,29 +103,25 @@ namespace VapeRPG
 
             Skills = new List<Skill>()
             {
-                //Tank
-                new Skill("Snail armor", "Movement speed decreases but armor is increased.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSnailArmor")),
-                new Skill("Damage to defense", "Convert part of your damage to defense.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameDamageToDefense")),
-                new Skill("Thorns", "Enemies attacking you take damage.", 10, SkillType.Tank, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameThorns")),
+                //On Kill Effects
+                new Skill("Excitement", "Killing enemies grants you a shine buff for 6 seconds.", 1, SkillType.OnKill),
+                new Skill("X-Ray Hits", "Hitting enemies has a chance to apply a spelunker buff on you.", 1, SkillType.OnHit),
 
-                //Melee
-                new Skill("Hemorrhage", "Additional damage is dealt to your enemies over time (after hit).", 10, SkillType.Melee, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameHemorrhage")),
-                new Skill("Sacrifice", "Trade part of your life for additional melee damage.", 10, SkillType.Melee, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSacrifice")),
+                new Skill("Mana Addict", "Kills give you a minor mana regen bonus.", 1, SkillType.OnKill),
+                new Skill("Energizing Kills", "Killing enemies with magic or summon damage grants you a stack of 'Energized'. After getting 20 stacks you receive a movement speed steroid and release low-damaging sparks with mediocre knockback on being hit for 5 seconds.", 1, SkillType.OnKill),
 
-                //Magic
-                new Skill("Magic clusters", "Weapon hits explode into additional magic sparks.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameMagicClusters")),
-                new Skill("Mana crits", "Your critical hits restore some mana.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameManaCrits")),
-                new Skill("Regenerating kills", "Gain mana regen after kills.", 10, SkillType.Magic, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameRegenKills")),
-
-                //Ranged
-                new Skill("Explosive shots", "Your weapons fire explosive projectiles.", 10, SkillType.Ranged, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameExplosiveShots")),
-                new Skill("Incendiary shots", "Your shots ignite your enemies.", 1, SkillType.Ranged, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameIncendiaryShots")),
-                new Skill("Ammo hoarding", "Increase your chance not to consume ammo.", 10, SkillType.Ranged, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameAmmoHoarding")),
-
-                //Utility
-                new Skill("Longer flight", "You can fly longer.", 10, SkillType.Utility, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameLongerFlight")),
-                new Skill("Steroids", "Taking damage increases your movement speed.", 10, SkillType.Utility, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrameSteroids"))
+                new Skill("Bloodlust", "Killing enemies grants you a regeneration buff for 10 seconds.", 1, SkillType.OnKill),
+                new Skill("Exploding Rage", "Killing enemies with melee has a chance (10%/20%/30%) to result in their bodies exploding blood and gore dealing 10% of their maximum life in a medium sized area.", 3, SkillType.OnKill),
+                new Skill("Reaver", "Killing enemies has a chance (5%/10%/15%) to summon an ancient wraith(the one we all hate when we go to pwnhammer some demon altars) to crush your enemies for 30 seconds. Wraith damage is 15 summon damage * by skill level.", 3, SkillType.OnKill),
+                new Skill("Soul Reaver", "Your reaver minion applies a slow debuff on hit, and grants you effect of the hunter/night vision potion while it lasts. Additionally, you can now maintain two wraiths at ones.", 1, SkillType.OnKill),
             };
+
+
+            foreach(Skill skill in Skills)
+            {
+                skill.AddPrerequisites();
+                skill.AddChildren();
+            }
 
             //itemQualityFrame = ModLoader.GetTexture("VapeRPG/Textures/UI/QualityFrame");
 
@@ -134,12 +135,37 @@ namespace VapeRPG
                 this.CharUI = new CharUIState();
                 this.CharUI.Activate();
 
-                this.userInterface = new UserInterface();
-                this.userInterface.SetState(this.ExpUI);
+                this.expUserInterface = new UserInterface();
+                this.expUserInterface.SetState(this.ExpUI);
+
+                this.charUserInterface = new UserInterface();
+                this.charUserInterface.SetState(this.CharUI);
 
                 ExpUIState.visible = true;
             }
         }
+
+        /*private void InitializeSkillTrees()
+        {
+            OnKillEffectTree = new TreeNode<Skill>(GetSkill("Excitement"));
+            OnHitEffectTree = new TreeNode<Skill>(GetSkill("X-Ray Kills"));
+
+            foreach(Skill skill in Skills)
+            {
+                if(skill.type == SkillType.OnKill)
+                {
+                    if(skill.Prerequisites.Count > 0)
+                    {
+                        Skill prerequisite = skill.Prerequisites[0];
+                        TreeNode<Skill> prerequisiteNode = OnKillEffectTree.Children.Find(x => x.Value == prerequisite);
+                        if(prerequisiteNode != null)
+                        {
+                            prerequisiteNode.AddChild(new TreeNode<Skill>(skill));
+                        }
+                    }
+                }
+            }
+        }*/
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
@@ -152,7 +178,7 @@ namespace VapeRPG
                     {
                         if (CharUIState.visible)
                         {
-                            CharUI.Update(Main._drawInterfaceGameTime);
+                            charUserInterface.Update(Main._drawInterfaceGameTime);
                             CharUI.Draw(Main.spriteBatch);
                         }
                         return true;
@@ -165,7 +191,7 @@ namespace VapeRPG
                     {
                         if (ExpUIState.visible)
                         {
-                            ExpUI.Update(Main._drawInterfaceGameTime);
+                            expUserInterface.Update(Main._drawInterfaceGameTime);
                             ExpUI.Draw(Main.spriteBatch);
                         }
                         return true;
@@ -181,7 +207,7 @@ namespace VapeRPG
 
             switch (msgType)
             {
-                case VapeRPGMessageType.ClientTransformChaosNPC:
+                case VapeRPGMessageType.ServerTransformChaosNPC:
                     int chaosMultiplier = reader.ReadInt32();
                     int index = reader.ReadInt32();
 
@@ -253,6 +279,11 @@ namespace VapeRPG
                 }
             }
             return description;
+        }
+
+        public static Skill GetSkill(string name)
+        {
+            return Skills.Find(x => x.name == name);
         }
     }
 }

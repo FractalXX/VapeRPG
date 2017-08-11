@@ -36,6 +36,9 @@ namespace VapeRPG.UI.States
             this.levelPanel.Height.Set(height, 0);
             this.levelPanel.BackgroundColor = Color.SkyBlue;
 
+            this.levelPanel.OnMouseDown += new MouseEvent(this.DragStart);
+            this.levelPanel.OnMouseUp += new MouseEvent(this.DragEnd);
+
             this.xpBar = new UIVapeProgressBar(1, 0, 100, Color.Green, Color.Lime);
             this.xpBar.SetPadding(0);
             this.xpBar.Left.Set(10, 0);
@@ -83,10 +86,12 @@ namespace VapeRPG.UI.States
             this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
         }
 
-        // For some reason, mouse events refuse to fire, so I've written my own
-        /*private void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        private Vector2 offset;
+        public bool dragging = false;
+
+        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
         {
-            offset = new Vector2(evt.MousePosition.X - this.statusPanel.Left.Pixels, evt.MousePosition.Y - this.statusPanel.Top.Pixels);
+            offset = new Vector2(evt.MousePosition.X - this.levelPanel.Left.Pixels, evt.MousePosition.Y - this.levelPanel.Top.Pixels);
             dragging = true;
         }
 
@@ -95,11 +100,29 @@ namespace VapeRPG.UI.States
             Vector2 end = evt.MousePosition;
             dragging = false;
 
-            this.statusPanel.Left.Set(end.X - offset.X, 0f);
-            this.statusPanel.Top.Set(end.Y - offset.Y, 0f);
+            this.levelPanel.Left.Set(end.X - offset.X, 0f);
+            this.levelPanel.Top.Set(end.Y - offset.Y, 0f);
 
             Recalculate();
-        }*/
+        }
+
+        protected override void DrawSelf(SpriteBatch spriteBatch)
+        {
+            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+            if (this.levelPanel.ContainsPoint(MousePosition))
+            {
+                Main.LocalPlayer.mouseInterface = true;
+            }
+            if (dragging)
+            {
+                this.levelPanel.Left.Set(MousePosition.X - offset.X, 0f);
+                this.levelPanel.Top.Set(MousePosition.Y - offset.Y, 0f);
+            }
+
+            this.Recalculate();
+
+            base.DrawSelf(spriteBatch);
+        }
 
         public void SetPanelPosition(Vector2 position)
         {
@@ -112,39 +135,6 @@ namespace VapeRPG.UI.States
         public Vector2 GetPanelPosition()
         {
             return new Vector2(this.levelPanel.Left.Pixels, this.levelPanel.Top.Pixels);
-        }
-
-        private Vector2 offset;
-        public bool dragging = false;
-        public override void Update(GameTime gameTime)
-        {
-            // Custom dragging code
-            MouseState ms = Mouse.GetState();
-            if (this.levelPanel.ContainsPoint(new Vector2(ms.X, ms.Y)))
-            {
-                Main.LocalPlayer.mouseInterface = true;
-                if(ms.LeftButton == ButtonState.Pressed && !dragging)
-                {
-                    offset = new Vector2(ms.X - this.levelPanel.Left.Pixels, ms.Y - this.levelPanel.Top.Pixels);
-                    dragging = true;
-                }
-            }
-            if (dragging)
-            {
-                float newX = ms.X - offset.X;
-                float newY = ms.Y - offset.Y;
-
-                this.levelPanel.Left.Set(newX, 0);
-                this.levelPanel.Top.Set(newY, 0);
- 
-                this.Recalculate();
-            }
-            if(ms.LeftButton == ButtonState.Released && dragging)
-            {
-                dragging = false;
-            }
-
-            base.Update(gameTime);
         }
     }
 }

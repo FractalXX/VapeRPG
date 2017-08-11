@@ -9,10 +9,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace VapeRPG.UI.Elements
 {
-    class UIStatInfo : UIText
+    class UIStatInfo : UIElement
     {
-        private UIVapeButton button;
+        private UIButton button;
         private UIText bonusText;
+        private UIText statText;
 
         private bool isMinorStat;
 
@@ -21,34 +22,56 @@ namespace VapeRPG.UI.Elements
 
         public float bonusValue;
 
-        public UIStatInfo(string stat, float width, float height, bool isMinorStat = false, bool button = true) : base(stat)
+        public Color TextColor
+        {
+            get
+            {
+                return this.statText.TextColor;
+            }
+            set
+            {
+                this.statText.TextColor = value;
+            }
+        }
+
+        public UIStatInfo(string stat, float width, float height, bool isMinorStat = false, bool button = true, float textScale = 1f)
         {
             this.stat = stat;
             this.statValue = 0;
             this.bonusValue = 0;
             this.isMinorStat = isMinorStat;
 
+            this.statText = new UIText(stat, textScale);
+            this.statText.Left.Set(0, 0);
+            this.statText.Top.Set(0, 0);
+
             this.Width.Set(width, 0);
             this.Height.Set(height, 0);
 
-            if(button)
+            if (button)
             {
-                this.button = new UIVapeButton(ModLoader.GetTexture("VapeRPG/Textures/UI/AddButton"), ModLoader.GetTexture("VapeRPG/Textures/UI/AddButtonPressed"));
-                this.button.Width.Set(15, 0);
-                this.button.Height.Set(15, 0);
+                this.button = new UIButton();
+                this.button.Width.Set(30, 0);
+                this.button.Height.Set(30, 0);
                 this.button.Top.Set(0, 0);
+                this.button.SetName("+");
 
-                Action onClick;
+                MouseEvent onMouseDown;
+
+                this.button.Left.Set(-80, 1f);
+                this.button.OnClick += (x, y) =>
+                {
+                    Main.PlaySound(12, -1, -1, 1, 1f, 0.0f);
+                };
 
                 if (this.isMinorStat)
                 {
-                    this.button.Left.Set(width + this.button.Width.Pixels + 50, 0);
-                    onClick = delegate ()
+                    onMouseDown = (x, y) =>
                     {
                         VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-                        if(this.stat.Contains("Max Minions"))
+                        if (this.stat.Contains("Max Minions"))
                         {
-                            if(vp.chaosPoints >= 5)
+                            if (vp.chaosPoints >= 5)
                             {
                                 vp.ChaosBonuses[this.stat] += 1;
                                 vp.chaosPoints -= 5;
@@ -75,9 +98,7 @@ namespace VapeRPG.UI.Elements
                 }
                 else
                 {
-                    this.button.Left.Set(width + this.button.Width.Pixels, 0);
-
-                    onClick = delegate ()
+                    onMouseDown = (x, y) =>
                     {
                         VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
                         if (this.stat.Contains("Intellect") && vp.BaseStats["Intellect"] >= 300) return;
@@ -88,18 +109,17 @@ namespace VapeRPG.UI.Elements
                         }
                     };
                 }
-                this.button.OnClick += onClick;
+                this.button.OnClick += onMouseDown;
 
                 this.Append(this.button);
+                this.Append(this.statText);
             }
 
-            if(!this.isMinorStat)
+            if (!this.isMinorStat)
             {
                 this.bonusText = new UIText("+ 0");
-                this.bonusText.Left.Set(this.button.Left.Pixels + this.button.Width.Pixels * 2, 0);
-                this.bonusText.Top.Set(0, 0);
-                this.bonusText.Width.Set(20, 0);
-                this.bonusText.Height.Set(this.Height.Pixels, 0);
+                this.bonusText.Left.Set(-35, 1f);
+                this.bonusText.Height.Set(0, 1f);
                 this.bonusText.TextColor = Color.LimeGreen;
 
                 this.Append(this.bonusText);
@@ -108,21 +128,21 @@ namespace VapeRPG.UI.Elements
 
         public override void Update(GameTime gameTime)
         {
-            if(this.stat.Contains("Max Minions"))
+            if (this.stat.Contains("Max Minions"))
             {
-                this.SetText(String.Format("{0}: {1}", this.stat, (int)this.statValue));
+                this.statText.SetText(String.Format("{0}: {1}", this.stat, (int)this.statValue));
             }
             else if (this.isMinorStat)
             {
-                this.SetText(String.Format("{0}: {1:0.00}%", this.stat, this.statValue));
+                this.statText.SetText(String.Format("{0}: {1:0.00}%", this.stat, this.statValue));
             }
             else
             {
-                this.SetText(String.Format("{0}: {1}", this.stat, this.statValue));
+                this.statText.SetText(String.Format("{0}: {1}", this.stat, this.statValue));
 
                 if (this.bonusValue > 0)
                 {
-                    this.bonusText.SetText(String.Format("+ {0}", this.bonusValue));
+                    this.bonusText.SetText(String.Format("+{0}", this.bonusValue));
                 }
                 else
                 {

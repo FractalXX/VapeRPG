@@ -27,7 +27,10 @@ namespace VapeRPG.UI.Elements
             Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
             int width = (int)Math.Ceiling(dimensions.Width);
             int height = (int)Math.Ceiling(dimensions.Height);
-            spriteBatch.Draw(ModLoader.GetTexture("VapeRPG/Textures/UI/Blank"), new Rectangle(point1.X - this.strokeThickness, point1.Y - this.strokeThickness, width + this.strokeThickness * 2, height + this.strokeThickness * 2), this.BorderColor);
+            if(strokeThickness > 0)
+            {
+                spriteBatch.Draw(ModLoader.GetTexture("VapeRPG/Textures/UI/Blank"), new Rectangle(point1.X - this.strokeThickness, point1.Y - this.strokeThickness, width + this.strokeThickness * 2, height + this.strokeThickness * 2), this.BorderColor);
+            }
             spriteBatch.Draw(backgroundTexture, new Rectangle(point1.X, point1.Y, width, height), this.BackgroundColor);
         }
     }

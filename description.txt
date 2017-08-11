@@ -1,4 +1,9 @@
+WARNING: This mod is heavily in development and is in only a testing phase. Expect updates/changes very often.
+
 Changelog:
+
+v0.2.2.1 HOTFIX:
+- Fixed item stats disappearing when re-entering world.
 
 v0.2.2:
 - Characters now only get skill points every 5 level. Choose wisely.
@@ -7,6 +12,7 @@ v0.2.2:
 - Capped Intellect at 300 due to game limitations on Mana (you can have 400 at max, +100 comes from level).
 - Pillars can't become chaos npcs anymore.
 - Fixed that players couldn't get Chaos XP once they reached character level 200.
+- Removed the custom HP/MP bar because it made other vanilla UI elements disappear.
 
 v0.2.1:
 - Life/Mana crystals and life fruits can no longer be used.

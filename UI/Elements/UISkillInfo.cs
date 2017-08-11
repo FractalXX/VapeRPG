@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -11,110 +12,72 @@ namespace VapeRPG.UI.Elements
 {
     class UISkillInfo : UIElement
     {
-        private Skill skill;
+        internal Skill skill;
 
-        private UIVapeProgressBar levelBar;
-        private UIVapeButton button;
         private UIImage icon;
+        private UIText skillLevelText;
+        private UISkillTooltip tooltip;
 
-        private Color skillColor;
+        private Texture2D skillShade;
 
-        public UISkillInfo(Skill skill, float width, float height)
+        private const float defaultWidth = 64;
+        private const float defaultHeight = 64;
+
+        public UISkillInfo(Skill skill, float width = defaultWidth, float height = defaultHeight)
         {
+            this.skillShade = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
+
             this.skill = skill;
 
             this.Width.Set(width, 0);
             this.Height.Set(height, 0);
 
-            switch (this.skill.skillType)
-            {
-                case SkillType.Melee:
-                    this.skillColor = Color.Red;
-                    break;
-
-                case SkillType.Magic:
-                    this.skillColor = Color.Cyan;
-                    break;
-
-                case SkillType.Ranged:
-                    this.skillColor = Color.Orange;
-                    break;
-
-                case SkillType.Tank:
-                    this.skillColor = Color.RosyBrown;
-                    break;
-
-                case SkillType.Utility:
-                    this.skillColor = Color.LimeGreen;
-                    break;
-
-                default:
-                    this.skillColor = Color.SkyBlue;
-                    break;
-            }
-
             this.icon = new UIImage(this.skill.icon);
             this.icon.SetPadding(0);
             this.icon.Width.Set(width, 0);
-            this.icon.Height.Set(height - 30, 0);
+            this.icon.Height.Set(height, 0);
             this.icon.Left.Set(0, 0);
             this.icon.Top.Set(0, 0);
 
-            this.levelBar = new UIVapeProgressBar(0, 0, this.skill.maxLevel, Color.Gray, Color.LimeGreen);
-            this.levelBar.SetPadding(0);
-            this.levelBar.strokeThickness = 1;
-            this.levelBar.Width.Set(width - 30, 0);
-            this.levelBar.Height.Set(20, 0);
-            this.levelBar.Left.Set(0, 0);
-            this.levelBar.Top.Set(height - this.levelBar.Height.Pixels, 0);
+            this.skillLevelText = new UIText("0/0");
+            this.skillLevelText.Left.Set(this.Width.Pixels - this.skillLevelText.MinWidth.Pixels, 0);
+            this.skillLevelText.Top.Set(this.Height.Pixels - this.skillLevelText.MinHeight.Pixels, 0);
 
-            this.button = new UIVapeButton(ModLoader.GetTexture("VapeRPG/Textures/UI/AddButton"), ModLoader.GetTexture("VapeRPG/Textures/UI/AddButtonPressed"));
-            this.button.SetPadding(0);
-            this.button.Width.Set(20, 0);
-            this.button.Height.Set(this.levelBar.Height.Pixels, 0);
-            this.button.Left.Set(width - this.button.Width.Pixels, 0);
-            this.button.Top.Set(height - this.button.Height.Pixels, 0);
-
-            this.button.OnClick += delegate ()
+            this.icon.OnClick += (x, y) =>
             {
                 VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
 
-                if (vp.skillPoints > 0 && vp.SkillLevels[this.skill.name] < this.skill.maxLevel)
+                if (vp.HasPrerequisiteForSkill(this.skill) && vp.skillPoints > 0 && vp.SkillLevels[this.skill.name] < this.skill.maxLevel)
                 {
                     vp.SkillLevels[this.skill.name]++;
                     vp.skillPoints--;
                 }
             };
 
-            this.Append(this.levelBar);
-            this.Append(this.button);
             this.Append(this.icon);
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
-            this.DrawTooltip(spriteBatch);
+            this.Append(this.skillLevelText);
         }
 
         public override void Update(GameTime gameTime)
         {
-            VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-            this.levelBar.value = vp.SkillLevels[this.skill.name];
-            this.levelBar.maxValue = this.skill.maxLevel;
-
             base.Update(gameTime);
+
+            VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
+
+            this.skillLevelText.SetText(String.Format("{0}/{1}", vp.SkillLevels[this.skill.name], this.skill.maxLevel));
         }
 
-        private void DrawTooltip(SpriteBatch spriteBatch)
+        protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            MouseState ms = Mouse.GetState();
-            Vector2 mousePosition = new Vector2(ms.X, ms.Y);
-
-            if (this.icon.ContainsPoint(mousePosition))
+            base.DrawSelf(spriteBatch);
+            VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
+            if (this.skill.Prerequisites.Count > 0 && vp.HasPrerequisiteForSkill(this.skill))
             {
-                Utils.DrawBorderString(spriteBatch, skill.name, new Vector2(Main.screenWidth / 2 - 200, 100), this.skillColor, 1.7f);
-                Utils.DrawBorderString(spriteBatch, skill.description, new Vector2(Main.screenWidth / 2 - 200, 150), Color.White, 1.3f);
+                CalculatedStyle dimensions = this.GetDimensions();
+                Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
+                int width = (int)Math.Ceiling(dimensions.Width);
+                int height = (int)Math.Ceiling(dimensions.Height);
+                spriteBatch.Draw(this.skillShade, new Rectangle(point1.X, point1.Y, width, height), Color.White);
             }
         }
     }
