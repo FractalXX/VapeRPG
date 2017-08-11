@@ -161,7 +161,7 @@ namespace VapeRPG
             this.EffectiveStats = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             this.ChaosBonuses = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
 
-            foreach(string stat in VapeRPG.BaseStats)
+            foreach (string stat in VapeRPG.BaseStats)
             {
                 this.BaseStats.Add(stat, 1);
             }
@@ -193,6 +193,9 @@ namespace VapeRPG
         /// <param name="chaos">Determines if the given xp should be chaos xp or not.</param>
         public void GainExperience(int value, bool chaos = false)
         {
+            long xp = this.xp;
+            long chaosXp = this.chaosXp;
+
             if (chaos)
             {
                 if (this.chaosXp < (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
@@ -209,6 +212,19 @@ namespace VapeRPG
                     CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
                     this.xp += (long)value;
                 }
+            }
+
+            if (this.xp < 0 || this.xp > (this.mod as VapeRPG).XpNeededForLevel[VapeRPG.MaxLevel])
+            {
+                this.xp = xp;
+                Main.NewText("[Vape RPG Warning]: Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
+                Main.NewText("[Vape RPG Warning]: Please report this bug with details in the mod's topic on the Terraria forums.", Color.Red);
+            }
+            if(this.chaosXp < 0 || this.chaosXp > (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
+            {
+                this.chaosXp = chaosXp;
+                Main.NewText("[Vape RPG Warning]: Chaos Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
+                Main.NewText("[Vape RPG Warning]: Please report this bug with details in the mod's topic on the Terraria forums.", Color.Red);
             }
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -286,13 +302,13 @@ namespace VapeRPG
             if (!Main.dedServ)
             {
                 int nextLevel = this.level + 1;
-                if(this.level == VapeRPG.MaxLevel)
+                if (this.level == VapeRPG.MaxLevel)
                 {
                     nextLevel = VapeRPG.MaxLevel;
                 }
 
                 int nextRank = this.chaosRank + 1;
-                if(this.chaosRank == VapeRPG.MaxLevel)
+                if (this.chaosRank == VapeRPG.MaxLevel)
                 {
                     nextRank = VapeRPG.MaxLevel;
                 }
@@ -443,7 +459,31 @@ namespace VapeRPG
         /// <returns></returns>
         public bool HasSkill(string skillName)
         {
-            return this.SkillLevels[skillName] > 0;
+            return this.SkillLevels.ContainsKey(skillName) && this.SkillLevels[skillName] > 0;
+        }
+
+        public bool HasPrerequisiteForSkill(Skill skill)
+        {
+            if (skill.Prerequisites.Count > 0)
+            {
+                int c = 0;
+                foreach (Skill s in skill.Prerequisites)
+                {
+                    if (this.HasSkill(s.name))
+                    {
+                        if (!skill.needsAllPrerequisites)
+                        {
+                            return true;
+                        }
+                        c++;
+                    }
+                }
+                return c == skill.Prerequisites.Count;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private void CheckExpUIOverflow()

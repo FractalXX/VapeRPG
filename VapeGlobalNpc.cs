@@ -55,7 +55,6 @@ namespace VapeRPG
             NPCID.PartyBunny,
             NPCID.Penguin,
             NPCID.PenguinBlack,
-            NPCID.Parrot,
             NPCID.Bird,
             NPCID.GoldBird,
             NPCID.ScorpionBlack,
@@ -86,7 +85,7 @@ namespace VapeRPG
             NPCID.SeaSnail,
             NPCID.Butterfly,
             NPCID.GoldButterfly,
-            NPCID.Firefly
+            NPCID.Firefly           
         };
 
         public override bool InstancePerEntity
@@ -114,7 +113,7 @@ namespace VapeRPG
             if (!IsIgnoredType(npc) && !npc.SpawnedFromStatue && !npc.friendly)
             {
                 double gainedXp;
-                if (npc.boss)
+                if (npc.boss || npc.lifeMax >= 1000)
                 {
                     foreach (Player player in Main.player)
                     {
@@ -354,7 +353,7 @@ namespace VapeRPG
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, NetworkText.Empty, npc.whoAmI);
 
                 ModPacket packet = this.mod.GetPacket();
-                packet.Write((byte)VapeRPGMessageType.ClientTransformChaosNPC);
+                packet.Write((byte)VapeRPGMessageType.ServerTransformChaosNPC);
                 packet.Write(this.chaosMultiplier);
                 packet.Write(npc.whoAmI);
                 packet.Send();
@@ -386,10 +385,8 @@ namespace VapeRPG
 
         private static bool IsIgnoredTypeChaos(NPC npc)
         {
-            return  ignoredTypes.Contains(npc.type) ||
-                    npc.TypeName.ToLower().Contains("head") ||
-                    npc.TypeName.ToLower().Contains("tail") ||
-                    npc.TypeName.ToLower().Contains("body");
+            return ignoredTypes.Contains(npc.type) ||
+                    npc.aiStyle == 6;
         }
     }
 }
