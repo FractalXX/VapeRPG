@@ -11,7 +11,7 @@ using VapeRPG.UI.Elements;
 
 namespace VapeRPG
 {
-    enum SkillType { OnHit, OnKill }
+    enum SkillType { GeneralWeapon, OnKill, General }
 
     class Skill
     {
@@ -23,10 +23,8 @@ namespace VapeRPG
         public Texture2D icon;
 
         internal List<Skill> Prerequisites { get; private set; }
-        internal List<Skill> Children { get; private set; }
 
         public SkillType type;
-        public bool needsAllPrerequisites;
 
         public Skill(string name, string description, int maxLevel, SkillType type, Texture2D icon)
         {
@@ -35,10 +33,7 @@ namespace VapeRPG
             this.icon = icon;
             this.maxLevel = maxLevel;
 
-            this.needsAllPrerequisites = false;
-
             this.Prerequisites = new List<Skill>();
-            this.Children = new List<Skill>();
 
             this.type = type;
         }
@@ -63,38 +58,116 @@ namespace VapeRPG
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Reaver"));
                 this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
-                this.needsAllPrerequisites = true;
+            }
+            else if(this.name == "Rage")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Bloodlust"));
+            }
+            else if (this.name == "Overkill")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Rage"));
+            }
+            else if (this.name == "Fury")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Overkill"));
             }
 
+            else if(this.name == "Magic Sparks")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Mana Addict"));
+            }
+            else if(this.name == "Overkill Charge")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Magic Sparks"));
+            }
+            else if(this.name == "Spectral Sparks")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Overkill Charge"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
+            }
             else if(this.name == "Energizing Kills")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Mana Addict"));
             }
-        }
 
-        internal void AddChildren()
-        {
-            if (this.name == "Excitement")
+            else if(this.name == "Leftover Supply" || this.name == "Confusion" || this.name == "High Five")
             {
-                this.Children.Add(VapeRPG.GetSkill("Bloodlust"));
-                this.Children.Add(VapeRPG.GetSkill("Mana Addict"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("X-Ray Hits"));
             }
-            if (this.name == "Bloodlust")
+            
+            else if(this.name == "Bounce")
             {
-                this.Children.Add(VapeRPG.GetSkill("Exploding Rage"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Leftover Supply"));
             }
-            else if (this.name == "Exploding Rage")
+            
+            else if(this.name == "Confusion Field")
             {
-                this.Children.Add(VapeRPG.GetSkill("Reaver"));
-            }
-            else if (this.name == "Reaver")
-            {
-                this.Children.Add(VapeRPG.GetSkill("Soul Reaver"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Confusion"));
             }
 
-            else if (this.name == "Mana Addict")
+            else if (this.name == "Hawk Eye")
             {
-                this.Children.Add(VapeRPG.GetSkill("Energizing Kills"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("High Five"));
+            }
+            else if (this.name == "Powerful Eye")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Hawk Eye"));
+            }
+            else if (this.name == "Dead Eye")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Powerful Eye"));
+            }
+
+            else if(this.name == "Reconsolidation")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("High Five"));
+            }
+            else if (this.name == "Close Combat Specialist")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Reconsolidation"));
+            }
+            else if (this.name == "Close Combat Veteran")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Close Combat Specialist"));
+            }
+
+            else if(this.name == "Kickstart" || this.name == "Aggro" || this.name == "Longer Flight")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Warmth"));
+            }
+
+            else if(this.name == "Execution")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Kickstart"));
+            }
+            else if (this.name == "First Touch")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Execution"));
+            }
+
+            else if (this.name == "Reflection" || this.name == "Damage to Defense")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Aggro"));
+            }
+
+            else if (this.name == "Strengthen")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Reflection"));
+            }
+
+            else if (this.name == "Vital Supplies")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Damage to Defense"));
+            }
+            else if (this.name == "Hardened Skin")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Vital Supplies"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Strengthen"));
+            }
+
+            else if (this.name == "Angel")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Longer Flight"));
             }
         }
     }

@@ -43,10 +43,8 @@ namespace VapeRPG.UI.Elements
         public override void OnInitialize()
         {
             // Initializing the text for the progress bar
-            this.statusText = new UIText("100000000/100000000", 0.8f);
-            this.statusText.Width.Set(this.Width.Pixels / 2, 0f);
-            this.statusText.Height.Set(this.Height.Pixels / 2, 0f);
-            this.statusText.Left.Set(this.Width.Pixels / 2 - this.statusText.Width.Pixels / 2, 0f);
+            this.statusText = new UIText("100000000/100000000", 0.9f);
+            this.statusText.Left.Set(this.Width.Pixels / 2 - this.statusText.MinWidth.Pixels / 2, 0f);
             this.statusText.Top.Set(this.Height.Pixels / 4, 0f);
 
             this.Append(statusText);
@@ -62,9 +60,7 @@ namespace VapeRPG.UI.Elements
             }
             this.foregroundWidth = relativeValue * this.Width.Pixels;
             this.statusText.SetText(String.Format("{0}/{1}", (decimal)this.value, (decimal)this.maxValue));
-
-            this.statusText.Recalculate();
-            this.Recalculate();
+            this.statusText.Left.Set(this.Width.Pixels / 2 - this.statusText.MinWidth.Pixels / 2, 0);
 
             base.Update(gameTime);
         }

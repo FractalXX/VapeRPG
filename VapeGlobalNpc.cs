@@ -18,16 +18,6 @@ namespace VapeRPG
         private static int chaosChance = 5; // Percent chance of a mob becoming a chaos mob
 
         /// <summary>
-        /// Returns true if the NPC has the hemorrhage debuff.
-        /// </summary>
-        public bool hemorrhage = false;
-
-        /// <summary>
-        /// The damage that should be inflicted by the hemorrhage.
-        /// </summary>
-        public int hemorrhageDamage = 0;
-
-        /// <summary>
         /// Returns true if the mob is a chaos mob.
         /// </summary>
         public bool isChaos = false;
@@ -85,7 +75,7 @@ namespace VapeRPG
             NPCID.SeaSnail,
             NPCID.Butterfly,
             NPCID.GoldButterfly,
-            NPCID.Firefly           
+            NPCID.Firefly
         };
 
         public override bool InstancePerEntity
@@ -99,7 +89,7 @@ namespace VapeRPG
         public override void SetDefaults(NPC npc)
         {
             // Fix for incompatibility with other mods such as Calamity, etc.
-            if(npc != null)
+            if (npc != null && Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
             {
                 if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= chaosChance)
                 {
@@ -113,28 +103,29 @@ namespace VapeRPG
             if (!IsIgnoredType(npc) && !npc.SpawnedFromStatue && !npc.friendly)
             {
                 double gainedXp;
-                if (npc.boss || npc.lifeMax >= 1000)
+                if (npc.boss)
                 {
-                    foreach (Player player in Main.player)
+                    foreach (Player player in Main.player.ToList().FindAll(x => x.active))
                     {
-                        if (player.active)
-                        {
-                            VapePlayer vp = player.GetModPlayer<VapePlayer>();
-                            gainedXp = npc.lifeMax / 2;
-                            vp.GainExperience((int)gainedXp);
-                        }
+                        VapePlayer vp = player.GetModPlayer<VapePlayer>();
+                        gainedXp = npc.lifeMax / 2;
+                        vp.GainExperience((int)gainedXp);
                     }
                 }
                 else
                 {
                     // If it isn't a boss, only nearby players gain experience based on the npc's HP
-                    foreach (Player player in Main.player)
+                    foreach (Player player in Main.player.ToList().FindAll(x => x.active))
                     {
                         if (Vector2.Distance(player.position, npc.position) <= expGainDistance)
                         {
                             VapePlayer vp = player.GetModPlayer<VapePlayer>();
                             gainedXp = 0.5 * Math.Pow(2, Math.Sqrt((2 * (1 + npc.defDamage / (2 * npc.lifeMax)) * npc.lifeMax) / Math.Pow(npc.lifeMax, 1 / 2.6)));
-                            if (npc.lifeMax <= 20)
+                            if (npc.lifeMax >= 1000)
+                            {
+                                gainedXp = npc.lifeMax / 2;
+                            }
+                            else if (npc.lifeMax <= 20)
                             {
                                 gainedXp /= 2;
                             }
@@ -330,7 +321,7 @@ namespace VapeRPG
             }
 
             #endregion
-            
+
             base.NPCLoot(npc);
         }
 
@@ -362,18 +353,9 @@ namespace VapeRPG
 
         public override void ResetEffects(NPC npc)
         {
-            this.hemorrhage = false;
             if (this.isChaos)
             {
                 npc.GivenName = String.Format("Chaos {0}", npc.TypeName);
-            }
-        }
-
-        public override void UpdateLifeRegen(NPC npc, ref int damage)
-        {
-            if (this.hemorrhage)
-            {
-                npc.lifeRegen -= this.hemorrhageDamage;
             }
         }
 

@@ -7,9 +7,11 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Microsoft.Xna.Framework;
 using Terraria.GameInput;
+using Terraria.DataStructures;
 
 using VapeRPG.UI.States;
-using Terraria.DataStructures;
+using VapeRPG.Buffs;
+using VapeRPG.Projectiles;
 
 namespace VapeRPG
 {
@@ -37,11 +39,14 @@ namespace VapeRPG
         public float dodgeChance;
         public float blockChance;
 
+        // Buffs
+        internal bool rageBuff;
+        internal bool energized;
+        internal bool strengthened;
+
         private Vector2 expUIPos;
 
         private static int statPointsPerLevel;
-
-        public bool regenKill;
 
         private static Random rnd = new Random();
 
@@ -220,7 +225,7 @@ namespace VapeRPG
                 Main.NewText("[Vape RPG Warning]: Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
                 Main.NewText("[Vape RPG Warning]: Please report this bug with details in the mod's topic on the Terraria forums.", Color.Red);
             }
-            if(this.chaosXp < 0 || this.chaosXp > (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
+            if (this.chaosXp < 0 || this.chaosXp > (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
             {
                 this.chaosXp = chaosXp;
                 Main.NewText("[Vape RPG Warning]: Chaos Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
@@ -292,11 +297,6 @@ namespace VapeRPG
                 packet.Send();
             }
 
-            if (this.regenKill)
-            {
-                this.player.manaRegenBonus += this.SkillLevels["Regenerating Kills"];
-            }
-
             // Updating the UI
 
             if (!Main.dedServ)
@@ -337,7 +337,9 @@ namespace VapeRPG
 
             this.statLifeMax3 = 0;
 
-            this.regenKill = false;
+            this.rageBuff = false;
+            this.energized = false;
+            this.strengthened = false;
 
             foreach (var x in VapeRPG.BaseStats)
             {
@@ -348,10 +350,22 @@ namespace VapeRPG
             }
         }
 
+        public override void PostUpdateBuffs()
+        {
+            if(this.rageBuff)
+            {
+                this.player.meleeDamage += this.SkillLevels["Rage"] * 0.03f;
+                if(this.HasSkill("Fury"))
+                {
+                    this.player.meleeSpeed += this.SkillLevels["Rage"] * 0.03f;
+                }
+            }
+        }
+
         private void UpdateStatBonuses()
         {
-            this.player.statLifeMax = 100 + (int)(this.level * 3.53172) + this.EffectiveStats["Vitality"] + this.EffectiveStats["Strength"] / 2;
-            this.player.statManaMax2 = this.EffectiveStats["Intellect"] + this.level / 2;
+            this.player.statLifeMax = 100 + (int)(this.level * 4) + this.EffectiveStats["Vitality"] + this.EffectiveStats["Strength"] / 2;
+            this.player.statManaMax2 = 20 + this.EffectiveStats["Intellect"] + this.level / 2;
 
             this.player.meleeDamage += this.EffectiveStats["Strength"] / 500f;
             this.player.magicDamage += this.EffectiveStats["Magic power"] / 430f + this.EffectiveStats["Spirit"] / 860f;
@@ -464,26 +478,15 @@ namespace VapeRPG
 
         public bool HasPrerequisiteForSkill(Skill skill)
         {
-            if (skill.Prerequisites.Count > 0)
+            int c = 0;
+            foreach (Skill s in skill.Prerequisites)
             {
-                int c = 0;
-                foreach (Skill s in skill.Prerequisites)
+                if (this.HasSkill(s.name))
                 {
-                    if (this.HasSkill(s.name))
-                    {
-                        if (!skill.needsAllPrerequisites)
-                        {
-                            return true;
-                        }
-                        c++;
-                    }
+                    c++;
                 }
-                return c == skill.Prerequisites.Count;
             }
-            else
-            {
-                return true;
-            }
+            return c == skill.Prerequisites.Count;
         }
 
         private void CheckExpUIOverflow()
@@ -507,10 +510,12 @@ namespace VapeRPG
             {
                 vapeMod.ExpUI.SetPanelPosition(this.expUIPos);
             }
+
         }
 
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
+            bool failed = false;
             if (rnd.NextDouble() <= this.dodgeChance)
             {
                 this.player.immune = true;
@@ -519,6 +524,7 @@ namespace VapeRPG
                 Main.PlaySound(2, this.player.position);
                 playSound = false;
                 genGore = false;
+                failed = true;
                 return false;
             }
 
@@ -530,15 +536,48 @@ namespace VapeRPG
                 Main.PlaySound(37, this.player.position);
                 playSound = false;
                 genGore = false;
+                failed = true;
                 return false;
+            }
+
+            if(failed && this.HasSkill("Strengthen"))
+            {
+                this.player.AddBuff(mod.BuffType<Strengthened>(), 18000);
+            }
+
+            if(this.strengthened)
+            {
+                damage -= (int)(damage * 0.05f * this.SkillLevels["Strengthen"]);
+                this.player.ClearBuff(mod.BuffType<Strengthened>());
             }
 
             return true;
         }
 
+        public override void OnHitByNPC(NPC npc, int damage, bool crit)
+        {
+            if(this.energized)
+            {
+                int sparkRange = 10;
+                Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Electricity"), this.player.position);
+                for (int i = 0; i < 360; i += 72)
+                {
+                    double angle = i * Math.PI / 180;
+                    Vector2 sparkTarget = new Vector2(this.player.position.X + sparkRange * (float)Math.Cos(angle), this.player.position.Y + sparkRange * (float)Math.Sin(angle));
+                    Vector2 sparkVelocity = this.player.position - sparkTarget;
+
+                    int v = 3;
+                    float speedMul = v / sparkVelocity.Length();
+                    sparkVelocity.X = speedMul * sparkVelocity.X;
+                    sparkVelocity.Y = speedMul * sparkVelocity.Y;
+                    Projectile.NewProjectileDirect(this.player.position, sparkVelocity, mod.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(10 * this.level * 0.05f), 40, this.player.whoAmI);
+                }
+            }
+        }
+
         public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            SkillController.OnHitNPCWithProj(this, proj, target, damage, knockback, crit);
+            SkillController.OnHitNPC(this, null, proj, target, damage, knockback, crit);
         }
 
         public override bool ConsumeAmmo(Item weapon, Item ammo)
@@ -553,12 +592,17 @@ namespace VapeRPG
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
-            SkillController.ModifyHitNPC(this, item, target, ref damage, ref knockback, ref crit);
+            SkillController.ModifyHitNPC(this, item, null, target, ref damage, ref knockback, ref crit);
+        }
+
+        public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
+        {
+            SkillController.OnHitNPC(this, item, null, target, damage, knockback, crit);
         }
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            SkillController.ModifyHitNPCWithProj(this, proj, target, ref damage, ref knockback, ref crit, ref hitDirection);
+            SkillController.ModifyHitNPC(this, null, proj, target, ref damage, ref knockback, ref crit);
         }
 
         public override bool Shoot(Item item, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)

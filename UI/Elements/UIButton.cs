@@ -7,10 +7,8 @@ using Terraria.UI;
 
 namespace VapeRPG.UI.Elements
 {
-    class UIButton : UIPanel
+    class UIButton : UITextPanel<string>
     {
-        private UIText nameText;
-
         public bool isToggle;
         private bool toggled;
 
@@ -26,12 +24,12 @@ namespace VapeRPG.UI.Elements
                 {
                     if (value)
                     {
-                        this.nameText.TextColor = Color.Yellow;
+                        this.TextColor = Color.Yellow;
                         this.BackgroundColor = new Color(80, 98, 163);
                     }
                     else
                     {
-                        this.nameText.TextColor = Color.White;
+                        this.TextColor = Color.White;
                         this.BackgroundColor = new Color(60, 78, 143);
                     }
 
@@ -40,7 +38,7 @@ namespace VapeRPG.UI.Elements
             }
         }
 
-        public UIButton(bool isToggle = false)
+        public UIButton(string name, bool isToggle = false) : base(name)
         {
             this.BackgroundColor = new Color(60, 78, 143);
             this.isToggle = isToggle;
@@ -49,14 +47,6 @@ namespace VapeRPG.UI.Elements
             this.OnMouseOver += Event_MouseOver;
             this.OnMouseOut += Event_MouseOut;
             this.OnMouseDown += Event_MouseDown;
-        }
-
-        public void SetName(string name)
-        {
-            this.nameText = new UIText(name);
-            this.nameText.HAlign = 0.5f;
-            this.nameText.VAlign = 0.5f;
-            this.Append(this.nameText);
         }
 
         private void Event_MouseOver(UIMouseEvent evt, UIElement listeningElement)

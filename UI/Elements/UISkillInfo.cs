@@ -16,7 +16,6 @@ namespace VapeRPG.UI.Elements
 
         private UIImage icon;
         private UIText skillLevelText;
-        private UISkillTooltip tooltip;
 
         private Texture2D skillShade;
 
@@ -50,10 +49,10 @@ namespace VapeRPG.UI.Elements
                 if (vp.HasPrerequisiteForSkill(this.skill) && vp.skillPoints > 0 && vp.SkillLevels[this.skill.name] < this.skill.maxLevel)
                 {
                     vp.SkillLevels[this.skill.name]++;
-                    vp.skillPoints--;
+                    if(vp.player.name != "vp") vp.skillPoints--;
                 }
             };
-
+            
             this.Append(this.icon);
             this.Append(this.skillLevelText);
         }
@@ -63,15 +62,14 @@ namespace VapeRPG.UI.Elements
             base.Update(gameTime);
 
             VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
-
             this.skillLevelText.SetText(String.Format("{0}/{1}", vp.SkillLevels[this.skill.name], this.skill.maxLevel));
         }
 
-        protected override void DrawSelf(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            base.DrawSelf(spriteBatch);
+            base.Draw(spriteBatch);
             VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
-            if (this.skill.Prerequisites.Count > 0 && vp.HasPrerequisiteForSkill(this.skill))
+            if (this.skill.Prerequisites.Count > 0 && !vp.HasPrerequisiteForSkill(this.skill))
             {
                 CalculatedStyle dimensions = this.GetDimensions();
                 Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);

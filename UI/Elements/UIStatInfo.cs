@@ -11,7 +11,7 @@ namespace VapeRPG.UI.Elements
 {
     class UIStatInfo : UIElement
     {
-        private UIButton button;
+        private UIImageButton button;
         private UIText bonusText;
         private UIText statText;
 
@@ -50,19 +50,14 @@ namespace VapeRPG.UI.Elements
 
             if (button)
             {
-                this.button = new UIButton();
+                this.button = new UIImageButton(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/AddButton"));
                 this.button.Width.Set(30, 0);
                 this.button.Height.Set(30, 0);
                 this.button.Top.Set(0, 0);
-                this.button.SetName("+");
 
                 MouseEvent onMouseDown;
 
                 this.button.Left.Set(-80, 1f);
-                this.button.OnClick += (x, y) =>
-                {
-                    Main.PlaySound(12, -1, -1, 1, 1f, 0.0f);
-                };
 
                 if (this.isMinorStat)
                 {
@@ -110,6 +105,7 @@ namespace VapeRPG.UI.Elements
                     };
                 }
                 this.button.OnClick += onMouseDown;
+                this.button.Left.Set(-50, 1f);
 
                 this.Append(this.button);
                 this.Append(this.statText);

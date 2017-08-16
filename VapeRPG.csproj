@@ -36,19 +36,21 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Buffs\Hemorrhage.cs" />
-    <Compile Include="Buffs\RegenKill.cs" />
-    <Compile Include="Buffs\Steroids.cs" />
+    <Compile Include="Buffs\Energized.cs" />
+    <Compile Include="Buffs\FullyEnergized.cs" />
+    <Compile Include="Buffs\Rage.cs" />
+    <Compile Include="Buffs\Strengthened.cs" />
     <Compile Include="Commands\XpCommand.cs" />
-    <Compile Include="DataStructures\TreeNode.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
-    <Compile Include="Projectiles\MagicSpark.cs" />
+    <Compile Include="Projectiles\ElectricSpark.cs" />
     <Compile Include="Skill.cs" />
     <Compile Include="SkillController.cs" />
+    <Compile Include="Sounds\Custom\Charge.cs" />
+    <Compile Include="Sounds\Custom\Electricity.cs" />
+    <Compile Include="Sounds\Custom\Energized.cs" />
     <Compile Include="Sounds\UI\ButtonPress.cs" />
-    <Compile Include="UI\Elements\UIBuffIcon.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
     <Compile Include="UI\Elements\UISkillTooltip.cs" />
     <Compile Include="UI\Elements\UISkillTreeBranch.cs" />
@@ -56,12 +58,10 @@
     <Compile Include="UI\Elements\UISkillInfo.cs" />
     <Compile Include="UI\Elements\UISkillTab.cs" />
     <Compile Include="UI\Elements\UIStatInfo.cs" />
-    <Compile Include="UI\Elements\UIVapeBorderedPanel.cs" />
-    <Compile Include="UI\Elements\UIScalableImage.cs" />
     <Compile Include="UI\States\CharUIState.cs" />
     <Compile Include="UI\Elements\UIVapeProgressBar.cs" />
     <Compile Include="UI\States\ExpUIState.cs" />
-    <Compile Include="UI\Elements\UITexturedPanel.cs" />
+    <Compile Include="UI\TreeHelper.cs" />
     <Compile Include="VapeConfig.cs" />
     <Compile Include="VapeGlobalItem.cs" />
     <Compile Include="VapeGlobalNpc.cs" />
@@ -85,21 +85,23 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework.Xact\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Xact.dll</HintPath>
     </Reference>
+    <Reference Include="ReLogic">
+      <HintPath>References\ReLogic.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Terraria">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\terraria\Terraria.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Projectiles\MagicSpark.png" />
+    <Content Include="Projectiles\ElectricSpark.png" />
+    <Content Include="Sounds\Custom\Electricity.wav" />
     <Content Include="Sounds\UI\ButtonPress.mp3" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Projectiles\MagicSpark.psd" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Items\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"C:\Program Files (x86)\Steam\steamapps\common\Terraria\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>

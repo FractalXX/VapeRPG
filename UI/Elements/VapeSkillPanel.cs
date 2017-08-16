@@ -21,8 +21,9 @@ namespace VapeRPG.UI.Elements
 
         private static Dictionary<string, SkillType> tabNames = new Dictionary<string, SkillType>()
         {
-            { "On Kill Effects", SkillType.OnKill },
-            { "On Hit Effects", SkillType.OnHit }
+            { "Reaper", SkillType.OnKill },
+            { "Shredder", SkillType.GeneralWeapon },
+            { "Power", SkillType.General }
         };
 
         public VapeSkillPanel(float width, float height)
@@ -52,23 +53,20 @@ namespace VapeRPG.UI.Elements
 
                 tab.InitializeSkillInfos();
 
-                UIButton button = new UIButton(true);
+                UIButton button = new UIButton(x.Key, true);
                 button.Width.Set((this.Width.Pixels - 10) / tabNames.Count, 0);
                 button.Height.Set(60, 0);
                 button.Left.Set(i * button.Width.Pixels, 0);
                 button.Top.Set(0, 0);
-                button.SetName(x.Key);
                 
                 this.buttons.Add(button);
                 this.tabs.Add(tab);
 
-                this.Append(tab);
                 this.buttonPanel.Append(button);
 
                 i++;
             }
 
-            this.tabs[this.currentTab].visible = true;
             this.buttons[0].Toggled = true;
 
             foreach(var x in this.buttons)
@@ -78,6 +76,9 @@ namespace VapeRPG.UI.Elements
                     this.GoToTab((byte)this.buttons.IndexOf(x));
                 };
             }
+
+            this.currentTab = 1;
+            this.GoToTab(0);
 
             this.Append(this.buttonPanel);
         }
@@ -89,8 +90,8 @@ namespace VapeRPG.UI.Elements
                 if (tab < this.tabs.Count)
                 {
                     this.buttons[this.currentTab].Toggled = false;
-                    this.tabs[this.currentTab].visible = false;
-                    this.tabs[tab].visible = true;
+                    this.tabs.ForEach(panel => { if (this.HasChild(panel)) this.RemoveChild(panel); });
+                    this.Append(this.tabs[tab]);
                     this.currentTab = tab;
                 }
             }
@@ -99,5 +100,7 @@ namespace VapeRPG.UI.Elements
                 this.buttons[tab].Toggled = true;
             }
         }
+
+
     }
 }

@@ -6,14 +6,13 @@ using Microsoft.Xna.Framework;
 
 namespace VapeRPG.UI.Elements
 {
-    enum BranchDirection { Vertical, Horizontal, DiagonalRight, DiagonalLeft}
     class UISkillTreeBranch : UIElement
     {
         private Texture2D texture;
 
-        public UISkillTreeBranch(BranchDirection direction)
+        public UISkillTreeBranch()
         {
-            this.texture = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/Line" + direction.ToString());
+            this.texture = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/Line");
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)

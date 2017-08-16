@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Text;
 using Terraria;
+using System.Text;
+using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.GameContent.UI.Elements;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,71 +11,97 @@ namespace VapeRPG.UI.Elements
 {
     class UISkillTooltip : UIPanel
     {
-        private UIText skillNameText;
-        private UIText tooltipText;
+        private UITextPanel<string> skillNameText;
+        private UITextPanel<string> tooltipText;
+        private UITextPanel<string> requirementsText;
 
-        internal bool visible;
-
-        public UISkillTooltip(Skill skill) : base()
+        public UISkillTooltip(Skill skill)
         {
-            this.visible = false;
             this.SetPadding(5);
 
-            this.MaxWidth.Set(300, 0);
-            this.MaxHeight.Set(200, 0);
+            this.MaxWidth.Set(400, 0);
+            this.MaxHeight.Set(400, 0);
             this.Width.Set(300, 0);
-            this.Height.Set(200, 0);
+            this.Height.Set(400, 0);
 
-            this.skillNameText = new UIText(skill.name);
+            this.skillNameText = new UITextPanel<string>(skill.name);
             this.skillNameText.Left.Set(0, 0);
             this.skillNameText.Top.Set(0, 0);
-            this.skillNameText.TextColor = Color.Green;
+            this.skillNameText.Width.Set(0, 1f);
+            this.skillNameText.TextColor = Color.Lime;
+            this.skillNameText.BackgroundColor = new Color(80, 128, 163);
 
-            this.tooltipText = new UIText(skill.description);
-            this.tooltipText.Left.Set(0, 0);
-            this.tooltipText.Top.Set(this.skillNameText.MinHeight.Pixels + 5, 0);
-            this.tooltipText.TextColor = Color.White;
-            this.tooltipText.MaxWidth.Set(this.Width.Pixels, 0);
+            string[] requirements = new string[skill.Prerequisites.Count];
 
             StringBuilder sb = new StringBuilder();
-            int words = 0;
-            for (int i = 0; i < this.tooltipText.Text.Length - 1; i++)
+            sb.Append("Requires: ");
+            if (skill.Prerequisites.Count > 0)
             {
-                sb.Append(this.tooltipText.Text[i]);
-                if(this.tooltipText.Text[i + 1].Equals(' '))
+
+                for (int i = 0; i < skill.Prerequisites.Count; i++)
                 {
-                    words++;
-                    if(words >= 6)
+                    requirements[i] = skill.Prerequisites[i].name;
+                    if (i > 0)
                     {
-                        sb.AppendLine();
-                        words = 0;
+                        sb.Append(" and ");
                     }
+                    sb.Append(requirements[i]);
+
                 }
             }
-            sb.Append(this.tooltipText.Text[this.tooltipText.Text.Length - 1]);
+            else
+            {
+                sb.Append("Nothing");
+            }
 
-            this.tooltipText.SetText(sb.ToString());
+            this.tooltipText = new UITextPanel<string>(skill.description, 0.8f);
+            this.tooltipText.Top.Set(this.skillNameText.MinHeight.Pixels, 0);
+            this.tooltipText.Width.Set(0, 1f);
+            this.tooltipText.MaxWidth.Set(0, 1f);
+            this.tooltipText.MaxHeight.Set(0, 0.8f);
+            this.tooltipText.Height.Set(this.Height.Pixels - this.skillNameText.MinHeight.Pixels, 0);
+            this.tooltipText.BackgroundColor = new Color(60, 78, 143);
 
-            this.BackgroundColor = Color.Gray;
+            this.requirementsText = new UITextPanel<string>(sb.ToString(), 0.8f);
+            this.requirementsText.Width.Set(0, 1f);
+            this.requirementsText.TextColor = Color.Yellow;
+            this.requirementsText.BackgroundColor = new Color(100, 118, 163);
+
+            sb.Clear();
+
+            string line = "";
+            int lines = 1;
+            for (int i = 0; i < this.tooltipText.Text.Length; i++)
+            {
+                line += this.tooltipText.Text[i];
+
+                if (Main.fontMouseText.MeasureString(line).X >= this.MaxWidth.Pixels - 60 && this.tooltipText.Text[i] == ' ')
+                {
+                    sb.AppendLine(line);
+                    line = "";
+                    lines++;
+                }
+                else if(i == this.tooltipText.Text.Length - 1)
+                {
+                    sb.AppendLine(line);
+                }
+            }
+
+            string text = sb.ToString();
+
+            this.tooltipText.Height.Set((16f * 0.8f + Main.fontMouseText.LineSpacing * 0.8f) * lines, 0);
+            this.tooltipText.SetText(text);
+            this.Height.Set(this.skillNameText.MinHeight.Pixels + this.tooltipText.Height.Pixels + this.requirementsText.MinHeight.Pixels + 10, 0);
+            this.Width.Set(Main.fontMouseText.MeasureString(text).X, 0);
+
+            this.requirementsText.Top.Set(-this.requirementsText.MinHeight.Pixels, 1f);
+
+            this.BackgroundColor = new Color(40, 58, 123);
 
             this.Append(this.skillNameText);
             this.Append(this.tooltipText);
-        }
-
-        protected override void DrawSelf(SpriteBatch spriteBatch)
-        {
-            if (this.visible)
-            {
-                base.DrawSelf(spriteBatch);
-            }
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            if (this.visible)
-            {
-                base.Draw(spriteBatch);
-            }
+            this.Append(this.requirementsText);
+            this.Recalculate();
         }
     }
 }
