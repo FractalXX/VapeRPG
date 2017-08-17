@@ -7,6 +7,8 @@ using Terraria.UI;
 using Terraria.Localization;
 using Terraria.ID;
 
+using Microsoft.Xna.Framework.Graphics;
+
 using VapeRPG.UI.States;
 
 namespace VapeRPG
@@ -26,6 +28,7 @@ namespace VapeRPG
         public int[] XpNeededForChaosRank { get; private set; }
         public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
         public CharUIState CharUI { get; private set; } // For the character panel
+        public StatHelpUIState StatHelpUI { get; private set; }
         private UserInterface expUserInterface;
         private UserInterface charUserInterface;
 
@@ -97,60 +100,58 @@ namespace VapeRPG
             Skills = new List<Skill>()
             {
                 //Reaper Tree
-                new Skill("Excitement", "Killing enemies grants you a shine buff for 6 seconds.", 1, SkillType.OnKill),
+                new Skill("Excitement", "Killing enemies grants you a shine buff for 6 seconds.", 1, SkillType.OnKill, GetSkillFrame("Excitement")),
 
-                new Skill("Bloodlust", "Killing enemies grants you a regeneration buff for 10 seconds.", 1, SkillType.OnKill),
-                new Skill("Exploding Rage", "Killing enemies with melee has a chance (10%/20%/30%) to result in their bodies exploding dealing 10% of their maximum life in a medium sized area.", 3, SkillType.OnKill),
-                new Skill("Reaver", "Killing enemies has a chance (5%/10%/15%) to summon an ancient wraith to crush your enemies for 30 seconds. Wraith damage is 15 summon damage * by skill level.", 3, SkillType.OnKill),
-                new Skill("Soul Reaver", "Your reaver minion applies a slow debuff on hit, and grants you the effect of the hunter and night vision potion while it lasts. Additionally, you can now maintain two wraiths at once.", 1, SkillType.OnKill),
+                new Skill("Bloodlust", "Killing enemies grants you a regeneration buff for 10 seconds.", 1, SkillType.OnKill, GetSkillFrame("Bloodlust")),
+                new Skill("Exploding Rage", "Killing enemies with melee has a chance (10%/20%/30%) to result in their bodies exploding dealing 10% of their maximum life in a medium sized area.", 3, SkillType.OnKill, GetSkillFrame("ExplodingRage")),
+                new Skill("Static Field", "Killing enemies has a chance (5%/10%/15%) to summon an electric shield around you. The shield does summon damage (20/level) and lasts 10 seconds.", 3, SkillType.OnKill, GetSkillFrame("StaticField")),
+                new Skill("High-Voltage Field", "Static Field applies slow debuff on hit and grants the night vision and hunter buffs while it lasts. Duration also increases to 30 seconds.", 1, SkillType.OnKill, GetSkillFrame("HighVoltageField")),
 
-                new Skill("Rage", "Killing enemies grants you the Rage buff, increasing your melee damage (3%/level) for 10 seconds.", 3, SkillType.OnKill),
-                new Skill("Overkill", "Killing enemies with critical hits restore a small percent of your life (3%/level).", 3, SkillType.OnKill),
-                new Skill("Fury", "The Rage buff also increases your melee speed by the same amount.", 1, SkillType.OnKill),
+                new Skill("Rage", "Killing enemies grants you the Rage buff, increasing your melee damage (3%/level) for 10 seconds.", 3, SkillType.OnKill, GetSkillFrame("Rage")),
+                new Skill("Overkill", "Killing enemies with critical hits restore a small percent of your life (3%/level).", 3, SkillType.OnKill, GetSkillFrame("Overkill")),
+                new Skill("Fury", "The Rage buff also increases your melee speed by the same amount.", 1, SkillType.OnKill, GetSkillFrame("Fury")),
 
-                new Skill("Mana Addict", "Kills give you a mana regen buff for 10 seconds.", 1, SkillType.OnKill),
-                new Skill("Energizing Kills", "Killing enemies with magic or summon damage grants you a stack of 'Energized'. After getting 20 stacks you receive a movement speed increase and release low-damaging sparks with mediocre knockback on being hit for 10 seconds.", 1, SkillType.OnKill),
+                new Skill("Mana Addict", "Kills give you a mana regen buff for 10 seconds.", 1, SkillType.OnKill, GetSkillFrame("ManaAddict")),
+                new Skill("Energizing Kills", "Killing enemies with magic or summon damage grants you a stack of 'Energized'. After getting 20 stacks you receive a movement speed increase and release low-damaging sparks with mediocre knockback on being hit for 10 seconds.", 1, SkillType.OnKill, GetSkillFrame("EnergizingKills")),
 
-                new Skill("Magic Sparks", "Magic kills release little magic sparks which reduces the life of nearby enemies by 4%/level.", 2, SkillType.OnKill),
-                new Skill("Overkill Charge", "Killing enemies with critical hits restore a small percent of your mana (4%/level).", 3, SkillType.OnKill),
-                new Skill("Spectral Sparks", "Magic sparks also reduce the defense of enemies by 5%.", 1, SkillType.OnKill),
+                new Skill("Magic Sparks", "Magic kills have a chance (10%/level) to release little magic sparks which reduces the life of nearby enemies by 5%/level.", 2, SkillType.OnKill, GetSkillFrame("MagicSparks")),
+                new Skill("Overkill Charge", "Killing enemies with critical hits restore a small percent of your mana (4%/level).", 3, SkillType.OnKill, GetSkillFrame("OverkillCharge")),
+                new Skill("Spectral Sparks", "Magic sparks also reduce the defense of enemies by 5%.", 1, SkillType.OnKill, GetSkillFrame("SpectralSparks")),
 
                 //Shredder Tree
-                new Skill("X-Ray Hits", "Hitting enemies has a chance to apply a spelunker buff on you for 3 seconds.", 1, SkillType.GeneralWeapon),
+                new Skill("X-Ray Hits", "Hitting enemies has a chance to apply a spelunker buff on you for 3 seconds.", 1, SkillType.GeneralWeapon, GetSkillFrame("XRayHits")),
 
-                new Skill("Leftover Supply", "Magic weapons have a chance to not consume mana. (2%/level)", 2, SkillType.GeneralWeapon),
-                new Skill("Bounce", "Magic hits have a chance (10%/level) to spawn a spark that bounces to another enemy. The spark's damage is 10%/20%/30% of the original damage.", 3, SkillType.GeneralWeapon),
+                new Skill("Leftover Supply", "Magic weapons have a chance to not consume mana. (2%/level)", 2, SkillType.GeneralWeapon, GetSkillFrame("LeftoverSupply")),
+                new Skill("Bounce", "Magic hits have a chance (10%/level) to spawn a spark that bounces to another enemy. The spark's damage is 10%/20%/30% of the original damage.", 3, SkillType.GeneralWeapon, GetSkillFrame("Bounce")),
 
-                new Skill("Confusion", "Hits have a chance to confuse your enemy. (5%/level)", 3, SkillType.GeneralWeapon),
-                new Skill("Confusion Field", "Confusion applies to multiple enemies in a short range.", 1, SkillType.GeneralWeapon),
+                new Skill("Confusion", "Hits have a chance to confuse your enemy. (5%/level)", 3, SkillType.GeneralWeapon, GetSkillFrame("Confusion")),
+                new Skill("Confusion Field", "Confusion applies to multiple enemies in a small radius.", 1, SkillType.GeneralWeapon, GetSkillFrame("ConfusionField")),
 
-                new Skill("High Five", "Critical hits further increase your crit and damage by 5%. Resets on non-crits.", 1, SkillType.GeneralWeapon),
-                new Skill("Hawk Eye", "Your critical chance increases with distance to your enemy.", 1, SkillType.GeneralWeapon),
-                new Skill("Powerful Eye", "Critical hits have increased knockback.", 1, SkillType.GeneralWeapon),
-                new Skill("Dead Eye", "Critical hits outside the screen deal 4x damage instead of 2x.", 1, SkillType.GeneralWeapon),
+                new Skill("High Five", "Critical hits further increase your crit and damage by 2%. Resets on non-crits or 50 stacks.", 1, SkillType.GeneralWeapon, GetSkillFrame("HighFive")),
+                new Skill("Titan Grip", "Critical hits have increased knockback (20%/level).", 2, SkillType.GeneralWeapon, GetSkillFrame("TitanGrip")),
+                new Skill("Hawk Eye", "Your critical chance increases with distance to your enemy.", 1, SkillType.GeneralWeapon, GetSkillFrame("HawkEye")),
 
-                new Skill("Reconsolidation", "Increase your chance to not consume ammo (4%/level).", 2, SkillType.GeneralWeapon),
-                new Skill("Close Combat Specialist", "Your ranged damage increases as you get closer to the enemy.", 1, SkillType.GeneralWeapon),
-                new Skill("Close Combat Veteran", "Your critical chance increases as you get closer to the enemy.", 1, SkillType.GeneralWeapon),
+                new Skill("Ammo Hoarding", "Increase your chance to not consume ammo (5%/level).", 2, SkillType.GeneralWeapon, GetSkillFrame("AmmoHoarding")),
+                new Skill("Close Combat Specialist", "Your ranged damage increases as you get closer to the enemy.", 1, SkillType.GeneralWeapon, GetSkillFrame("CloseCombatSpecialist")),
 
                 //Power Tree
-                new Skill("Warmth", "Increase your HP/MP regen by 10%", 1, SkillType.General),
+                new Skill("Warmth", "Increase your HP/MP regen by 10%", 1, SkillType.General, GetSkillFrame("Warmth")),
 
-                new Skill("Kickstart", "You have 5%/10% more critical chance against enemies above 70% health.", 2, SkillType.General),
-                new Skill("Execution", "If your enemy is under 20% health you can't crit them but you deal 20%/30%/40% increased damage to them.", 3, SkillType.General),
-                new Skill("First Touch", "If your enemy is at its max health, your first hit instantly damages it for 10% of their health.", 1, SkillType.General),
+                new Skill("Kickstart", "You have 5%/10% more critical chance against enemies above 70% health.", 2, SkillType.General, GetSkillFrame("Kickstart")),
+                new Skill("Execution", "If your enemy is under 20% health you can't crit them but you deal 20%/30%/40% increased damage to them.", 3, SkillType.General, GetSkillFrame("Execution")),
+                new Skill("First Touch", "If your enemy is at its max health, your first hit instantly damages it for 10% of their health.", 1, SkillType.General, GetSkillFrame("FirstTouch")),
 
-                new Skill("Aggro", "Enemies are more likely to target you.", 1, SkillType.General),
+                new Skill("Aggro", "Enemies are more likely to target you.", 1, SkillType.General, GetSkillFrame("Aggro")),
 
-                new Skill("Reflection", "You reflect 5%/10% of melee damage done by your enemy.", 2, SkillType.General),
-                new Skill("Strengthen", "After a dodge or block, the next time you take damage, the amount is reduced by 5%/level.", 2, SkillType.General),
+                new Skill("Reflection", "You reflect 5%/10% of melee damage done by your enemy.", 2, SkillType.General, GetSkillFrame("Reflection")),
+                new Skill("Strengthen", "After a dodge or block, the next time you take damage, the amount is reduced by 5%/level.", 2, SkillType.General, GetSkillFrame("Strengthen")),
 
-                new Skill("Damage to Defense", "Your damage is reduced by 10%/level but your defense increases by the same amount.", 3, SkillType.General),
-                new Skill("Vital Supplies", "Damage to Defense increases life as well.", 1, SkillType.General),
-                new Skill("Hardened Skin", "Melee hits deal 5%/10% less damage to you.", 2, SkillType.General),
+                new Skill("Damage to Defense", "Your damage is reduced by 10%/level but your defense increases by the same amount.", 3, SkillType.General, GetSkillFrame("DamageToDefense")),
+                new Skill("Vital Supplies", "Damage to Defense increases life as well.", 1, SkillType.General, GetSkillFrame("VitalSupplies")),
+                new Skill("Hardened Skin", "Melee hits deal 5%/10% less damage to you.", 2, SkillType.General, GetSkillFrame("HardenedSkin")),
 
-                new Skill("Longer Flight", "Your flight time is increased by 20%/level.", 3, SkillType.General),
-                new Skill("Angel", "You deal increased damage (5%/level) while using your wing. Doesn't apply on jumps.", 2, SkillType.General)
+                new Skill("Longer Flight", "Your flight time is increased by 30%/level.", 3, SkillType.General, GetSkillFrame("LongerFlight")),
+                new Skill("Angel", "You deal increased damage (5%/level) while using your wing. Doesn't apply on jumps.", 2, SkillType.General, GetSkillFrame("Angel"))
             };
 
 
@@ -171,6 +172,9 @@ namespace VapeRPG
                 this.CharUI = new CharUIState();
                 this.CharUI.Activate();
 
+                this.StatHelpUI = new StatHelpUIState();
+                this.StatHelpUI.Activate();
+
                 this.expUserInterface = new UserInterface();
                 this.expUserInterface.SetState(this.ExpUI);
 
@@ -186,6 +190,18 @@ namespace VapeRPG
             int MouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
             if (MouseTextIndex != -1)
             {
+                layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
+                "VapeRPG: StatHelp",
+                delegate
+                {
+                    if (StatHelpUIState.visible)
+                    {
+                        StatHelpUI.Draw(Main.spriteBatch);
+                    }
+                    return true;
+                },
+                InterfaceScaleType.UI)
+            );
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
                     "VapeRPG: StatWindow",
                     delegate
@@ -298,6 +314,21 @@ namespace VapeRPG
         public static Skill GetSkill(string name)
         {
             return Skills.Find(x => x.name == name);
+        }
+
+        private static Texture2D GetSkillFrame(string name)
+        {
+            Texture2D frame;
+            try
+            {
+                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/" + name);
+            }
+            catch(Exception)
+            {
+                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
+            }
+
+            return frame;
         }
     }
 }

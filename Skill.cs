@@ -50,13 +50,13 @@ namespace VapeRPG
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Bloodlust"));
             }
-            else if (this.name == "Reaver")
+            else if (this.name == "Static Field")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Exploding Rage"));
             }
-            else if (this.name == "Soul Reaver")
+            else if (this.name == "High-Voltage Field")
             {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Reaver"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Static Field"));
                 this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
             }
             else if(this.name == "Rage")
@@ -105,30 +105,22 @@ namespace VapeRPG
                 this.Prerequisites.Add(VapeRPG.GetSkill("Confusion"));
             }
 
-            else if (this.name == "Hawk Eye")
+            else if (this.name == "Titan Grip")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("High Five"));
             }
-            else if (this.name == "Powerful Eye")
+            else if (this.name == "Hawk Eye")
             {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Hawk Eye"));
-            }
-            else if (this.name == "Dead Eye")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Powerful Eye"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Titan Grip"));
             }
 
-            else if(this.name == "Reconsolidation")
+            else if(this.name == "Ammo Hoarding")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("High Five"));
             }
             else if (this.name == "Close Combat Specialist")
             {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Reconsolidation"));
-            }
-            else if (this.name == "Close Combat Veteran")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Close Combat Specialist"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Ammo Hoarding"));
             }
 
             else if(this.name == "Kickstart" || this.name == "Aggro" || this.name == "Longer Flight")

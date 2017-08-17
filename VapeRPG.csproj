@@ -38,7 +38,9 @@
   <ItemGroup>
     <Compile Include="Buffs\Energized.cs" />
     <Compile Include="Buffs\FullyEnergized.cs" />
+    <Compile Include="Buffs\HighFive.cs" />
     <Compile Include="Buffs\Rage.cs" />
+    <Compile Include="Buffs\StaticField.cs" />
     <Compile Include="Buffs\Strengthened.cs" />
     <Compile Include="Commands\XpCommand.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
@@ -50,6 +52,7 @@
     <Compile Include="Sounds\Custom\Charge.cs" />
     <Compile Include="Sounds\Custom\Electricity.cs" />
     <Compile Include="Sounds\Custom\Energized.cs" />
+    <Compile Include="Sounds\Custom\StaticFieldApply.cs" />
     <Compile Include="Sounds\UI\ButtonPress.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
     <Compile Include="UI\Elements\UISkillTooltip.cs" />
@@ -61,6 +64,7 @@
     <Compile Include="UI\States\CharUIState.cs" />
     <Compile Include="UI\Elements\UIVapeProgressBar.cs" />
     <Compile Include="UI\States\ExpUIState.cs" />
+    <Compile Include="UI\States\StatHelpUIState.cs" />
     <Compile Include="UI\TreeHelper.cs" />
     <Compile Include="VapeConfig.cs" />
     <Compile Include="VapeGlobalItem.cs" />

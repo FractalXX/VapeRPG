@@ -16,7 +16,7 @@ namespace VapeRPG.Projectiles
         {
             projectile.width = 20;
             projectile.height = 20;
-            projectile.penetrate = 1;
+            projectile.penetrate = 2;
             projectile.damage = 10;
             projectile.friendly = true;
             projectile.magic = true;

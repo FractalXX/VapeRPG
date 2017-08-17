@@ -7,8 +7,7 @@ namespace VapeRPG.Buffs
 {
     class Energized : ModBuff
     {
-        internal static byte maxStacks = 2;
-        internal byte stacks = 1;
+        internal static byte maxStacks = 20;
 
         public override void SetDefaults()
         {
@@ -20,12 +19,13 @@ namespace VapeRPG.Buffs
 
         public override bool ReApply(Player player, int time, int buffIndex)
         {
-            this.stacks++;
-            if (this.stacks >= maxStacks)
+            VapePlayer vp = player.GetModPlayer<VapePlayer>();
+            vp.energizedStacks++;
+            if (vp.energizedStacks >= maxStacks)
             {
                 player.AddBuff(mod.BuffType<FullyEnergized>(), 600);
                 Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Energized"), player.position);
-                this.stacks = 1;
+                vp.energizedStacks = 0;
                 player.ClearBuff(Type);
             }
             else
@@ -37,7 +37,7 @@ namespace VapeRPG.Buffs
 
         public override void Update(Player player, ref int buffIndex)
         {
-            player.buffTime[buffIndex] = this.stacks * 60;
+            player.buffTime[buffIndex] = player.GetModPlayer<VapePlayer>().energizedStacks * 60;
         }
     }
 }

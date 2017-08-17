@@ -57,8 +57,6 @@ namespace VapeRPG.UI.Elements
 
                 MouseEvent onMouseDown;
 
-                this.button.Left.Set(-80, 1f);
-
                 if (this.isMinorStat)
                 {
                     onMouseDown = (x, y) =>
@@ -90,6 +88,7 @@ namespace VapeRPG.UI.Elements
                             }
                         }
                     };
+                    this.button.Left.Set(-50, 1f);
                 }
                 else
                 {
@@ -103,9 +102,9 @@ namespace VapeRPG.UI.Elements
                             vp.statPoints--;
                         }
                     };
+                    this.button.Left.Set(-80, 1f);
                 }
                 this.button.OnClick += onMouseDown;
-                this.button.Left.Set(-50, 1f);
 
                 this.Append(this.button);
                 this.Append(this.statText);
@@ -114,7 +113,7 @@ namespace VapeRPG.UI.Elements
             if (!this.isMinorStat)
             {
                 this.bonusText = new UIText("+ 0");
-                this.bonusText.Left.Set(-35, 1f);
+                this.bonusText.Left.Set(-50, 1f);
                 this.bonusText.Height.Set(0, 1f);
                 this.bonusText.TextColor = Color.LimeGreen;
 

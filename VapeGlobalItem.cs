@@ -419,6 +419,12 @@ namespace VapeRPG
             base.NetSend(item, writer);
         }
 
+        public override bool UseItem(Item item, Player player)
+        {
+            SkillController.UseItem(player.GetModPlayer<VapePlayer>(), item);
+            return base.UseItem(item, player);
+        }
+
         public override void NetReceive(Item item, BinaryReader reader)
         {
             this.quality = (ItemQuality)reader.ReadInt32();

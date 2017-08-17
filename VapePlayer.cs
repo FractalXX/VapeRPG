@@ -44,15 +44,22 @@ namespace VapeRPG
         internal bool energized;
         internal bool strengthened;
 
+        internal int fieldCounter = 0;
+
+        // Buff Stacks
+        internal int energizedStacks;
+        internal int highfiveStacks;
+
         private Vector2 expUIPos;
 
         private static int statPointsPerLevel;
 
-        private static Random rnd = new Random();
+        private static Random rnd;
 
         static VapePlayer()
         {
             statPointsPerLevel = 5;
+            rnd = new Random();
         }
 
         public override TagCompound Save()
@@ -146,7 +153,7 @@ namespace VapeRPG
             }
         }
 
-        public void InitializeNewPlayer()
+        internal void InitializeNewPlayer()
         {
             this.level = 1;
             this.xp = 1;
@@ -165,6 +172,11 @@ namespace VapeRPG
             this.SkillLevels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             this.EffectiveStats = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             this.ChaosBonuses = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+
+            this.energizedStacks = 0;
+            this.highfiveStacks = 0;
+
+            this.fieldCounter = 0;
 
             foreach (string stat in VapeRPG.BaseStats)
             {
@@ -187,6 +199,7 @@ namespace VapeRPG
             if (VapeRPG.CharWindowHotKey.JustPressed)
             {
                 CharUIState.visible = !CharUIState.visible;
+                StatHelpUIState.visible = false;
             }
         }
 
@@ -245,6 +258,13 @@ namespace VapeRPG
             }
         }
 
+        public override void OnEnterWorld(Player player)
+        {
+            this.energizedStacks = 0;
+            this.highfiveStacks = 0;
+            this.fieldCounter = 0;
+        }
+
         public override void PostUpdate()
         {
             VapeRPG vapeMod = (this.mod as VapeRPG);
@@ -295,6 +315,25 @@ namespace VapeRPG
                 }
 
                 packet.Send();
+            }
+
+            if (this.fieldCounter > 0 && this.fieldCounter % 15 == 0)
+            {
+                foreach (NPC npc in Main.npc)
+                {
+                    if(!npc.friendly && npc.active)
+                    {
+                        if (Vector2.Distance(npc.position, player.position) <= StaticField.range)
+                        {
+                            int baseDamage = 15 * this.SkillLevels["Static Field"];
+                            npc.StrikeNPC((int)Math.Ceiling(baseDamage * this.player.minionDamage), 0, 0);
+                            if (this.HasSkill("High-Voltage Field"))
+                            {
+                                npc.AddBuff(32, 300);
+                            }
+                        }
+                    }
+                }
             }
 
             // Updating the UI
@@ -360,11 +399,19 @@ namespace VapeRPG
                     this.player.meleeSpeed += this.SkillLevels["Rage"] * 0.03f;
                 }
             }
+            if(this.player.FindBuffIndex(mod.BuffType<StaticField>()) != -1)
+            {
+                this.fieldCounter++;
+            }
+            else
+            {
+                this.fieldCounter = 0;
+            }
         }
 
         private void UpdateStatBonuses()
         {
-            this.player.statLifeMax = 100 + (int)(this.level * 4) + this.EffectiveStats["Vitality"] + this.EffectiveStats["Strength"] / 2;
+            this.player.statLifeMax = 100 + (int)(this.level * 4) + this.EffectiveStats["Vitality"] * 2 + this.EffectiveStats["Strength"] / 2;
             this.player.statManaMax2 = 20 + this.EffectiveStats["Intellect"] + this.level / 2;
 
             this.player.meleeDamage += this.EffectiveStats["Strength"] / 500f;
@@ -380,7 +427,12 @@ namespace VapeRPG
 
             this.player.meleeSpeed += this.EffectiveStats["Agility"] / 265f;
 
-            this.dodgeChance += this.EffectiveStats["Dexterity"] / 900f;
+            this.dodgeChance += this.EffectiveStats["Agility"] / 900f;
+
+            if(this.player.name.Contains("vp"))
+            {
+                this.player.rangedCrit = 100;
+            }
 
             this.UpdateChaosBonuses();
 
@@ -551,12 +603,7 @@ namespace VapeRPG
                 this.player.ClearBuff(mod.BuffType<Strengthened>());
             }
 
-            return true;
-        }
-
-        public override void OnHitByNPC(NPC npc, int damage, bool crit)
-        {
-            if(this.energized)
+            if (this.energized)
             {
                 int sparkRange = 10;
                 Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Electricity"), this.player.position);
@@ -564,25 +611,33 @@ namespace VapeRPG
                 {
                     double angle = i * Math.PI / 180;
                     Vector2 sparkTarget = new Vector2(this.player.position.X + sparkRange * (float)Math.Cos(angle), this.player.position.Y + sparkRange * (float)Math.Sin(angle));
-                    Vector2 sparkVelocity = this.player.position - sparkTarget;
+                    Vector2 sparkVelocity = sparkTarget - this.player.position;
 
                     int v = 3;
                     float speedMul = v / sparkVelocity.Length();
                     sparkVelocity.X = speedMul * sparkVelocity.X;
                     sparkVelocity.Y = speedMul * sparkVelocity.Y;
-                    Projectile.NewProjectileDirect(this.player.position, sparkVelocity, mod.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(10 * this.level * 0.05f), 40, this.player.whoAmI);
+                    Projectile spark = Projectile.NewProjectileDirect(this.player.position, sparkVelocity, mod.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(10 * this.level * 0.05f), 40, this.player.whoAmI);
+                    spark.penetrate = 1;
                 }
             }
+
+            return true;
+        }
+
+        public override void OnHitByNPC(NPC npc, int damage, bool crit)
+        {
+
+        }
+
+        public override bool ConsumeAmmo(Item weapon, Item ammo)
+        {
+            return base.ConsumeAmmo(weapon, ammo) || SkillController.ConsumeAmmo(this, weapon, ammo);
         }
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
             SkillController.OnHitNPC(this, null, proj, target, damage, knockback, crit);
-        }
-
-        public override bool ConsumeAmmo(Item weapon, Item ammo)
-        {
-            return SkillController.ConsumeAmmo(this, weapon, ammo);
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)

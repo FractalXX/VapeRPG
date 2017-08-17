@@ -23,6 +23,8 @@ namespace VapeRPG.UI.States
         private UIText pointsText;
         private UIText chaosPointsText;
 
+        private UIImage statHelper;
+
         public static bool visible = false;
 
         private float charPanelWidth;
@@ -67,16 +69,25 @@ namespace VapeRPG.UI.States
             for (int i = 0; i < statControls.Length; i++)
             {
                 this.statControls[i] = new UIStatInfo(VapeRPG.BaseStats[i], this.statPanel.Width.Pixels, 20);
-                this.statControls[i].Top.Set(20 + 1.2f * i * this.statControls[i].Height.Pixels + 5, 0);
+                this.statControls[i].Top.Set(30 + 1.2f * i * this.statControls[i].Height.Pixels + 5, 0);
                 this.statControls[i].TextColor = Color.Yellow;
                 this.statPanel.Append(this.statControls[i]);
             }
 
-            this.pointsText = new UIText("Stat points: 0\nSkill points: 0");
+            this.statHelper = new UIImage(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/HelpButton"));
+            this.statHelper.Width.Set(30, 0);
+            this.statHelper.Height.Set(30, 0);
+            this.statHelper.Left.Set(-30, 1f);
+            this.statHelper.Top.Set(0, 0);
+            this.statHelper.OnMouseOver += (x, y) => StatHelpUIState.visible = true;
+            this.statHelper.OnMouseOut += (x, y) => StatHelpUIState.visible = false;
+
+            this.statPanel.Append(this.statHelper);
+
+            this.pointsText = new UIText("Stat points: 0\nSkill points: 0", 0.8f);
             this.pointsText.Width.Set(this.statPanel.Width.Pixels / 3, 0);
-            this.pointsText.Height.Set(this.statPanel.Height.Pixels / 5, 0);
-            this.pointsText.Left.Set(this.statPanel.Width.Pixels / 2 - this.pointsText.MinWidth.Pixels / 2, 0);
-            this.pointsText.Top.Set(this.statPanel.Height.Pixels * 0.75f, 0);
+            this.pointsText.HAlign = 0.5f;
+            this.pointsText.Top.Set(-this.pointsText.MinHeight.Pixels * 2 - 10, 1f);
             this.statPanel.Append(this.pointsText);
             #endregion
 

@@ -33,12 +33,12 @@ namespace VapeRPG.UI
                     x = 104;
                     y = 198;
                 }
-                else if(name == "Reaver")
+                else if(name == "Static Field")
                 {
                     x = 104;
                     y = 292;
                 }
-                else if(name == "Soul Reaver")
+                else if(name == "High-Voltage Field")
                 {
                     x = 104;
                     y = 396;
@@ -123,23 +123,18 @@ namespace VapeRPG.UI
                     x = 208;
                     y = 94;
                 }
-                else if(name == "Hawk Eye")
+                else if(name == "Titan Grip")
                 {
                     x = 208;
                     y = 198;
                 }
-                else if(name == "Powerful Eye")
+                else if(name == "Hawk Eye")
                 {
                     x = 208;
                     y = 292;
                 }
-                else if(name == "Dead Eye")
-                {
-                    x = 208;
-                    y = 396;
-                }
 
-                else if(name == "Reconsolidation")
+                else if(name == "Ammo Hoarding")
                 {
                     x = 312;
                     y = 198;
@@ -148,11 +143,6 @@ namespace VapeRPG.UI
                 {
                     x = 312;
                     y = 292;
-                }
-                else if(name == "Close Combat Veteran")
-                {
-                    x = 312;
-                    y = 396;
                 }
             }
             if(skillInfo.skill.type == SkillType.General)
