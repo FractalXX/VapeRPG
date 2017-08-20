@@ -48,12 +48,12 @@ namespace VapeRPG
 
         private static Hashtable reforgeBuffer = new Hashtable(); // For storing, then loading the item's properties when it's reforged
 
-        // Stat paris for unique items
+        // Stat pairs for unique items
         private static string[,] uniqueStatPairs =
         {
             {"Strength", "Agility" },
             {"Dexterity", "Agility" },
-            {"Intellect", "Magic Power" }
+            {"Spirit", "Magic Power" }
         };
 
         public override bool InstancePerEntity
@@ -179,10 +179,11 @@ namespace VapeRPG
                 {
                     this.statBonus.Clear();
 
-                    int statMin = (item.rare + 1) * 10;
-                    int statMax = (item.rare + 1) * 15;
+                    int statMin = (item.rare + 1) * 7;
+                    int statMax = (item.rare + 1) * 12;
                     int statPairIndex = rnd.Next(0, uniqueStatPairs.GetLength(0));
 
+                    // Fargo fix
                     if (statMin < 0) statMin *= -1;
                     if (statMax < 0) statMax *= -1;
 
@@ -203,9 +204,10 @@ namespace VapeRPG
                         }
                         while (this.statBonus.ContainsKey(VapeRPG.BaseStats[stat]));
 
-                        int statMin = (item.rare + 1) * 5;
-                        int statMax = (item.rare + 1 + ((int)newQuality - 1)) * 10;
+                        int statMin = (item.rare + 1) * 3;
+                        int statMax = (item.rare + 1 + ((int)newQuality - 1)) * 6;
 
+                        // Fargo fix
                         if (statMin < 0) statMin *= -1;
                         if (statMax < 0) statMax *= -1;
 
@@ -322,7 +324,11 @@ namespace VapeRPG
                 this.quality = (ItemQuality)Enum.Parse(ItemQuality.Common.GetType(), tag.GetString("Quality"));
                 foreach (var x in statBonusTC)
                 {
-                    this.statBonus.Add(x.Key, (int)x.Value);
+                    // Fix for potential error due to removing Intellect from stats
+                    if(x.Key != "Intellect")
+                    {
+                        this.statBonus.Add(x.Key, (int)x.Value);
+                    }
                 }
 
                 if (this.quality == ItemQuality.Unique)
@@ -350,6 +356,9 @@ namespace VapeRPG
         {
             VapePlayer vp = player.GetModPlayer<VapePlayer>();
             this.tooltipVisible = true;
+
+            vp.blockChance += this.blockChance;
+
             if (this.statBonus.Count > 0)
             {
                 foreach (var x in this.statBonus)

@@ -50,17 +50,13 @@ namespace VapeRPG.UI.States
                 {
                     description = "Increases melee speed.\nIncreases dodge chance by a minimal amount.";
                 }
-                else if(stat.Contains("Intellect"))
-                {
-                    description = "Every point increases mana by one.\nYou can't add points past 300 due to game limitations (400 mana max).";
-                }
                 else if(stat.Contains("Vitality"))
                 {
-                    description = "Every point increases life by 2.";
+                    description = "Every point increases life by 2. Every 5th point increases defense by one.";
                 }
                 else if(stat.Contains("Spirit"))
                 {
-                    description = "Increases minion damage.\nEvery 100th point increases max minions by one.";
+                    description = "Increases minion damage.\nEvery 50th point increases max minions by one.";
                 }
 
                 string text = String.Format("{0}: {1}", stat, description);

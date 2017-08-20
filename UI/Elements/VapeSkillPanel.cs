@@ -19,11 +19,11 @@ namespace VapeRPG.UI.Elements
 
         private byte currentTab;
 
-        private static Dictionary<string, SkillType> tabNames = new Dictionary<string, SkillType>()
+        private static Dictionary<string, SkillTree> tabNames = new Dictionary<string, SkillTree>()
         {
-            { "Reaper", SkillType.OnKill },
-            { "Shredder", SkillType.GeneralWeapon },
-            { "Power", SkillType.General }
+            { "Reaper", SkillTree.Reaper },
+            { "Shredder", SkillTree.Shredder },
+            { "Power", SkillTree.Power }
         };
 
         public VapeSkillPanel(float width, float height)

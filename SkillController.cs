@@ -23,12 +23,8 @@ namespace VapeRPG
         {
             if (modPlayer.HasSkill("Warmth"))
             {
-                modPlayer.player.lifeRegen += (int)Math.Ceiling(modPlayer.player.lifeRegen * 0.1f);
-                modPlayer.player.manaRegen += (int)Math.Ceiling(modPlayer.player.manaRegen * 0.1f);
-            }
-            if (modPlayer.HasSkill("Aggro"))
-            {
-                modPlayer.player.aggro += 400;
+                modPlayer.player.lifeRegen += (int)Math.Ceiling(modPlayer.player.lifeRegen * 0.1f * modPlayer.SkillLevels["Warmth"]);
+                modPlayer.player.manaRegen += (int)Math.Ceiling(modPlayer.player.manaRegen * 0.1f * modPlayer.SkillLevels["Warmth"]);
             }
             if (modPlayer.HasSkill("Damage to Defense"))
             {
@@ -69,6 +65,11 @@ namespace VapeRPG
             {
                 damage -= (int)Math.Ceiling(damage * 0.05f * modPlayer.SkillLevels["Hardened Skin"]);
             }
+        }
+
+        public static void ModifyHitByProjectile(VapePlayer modPlayer, Projectile proj, ref int damage, ref bool crit)
+        {
+
         }
 
         public static void ModifyHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit)
@@ -199,7 +200,7 @@ namespace VapeRPG
                             CombatText.NewText(new Rectangle((int)npc.position.X, (int)npc.position.Y - 50, 100, 100), Color.Cyan, amount);
                             if (modPlayer.HasSkill("Spectral Sparks"))
                             {
-                                npc.defense -= (int)Math.Ceiling(npc.defense * 0.05f);
+                                npc.defense -= (int)Math.Ceiling(npc.defense * 0.15f);
                             }
                         }
                     }
@@ -217,12 +218,11 @@ namespace VapeRPG
                     int duration = 600;
                     if(modPlayer.HasSkill("High-Voltage Field"))
                     {
-                        duration *= 3;
+                        duration *= 2;
+                        modPlayer.player.AddBuff(12, duration);
                     }
                     Main.PlaySound(modPlayer.mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/StaticFieldApply"), modPlayer.player.position);
                     modPlayer.player.AddBuff(modPlayer.mod.BuffType<StaticField>(), duration);
-                    modPlayer.player.AddBuff(12, duration);
-                    modPlayer.player.AddBuff(17, duration);
                 }
 
 
@@ -244,9 +244,10 @@ namespace VapeRPG
                 }
             }
             //On Hit
-            if (modPlayer.HasSkill("X-Ray Hits") && rnd.Next(0, 101) <= 10 && target.type != NPCID.TargetDummy)
+            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 1 && target.type != NPCID.TargetDummy && !target.boss && !target.TypeName.ToLower().Contains("pillar") && !target.GivenName.ToLower().Contains("pillar"))
             {
-                modPlayer.player.AddBuff(9, 180);
+                CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
+                target.StrikeNPC(target.lifeMax * 2, 0, 0);
             }
             if ((proj == null ? item.magic : proj.magic) && modPlayer.HasSkill("Bounce") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Bounce"] * 10)
             {
@@ -335,11 +336,6 @@ namespace VapeRPG
             {
                 modPlayer.player.statMana += item.mana;
             }
-        }
-
-        public static bool ConsumeAmmo(VapePlayer modPlayer, Item weapon, Item ammo)
-        {
-            return modPlayer.HasSkill("Ammo Hoarding") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Ammo Hoarding"] * 5f;
         }
     }
 }

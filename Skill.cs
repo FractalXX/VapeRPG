@@ -11,7 +11,7 @@ using VapeRPG.UI.Elements;
 
 namespace VapeRPG
 {
-    enum SkillType { GeneralWeapon, OnKill, General }
+    enum SkillTree { Shredder, Reaper, Power }
 
     class Skill
     {
@@ -24,9 +24,9 @@ namespace VapeRPG
 
         internal List<Skill> Prerequisites { get; private set; }
 
-        public SkillType type;
+        public SkillTree tree;
 
-        public Skill(string name, string description, int maxLevel, SkillType type, Texture2D icon)
+        public Skill(string name, string description, int maxLevel, SkillTree tree, Texture2D icon)
         {
             this.name = name;
             this.description = description;
@@ -35,34 +35,29 @@ namespace VapeRPG
 
             this.Prerequisites = new List<Skill>();
 
-            this.type = type;
+            this.tree = tree;
         }
 
-        public Skill(string name, string description, int maxLevel, SkillType type) : this(name, description, maxLevel, type, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame")) { }
+        public Skill(string name, string description, int maxLevel, SkillTree type) : this(name, description, maxLevel, type, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame")) { }
 
         internal void AddPrerequisites()
         {
-            if (this.name == "Bloodlust" || this.name == "Mana Addict")
+            // Reaper tree
+
+            if (this.name == "Rage" || this.name == "Mana Addict" || this.name == "Static Field")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Excitement"));
+            }
+
+            else if (this.name == "Bloodlust")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Rage"));
             }
             else if (this.name == "Exploding Rage")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Bloodlust"));
             }
-            else if (this.name == "Static Field")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Exploding Rage"));
-            }
-            else if (this.name == "High-Voltage Field")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Static Field"));
-                this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
-            }
-            else if(this.name == "Rage")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Bloodlust"));
-            }
+
             else if (this.name == "Overkill")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Rage"));
@@ -70,6 +65,12 @@ namespace VapeRPG
             else if (this.name == "Fury")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Overkill"));
+            }
+
+            else if (this.name == "High-Voltage Field")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("Static Field"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
             }
 
             else if(this.name == "Magic Sparks")
@@ -85,19 +86,22 @@ namespace VapeRPG
                 this.Prerequisites.Add(VapeRPG.GetSkill("Overkill Charge"));
                 this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
             }
+
             else if(this.name == "Energizing Kills")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Mana Addict"));
             }
 
-            else if(this.name == "Leftover Supply" || this.name == "Confusion" || this.name == "High Five")
+            //Shredder tree
+
+            else if(this.name == "Bounce" || this.name == "Confusion" || this.name == "High Five" || this.name == "Close Combat Specialist" || this.name == "Ammo Hoarding")
             {
-                this.Prerequisites.Add(VapeRPG.GetSkill("X-Ray Hits"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("One Above All"));
             }
             
-            else if(this.name == "Bounce")
+            else if(this.name == "Leftover Supply")
             {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Leftover Supply"));
+                this.Prerequisites.Add(VapeRPG.GetSkill("Bounce"));
             }
             
             else if(this.name == "Confusion Field")
@@ -114,16 +118,9 @@ namespace VapeRPG
                 this.Prerequisites.Add(VapeRPG.GetSkill("Titan Grip"));
             }
 
-            else if(this.name == "Ammo Hoarding")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("High Five"));
-            }
-            else if (this.name == "Close Combat Specialist")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Ammo Hoarding"));
-            }
+            // Power
 
-            else if(this.name == "Kickstart" || this.name == "Aggro" || this.name == "Longer Flight")
+            else if(this.name == "Kickstart" || this.name == "Aggro" || this.name == "Longer Flight" || this.name == "Reflection" || this.name == "Damage to Defense")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Warmth"));
             }
@@ -135,11 +132,6 @@ namespace VapeRPG
             else if (this.name == "First Touch")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Execution"));
-            }
-
-            else if (this.name == "Reflection" || this.name == "Damage to Defense")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Aggro"));
             }
 
             else if (this.name == "Strengthen")

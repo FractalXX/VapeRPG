@@ -95,7 +95,6 @@ namespace VapeRPG.UI.Elements
                     onMouseDown = (x, y) =>
                     {
                         VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-                        if (this.stat.Contains("Intellect") && vp.BaseStats["Intellect"] >= 300) return;
                         if (vp.statPoints > 0)
                         {
                             vp.BaseStats[this.stat]++;
@@ -107,7 +106,6 @@ namespace VapeRPG.UI.Elements
                 this.button.OnClick += onMouseDown;
 
                 this.Append(this.button);
-                this.Append(this.statText);
             }
 
             if (!this.isMinorStat)
@@ -119,6 +117,8 @@ namespace VapeRPG.UI.Elements
 
                 this.Append(this.bonusText);
             }
+
+            this.Append(this.statText);
         }
 
         public override void Update(GameTime gameTime)

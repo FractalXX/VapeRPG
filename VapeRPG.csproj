@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Buffs\Energized.cs" />
+    <Compile Include="Buffs\FieldSickness.cs" />
     <Compile Include="Buffs\FullyEnergized.cs" />
     <Compile Include="Buffs\HighFive.cs" />
     <Compile Include="Buffs\Rage.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="Sounds\Custom\Electricity.cs" />
     <Compile Include="Sounds\Custom\Energized.cs" />
     <Compile Include="Sounds\Custom\StaticFieldApply.cs" />
-    <Compile Include="Sounds\UI\ButtonPress.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
     <Compile Include="UI\Elements\UISkillTooltip.cs" />
     <Compile Include="UI\Elements\UISkillTreeBranch.cs" />
@@ -99,8 +99,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Projectiles\ElectricSpark.png" />
-    <Content Include="Sounds\Custom\Electricity.wav" />
-    <Content Include="Sounds\UI\ButtonPress.mp3" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Projectiles\MagicSpark.psd" />

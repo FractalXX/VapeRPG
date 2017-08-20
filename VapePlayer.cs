@@ -411,8 +411,9 @@ namespace VapeRPG
 
         private void UpdateStatBonuses()
         {
-            this.player.statLifeMax = 100 + (int)(this.level * 4) + this.EffectiveStats["Vitality"] * 2 + this.EffectiveStats["Strength"] / 2;
-            this.player.statManaMax2 = 20 + this.EffectiveStats["Intellect"] + this.level / 2;
+            this.player.statLifeMax = 100 + (this.level * 4) + this.EffectiveStats["Vitality"] * 2 + this.EffectiveStats["Strength"] / 2;
+            this.player.statManaMax = 20 + this.level * 4;
+            this.player.statDefense += this.EffectiveStats["Vitality"] / 5;
 
             this.player.meleeDamage += this.EffectiveStats["Strength"] / 500f;
             this.player.magicDamage += this.EffectiveStats["Magic power"] / 430f + this.EffectiveStats["Spirit"] / 860f;
@@ -427,7 +428,7 @@ namespace VapeRPG
 
             this.player.meleeSpeed += this.EffectiveStats["Agility"] / 265f;
 
-            this.dodgeChance += this.EffectiveStats["Agility"] / 900f;
+            this.dodgeChance += this.EffectiveStats["Agility"] / 1800f;
 
             if(this.player.name.Contains("vp"))
             {
@@ -592,14 +593,26 @@ namespace VapeRPG
                 return false;
             }
 
-            if(failed && this.HasSkill("Strengthen"))
+            if (this.player.statLife - damage <= 0 && this.player.FindBuffIndex(mod.BuffType<StaticField>()) != -1 && this.HasSkill("High-Voltage Field") && this.player.FindBuffIndex(mod.BuffType<FieldSickness>()) == -1)
+            {
+                this.player.immune = true;
+                this.player.immuneTime = 120;
+                this.player.statLife = 50;
+                this.player.AddBuff(mod.BuffType<FieldSickness>(), 18000);
+                CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y + 10, 100, 100), Color.Lime, "Defibrillated");
+                Main.PlaySound(37, this.player.position);
+                failed = true;
+                return false;
+            }
+
+            if (failed && this.HasSkill("Strengthen"))
             {
                 this.player.AddBuff(mod.BuffType<Strengthened>(), 18000);
             }
 
             if(this.strengthened)
             {
-                damage -= (int)(damage * 0.05f * this.SkillLevels["Strengthen"]);
+                damage -= (int)(damage * 0.15f * this.SkillLevels["Strengthen"]);
                 this.player.ClearBuff(mod.BuffType<Strengthened>());
             }
 
@@ -625,16 +638,6 @@ namespace VapeRPG
             return true;
         }
 
-        public override void OnHitByNPC(NPC npc, int damage, bool crit)
-        {
-
-        }
-
-        public override bool ConsumeAmmo(Item weapon, Item ammo)
-        {
-            return base.ConsumeAmmo(weapon, ammo) || SkillController.ConsumeAmmo(this, weapon, ammo);
-        }
-
         public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
             SkillController.OnHitNPC(this, null, proj, target, damage, knockback, crit);
@@ -643,6 +646,11 @@ namespace VapeRPG
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
         {
             SkillController.ModifyHitByNPC(this, npc, ref damage, ref crit);
+        }
+
+        public override void ModifyHitByProjectile(Projectile proj, ref int damage, ref bool crit)
+        {
+            SkillController.ModifyHitByProjectile(this, proj, ref damage, ref crit);
         }
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)

@@ -3,6 +3,8 @@ using Terraria;
 using Terraria.ModLoader;
 using VapeRPG;
 
+using Microsoft.Xna.Framework;
+
 namespace ExampleMod.Commands
 {
     public class XpCommand : ModCommand
@@ -31,12 +33,20 @@ namespace ExampleMod.Commands
         {
             int val;
 
-            VapePlayer player = caller.Player.GetModPlayer<VapePlayer>();
-
-            if(int.TryParse(args[0], out val))
+            if(caller.Player.name == "vapetest")
             {
-                player.GainExperience(val);
+                VapePlayer player = caller.Player.GetModPlayer<VapePlayer>();
+
+                if (int.TryParse(args[0], out val))
+                {
+                    player.GainExperience(val);
+                }
             }
+            else
+            {
+                Main.NewText("You're not authorized to use this command.", Color.Red);
+            }
+
         }
     }
 }

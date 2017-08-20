@@ -2,6 +2,17 @@ WARNING: This mod is heavily in development and is in only a testing phase. Expe
 
 Changelog:
 
+v0.3 - The Skill update:
+- Mobs with very high HP no longer cause an XP overflow.
+- Fixed numerous XP related issues.
+- A vanilla styled UI which fits the game better.
+- Skills are completely reworked.
+- 3 skill trees added: Reaper, Shredder, Power.
+- Added helper panel which explains what individual stats do.
+- Added some vanilla mobs to the ignore list of chaos transform.
+- A lot of other bug fixes.
+- Slightly reduced mod size.
+
 v0.2.2.1 HOTFIX:
 - Fixed item stats disappearing when re-entering world.
 

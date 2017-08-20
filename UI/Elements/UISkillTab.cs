@@ -16,9 +16,9 @@ namespace VapeRPG.UI.Elements
 
         private UISkillTooltip tooltip;
 
-        private SkillType skillTypes;
+        private SkillTree skillTypes;
 
-        public UISkillTab(string name, SkillType skillTypes)
+        public UISkillTab(string name, SkillTree skillTypes)
         {
             this.name = name;
             this.skillTypes = skillTypes;
@@ -32,7 +32,7 @@ namespace VapeRPG.UI.Elements
 
         public void InitializeSkillInfos()
         {
-            foreach (Skill skill in VapeRPG.Skills.FindAll(x => x.type == this.skillTypes))
+            foreach (Skill skill in VapeRPG.Skills.FindAll(x => x.tree == this.skillTypes))
             {
                 UISkillInfo usi = new UISkillInfo(skill);
                 this.AddSkillInfo(usi);
