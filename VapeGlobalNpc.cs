@@ -9,6 +9,8 @@ using Terraria.Localization;
 using Terraria.ModLoader.IO;
 using Microsoft.Xna.Framework;
 
+using VapeRPG.Items;
+
 namespace VapeRPG
 {
     class VapeGlobalNpc : GlobalNPC
@@ -313,6 +315,16 @@ namespace VapeRPG
             {
                 npc.GivenName = String.Format("Chaos {0}", npc.TypeName);
             }
+        }
+
+        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        {
+            if(type == NPCID.Merchant)
+            {
+                shop.item[nextSlot].SetDefaults(mod.ItemType<VapersGlobe>());
+                nextSlot++;
+            }
+            base.SetupShop(type, shop, ref nextSlot);
         }
 
         private static bool IsIgnoredType(NPC npc)

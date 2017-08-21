@@ -56,7 +56,7 @@ namespace VapeRPG.UI.States
                 }
                 else if(stat.Contains("Spirit"))
                 {
-                    description = "Increases minion damage.\nEvery 50th point increases max minions by one.";
+                    description = "Increases minion damage. Increases magic damage by a minimal amount.\nEvery 50th point increases max minions by one.";
                 }
 
                 string text = String.Format("{0}: {1}", stat, description);

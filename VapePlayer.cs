@@ -112,39 +112,7 @@ namespace VapeRPG
 
             if (this.level > 0)
             {
-                // Getting sub compounds
-                TagCompound stats = tag.GetCompound("BaseStats");
-                TagCompound skillLevels = tag.GetCompound("SkillLevels");
-                TagCompound chaosBonuses = tag.GetCompound("ChaosBonuses");
-
-                // Unboxing values into the proper dictionary
-                foreach (var stat in stats)
-                {
-                    this.BaseStats[stat.Key] = (int)stat.Value;
-                }
-
-                foreach (var skillLevel in skillLevels)
-                {
-                    this.SkillLevels[skillLevel.Key] = (int)skillLevel.Value;
-                }
-
-                foreach (var chaosBonus in chaosBonuses)
-                {
-                    this.ChaosBonuses[chaosBonus.Key] = (float)chaosBonus.Value;
-                }
-
-                this.chaosRank = tag.GetAsInt("ChaosRank");
-                this.chaosXp = tag.GetAsLong("ChaosXp");
-
-                this.statPoints = tag.GetAsInt("StatPoints");
-                this.skillPoints = tag.GetAsInt("SkillPoints");
-                this.chaosPoints = tag.GetAsInt("ChaosPoints");
-
-                this.xp = tag.GetAsLong("Xp");
-                Vector2 expUIPos = tag.Get<Vector2>("expUIPos");
-
-                VapeRPG vapeMod = (this.mod as VapeRPG);
-                vapeMod.ExpUI.SetPanelPosition(expUIPos);
+                SaveVersionHandler.Load(this, tag);
             }
             // If it doesn't, create a new player
             else
@@ -359,7 +327,7 @@ namespace VapeRPG
                 if (CharUIState.visible)
                 {
                     vapeMod.CharUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints, this.skillPoints);
-                    vapeMod.CharUI.UpdateBonusPanel(this.chaosPoints, player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.moveSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
+                    vapeMod.CharUI.UpdateBonusPanel(this.chaosPoints, player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.maxRunSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
                 }
             }
         }
@@ -411,7 +379,7 @@ namespace VapeRPG
 
         private void UpdateStatBonuses()
         {
-            this.player.statLifeMax = 100 + (this.level * 4) + this.EffectiveStats["Vitality"] * 2 + this.EffectiveStats["Strength"] / 2;
+            this.player.statLifeMax = 100 + (this.level * 5) + this.EffectiveStats["Vitality"] * 2 + this.EffectiveStats["Strength"] / 2;
             this.player.statManaMax = 20 + this.level * 4;
             this.player.statDefense += this.EffectiveStats["Vitality"] / 5;
 
@@ -454,7 +422,7 @@ namespace VapeRPG
             this.player.maxMinions += (int)this.ChaosBonuses["Max Minions"];
 
             this.player.meleeSpeed += this.ChaosBonuses["Melee Speed"];
-            this.player.moveSpeed += this.ChaosBonuses["Movement Speed"];
+            this.player.maxRunSpeed += this.ChaosBonuses["Max Run Speed"] * 3;
             this.dodgeChance += this.ChaosBonuses["Dodge Chance"];
         }
 

@@ -187,9 +187,9 @@ namespace VapeRPG.UI.States
                     usi.statValue = meleeSpeed * 100;
                     usi.TextColor = Color.Red;
                 }
-                if (usi.stat.Contains("Movement Speed"))
+                if (usi.stat.Contains("Max Run Speed"))
                 {
-                    usi.statValue = moveSpeed * 100;
+                    usi.statValue = moveSpeed;
                     usi.TextColor = Color.LimeGreen;
                 }
                 if (usi.stat.Contains("Dodge Chance"))

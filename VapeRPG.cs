@@ -55,7 +55,7 @@ namespace VapeRPG
             "Magic Crit",
             "Minion Damage",
             "Max Minions",
-            "Movement Speed",
+            "Max Run Speed",
             "Dodge Chance",
             "Block Chance"
         };

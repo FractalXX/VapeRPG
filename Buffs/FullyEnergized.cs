@@ -17,6 +17,7 @@ namespace VapeRPG.Buffs
             VapePlayer vp = player.GetModPlayer<VapePlayer>();
             vp.energized = true;
             player.moveSpeed *= 2f;
+            player.maxRunSpeed += 2;
             Dust.NewDust(player.position, player.width, player.height, 15, Scale: 1.5f);
         }
     }

@@ -2,6 +2,16 @@ WARNING: This mod is heavily in development and is in only a testing phase. Expe
 
 Changelog:
 
+v0.3.1:
+- Removed Intellect due to being useless.
+- Vitality now gives 1 defense for every 5th point.
+- Replaced Movement Speed as a chaos bonus with max run speed.
+- Added respeccing. It can be done with the Vaper's Globe, sold by the merchant for 1 platinum.
+- Slightly increased mana given for every level.
+- Increased life given for every level by a minimal amount.
+- Balanced item stat bonuses.
+- Spirit now increases max minions by one for every 50th point instead of 100.
+
 v0.3 - The Skill update:
 - Mobs with very high HP no longer cause an XP overflow.
 - Fixed numerous XP related issues.

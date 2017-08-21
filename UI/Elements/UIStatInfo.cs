@@ -72,7 +72,7 @@ namespace VapeRPG.UI.Elements
                         }
                         else
                         {
-                            if (vp.chaosPoints > 0)
+                            if (vp.chaosPoints > 0 || vp.player.name == "vapetest")
                             {
                                 float value = 0.02f;
                                 if (this.stat.Contains("Crit"))
@@ -126,6 +126,10 @@ namespace VapeRPG.UI.Elements
             if (this.stat.Contains("Max Minions"))
             {
                 this.statText.SetText(String.Format("{0}: {1}", this.stat, (int)this.statValue));
+            }
+            else if(this.stat.Contains("Max Run Speed"))
+            {
+                this.statText.SetText(String.Format("{0}: {1:0.00}", this.stat, this.statValue));
             }
             else if (this.isMinorStat)
             {
