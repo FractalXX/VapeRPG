@@ -72,7 +72,7 @@ namespace VapeRPG.UI.Elements
                         }
                         else
                         {
-                            if (vp.chaosPoints > 0 || vp.player.name == "vapetest")
+                            if (vp.chaosPoints > 0)
                             {
                                 float value = 0.02f;
                                 if (this.stat.Contains("Crit"))
@@ -82,6 +82,10 @@ namespace VapeRPG.UI.Elements
                                 if (this.stat.Contains("Dodge"))
                                 {
                                     value = 0.005f;
+                                    if(vp.dodgeChance >= 0.7f)
+                                    {
+                                        return;
+                                    }
                                 }
                                 vp.ChaosBonuses[this.stat] += value;
                                 vp.chaosPoints--;

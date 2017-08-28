@@ -51,8 +51,8 @@ namespace VapeRPG
         // Stat pairs for unique items
         private static string[,] uniqueStatPairs =
         {
-            {"Strength", "Agility" },
-            {"Dexterity", "Agility" },
+            {"Strength", "Haste" },
+            {"Dexterity", "Haste" },
             {"Spirit", "Magic Power" }
         };
 
@@ -179,8 +179,8 @@ namespace VapeRPG
                 {
                     this.statBonus.Clear();
 
-                    int statMin = (item.rare + 1) * 7;
-                    int statMax = (item.rare + 1) * 12;
+                    int statMin = (item.rare + 1) * 4;
+                    int statMax = (item.rare + 1) * 8;
                     int statPairIndex = rnd.Next(0, uniqueStatPairs.GetLength(0));
 
                     // Fargo fix

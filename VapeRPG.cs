@@ -39,7 +39,7 @@ namespace VapeRPG
             "Strength",
             "Magic power",
             "Dexterity",
-            "Agility",
+            "Haste",
             "Vitality",
             "Spirit"
         };
@@ -120,7 +120,7 @@ namespace VapeRPG
                 new Skill("Spectral Sparks", "Magic sparks also reduce the defense of enemies by 15%.", 1, SkillTree.Reaper, GetSkillFrame("SpectralSparks")),
 
                 //Shredder Tree
-                new Skill("One Above All", "You have 1% chance to one hit kill any non-boss, non-pillar enemies.", 1, SkillTree.Shredder, GetSkillFrame("OneAboveAll")),
+                new Skill("One Above All", "You have 3% chance to one hit kill any non-boss, non-pillar enemies.", 1, SkillTree.Shredder, GetSkillFrame("OneAboveAll")),
 
                 new Skill("Bounce", "Magic hits have a chance (10%/level) to spawn a spark that bounces to another enemy. The spark's damage is 10%/20%/30% of the original damage.", 3, SkillTree.Shredder, GetSkillFrame("Bounce")),
                 new Skill("Leftover Supply", "Magic weapons have a chance to not consume mana. (4%/level)", 2, SkillTree.Shredder, GetSkillFrame("LeftoverSupply")),
@@ -137,9 +137,9 @@ namespace VapeRPG
                 //Power Tree
                 new Skill("Warmth", "Increases your HP/MP regen by 10%/level.", 2, SkillTree.Power, GetSkillFrame("Warmth")),
 
-                new Skill("Kickstart", "Your critical chance increases by 5%/10% against enemies above 70% health.", 2, SkillTree.Power, GetSkillFrame("Kickstart")),
-                new Skill("Execution", "If your enemy is under 20% health you can't crit them but you deal 20%/30%/40% increased damage to them.", 3, SkillTree.Power, GetSkillFrame("Execution")),
                 new Skill("First Touch", "If your enemy is at its max health, your first hit (minions included) instantly damages it for 10% of their health.", 1, SkillTree.Power, GetSkillFrame("FirstTouch")),
+                new Skill("Kickstart", "Your critical chance increases by 5%/10% against enemies above 70% health.", 2, SkillTree.Power, GetSkillFrame("Kickstart")),
+                new Skill("Execution", "If your enemy is under 20% health you deal increased damage (10%/level) to them.", 3, SkillTree.Power, GetSkillFrame("Execution")),
 
                 new Skill("Reflection", "You reflect 10%/20% of melee damage done by your enemy.", 2, SkillTree.Power, GetSkillFrame("Reflection")),
                 new Skill("Strengthen", "After a dodge or block, the next time you take damage, the amount is reduced by 15%/level.", 2, SkillTree.Power, GetSkillFrame("Strengthen")),

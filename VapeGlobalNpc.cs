@@ -195,7 +195,7 @@ namespace VapeRPG
             }
             if (npc.type == NPCID.Retinazer || npc.type == NPCID.TheDestroyer || npc.type == NPCID.SkeletronPrime)
             {
-                chance = rnd.Next(0, 3);
+                chance = rnd.Next(0, 5);
 
                 if (chance == 0)
                 {

@@ -23,8 +23,8 @@ namespace VapeRPG.UI.States
             this.statHelpTexts = new UIText[VapeRPG.BaseStats.Length];
 
             this.helpPanel = new UIPanel();
-            this.helpPanel.Width.Set(600, 0);
-            this.helpPanel.Height.Set(500, 0);
+            this.helpPanel.Width.Set(700, 0);
+            this.helpPanel.Height.Set(600, 0);
             this.helpPanel.HAlign = 0.5f;
             this.helpPanel.VAlign = 0.5f;
             this.helpPanel.BackgroundColor = new Color(60, 78, 143);
@@ -46,9 +46,9 @@ namespace VapeRPG.UI.States
                 {
                     description = "Increases ranged damage and ranged crit.";
                 }
-                else if(stat.Contains("Agility"))
+                else if(stat.Contains("Haste"))
                 {
-                    description = "Increases melee speed.\nIncreases dodge chance by a minimal amount.";
+                    description = "Increases melee speed. Increases movement speed by a minimal amount.\nIncreases dodge chance by a minimal amount.";
                 }
                 else if(stat.Contains("Vitality"))
                 {

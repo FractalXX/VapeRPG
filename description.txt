@@ -1,6 +1,24 @@
 WARNING: This mod is heavily in development and is in only a testing phase. Expect updates/changes very often.
 
 Changelog:
+v0.3.2.1:
+- Fixed Execution.
+
+v0.3.2:
+- Capped dodge chance at 70%.
+- Players now start with 1% crit.
+- Rebalanced starting stats.
+- Vitality now only gives defense every 10th point.
+- Reordered some branches on the skill tree.
+- One Above All now has 3% chance of occuring.
+- Execution now allows crits but deals 10%/level damage instead.
+- Balanced item stat bonuses (mainly unique).
+- Renamed agility to haste.
+- Haste (agility) now gives a minor increase in movement speed.
+- Haste (agility) now gives less melee speed.
+
+v0.3.1.1:
+- Mechanical bosses now properly drop every piece of the unique hallowed set.
 
 v0.3.1:
 - Removed Intellect due to being useless.

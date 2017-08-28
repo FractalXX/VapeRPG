@@ -30,6 +30,11 @@ namespace VapeRPG
                     modPlayer.statPoints += (int)stat.Value;
                     continue;
                 }
+                // Agility was renamed to Haste in v0.3.1
+                else if(key == "Agility")
+                {
+                    key = "Haste";
+                }
                 modPlayer.BaseStats[key] = (int)stat.Value;
             }
 

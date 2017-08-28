@@ -34,8 +34,6 @@ namespace VapeRPG
         public int skillPoints;
         public int chaosPoints;
 
-        public int statLifeMax3;
-
         public float dodgeChance;
         public float blockChance;
 
@@ -337,12 +335,17 @@ namespace VapeRPG
             this.dodgeChance = 0;
             this.blockChance = 0;
 
-            this.player.meleeDamage = 0.6f;
-            this.player.magicDamage = 0.65f;
-            this.player.rangedDamage = 0.625f;
-            this.player.minionDamage = 0.8f;
+            this.player.meleeDamage = 0.55f;
+            this.player.magicDamage = 0.6f;
+            this.player.rangedDamage = 0.575f;
+            this.player.minionDamage = 0.6f;
+            this.player.thrownDamage = 0.575f;
+            this.player.meleeSpeed = 0.8f;
 
-            this.statLifeMax3 = 0;
+            this.player.meleeCrit = 1;
+            this.player.magicCrit = 1;
+            this.player.rangedCrit = 1;
+            this.player.thrownCrit = 1;
 
             this.rageBuff = false;
             this.energized = false;
@@ -381,7 +384,7 @@ namespace VapeRPG
         {
             this.player.statLifeMax = 100 + (this.level * 5) + this.EffectiveStats["Vitality"] * 2 + this.EffectiveStats["Strength"] / 2;
             this.player.statManaMax = 20 + this.level * 4;
-            this.player.statDefense += this.EffectiveStats["Vitality"] / 5;
+            this.player.statDefense += this.EffectiveStats["Vitality"] / 10;
 
             this.player.meleeDamage += this.EffectiveStats["Strength"] / 500f;
             this.player.magicDamage += this.EffectiveStats["Magic power"] / 430f + this.EffectiveStats["Spirit"] / 860f;
@@ -394,14 +397,10 @@ namespace VapeRPG
             this.player.minionDamage += this.EffectiveStats["Spirit"] / 400f;
             this.player.maxMinions += this.EffectiveStats["Spirit"] / 100;
 
-            this.player.meleeSpeed += this.EffectiveStats["Agility"] / 265f;
+            this.player.meleeSpeed += this.EffectiveStats["Haste"] / 900f;
+            this.player.moveSpeed += this.EffectiveStats["Haste"] / 1800f;
 
-            this.dodgeChance += this.EffectiveStats["Agility"] / 1800f;
-
-            if(this.player.name.Contains("vp"))
-            {
-                this.player.rangedCrit = 100;
-            }
+            this.dodgeChance += this.EffectiveStats["Haste"] / 1800f;
 
             this.UpdateChaosBonuses();
 
@@ -424,6 +423,10 @@ namespace VapeRPG
             this.player.meleeSpeed += this.ChaosBonuses["Melee Speed"];
             this.player.maxRunSpeed += this.ChaosBonuses["Max Run Speed"] * 3;
             this.dodgeChance += this.ChaosBonuses["Dodge Chance"];
+            if (this.dodgeChance > 0.7)
+            {
+                this.dodgeChance = 0.7f;
+            }
         }
 
         public override void PostUpdateEquips()

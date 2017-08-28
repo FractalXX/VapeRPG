@@ -152,17 +152,17 @@ namespace VapeRPG.UI
                     y = 10;
                 }
 
-                else if(name == "Kickstart")
+                else if (name == "First Touch")
                 {
                     x = 222;
                     y = 94;
                 }
-                else if(name == "Execution")
+                else if(name == "Kickstart")
                 {
                     x = 222;
                     y = 198;
                 }
-                else if(name == "First Touch")
+                else if(name == "Execution")
                 {
                     x = 222;
                     y = 292;

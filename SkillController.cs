@@ -110,8 +110,7 @@ namespace VapeRPG
 
             if (modPlayer.HasSkill("Execution") && target.life <= target.lifeMax * 0.2f)
             {
-                crit = false;
-                damage += (int)Math.Ceiling(damage * (0.1f + 0.1f * modPlayer.SkillLevels["Execution"]));
+                damage += (int)Math.Ceiling(damage * 0.1f * modPlayer.SkillLevels["Execution"]);
             }
             if (modPlayer.HasSkill("First Touch") && target.life == target.lifeMax)
             {
@@ -244,7 +243,7 @@ namespace VapeRPG
                 }
             }
             //On Hit
-            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 1 && target.type != NPCID.TargetDummy && !target.boss && !target.TypeName.ToLower().Contains("pillar") && !target.GivenName.ToLower().Contains("pillar"))
+            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 3 && target.type != NPCID.TargetDummy && !target.boss && !target.TypeName.ToLower().Contains("pillar") && !target.GivenName.ToLower().Contains("pillar"))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
                 target.StrikeNPC(target.lifeMax * 2, 0, 0);

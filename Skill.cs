@@ -120,18 +120,18 @@ namespace VapeRPG
 
             // Power
 
-            else if(this.name == "Kickstart" || this.name == "Aggro" || this.name == "Longer Flight" || this.name == "Reflection" || this.name == "Damage to Defense")
+            else if(this.name == "First Touch" || this.name == "Aggro" || this.name == "Longer Flight" || this.name == "Reflection" || this.name == "Damage to Defense")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Warmth"));
             }
 
-            else if(this.name == "Execution")
+            else if(this.name == "Kickstart")
+            {
+                this.Prerequisites.Add(VapeRPG.GetSkill("First Touch"));
+            }
+            else if (this.name == "Execution")
             {
                 this.Prerequisites.Add(VapeRPG.GetSkill("Kickstart"));
-            }
-            else if (this.name == "First Touch")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Execution"));
             }
 
             else if (this.name == "Strengthen")
