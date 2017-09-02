@@ -395,7 +395,7 @@ namespace VapeRPG
             this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / 8.5f);
 
             this.player.minionDamage += this.EffectiveStats["Spirit"] / 400f;
-            this.player.maxMinions += this.EffectiveStats["Spirit"] / 100;
+            this.player.maxMinions += this.EffectiveStats["Spirit"] / 50;
 
             this.player.meleeSpeed += this.EffectiveStats["Haste"] / 900f;
             this.player.moveSpeed += this.EffectiveStats["Haste"] / 1800f;
