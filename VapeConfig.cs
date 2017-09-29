@@ -9,6 +9,9 @@ namespace VapeRPG
     public static class VapeConfig
     {
         public static bool UIEnabled = true;
+        public static int ChaosChance = 5;
+        public static int MaxMinionPerSpirit = 50;
+        public static int MaxTurretPerSpirit = 100;
 
         static string ConfigPath = Path.Combine(Main.SavePath, "Mod Configs", "VapeRPG.json");
 
@@ -32,6 +35,9 @@ namespace VapeRPG
             if (Configuration.Load())
             {
                 Configuration.Get("EnableUI", ref UIEnabled);
+                Configuration.Get("ChaosChance", ref ChaosChance);
+                Configuration.Get("MaxMinionPerSpirit", ref MaxMinionPerSpirit);
+                Configuration.Get("MaxTurretPerSpirit", ref MaxTurretPerSpirit);
                 return true;
             }
             return false;
@@ -42,6 +48,9 @@ namespace VapeRPG
         {
             Configuration.Clear();
             Configuration.Put("EnableUI", UIEnabled);
+            Configuration.Put("ChaosChance", ChaosChance);
+            Configuration.Put("MaxMinionPerSpirit", MaxMinionPerSpirit);
+            Configuration.Put("MaxTurretPerSpirit", MaxTurretPerSpirit);
             Configuration.Save();
         }
     }
