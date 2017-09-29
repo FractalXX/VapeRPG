@@ -180,9 +180,11 @@ namespace VapeRPG
             long xp = this.xp;
             long chaosXp = this.chaosXp;
 
+            VapeRPG vapeMod = this.mod as VapeRPG;
+
             if (chaos)
             {
-                if (this.chaosXp < (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
+                if (this.chaosXp < vapeMod.XpNeededForChaosRank[VapeRPG.MaxLevel])
                 {
                     CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 50, 50), Color.DeepPink, String.Format("+{0} Chaos XP", value));
                     this.chaosXp += value;
@@ -190,7 +192,7 @@ namespace VapeRPG
             }
             else
             {
-                if (this.xp < (this.mod as VapeRPG).XpNeededForLevel[VapeRPG.MaxLevel])
+                if (this.xp < vapeMod.XpNeededForLevel[VapeRPG.MaxLevel])
                 {
                     // Fancy text above the player
                     CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
@@ -198,13 +200,14 @@ namespace VapeRPG
                 }
             }
 
-            if (this.xp < 0 || this.xp > (this.mod as VapeRPG).XpNeededForLevel[VapeRPG.MaxLevel])
+            // For debugging
+            if (this.xp < 0 || this.xp > vapeMod.XpNeededForLevel[VapeRPG.MaxLevel])
             {
                 this.xp = xp;
                 Main.NewText("[Vape RPG Warning]: Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
                 Main.NewText("[Vape RPG Warning]: Please report this bug with details in the mod's topic on the Terraria forums.", Color.Red);
             }
-            if (this.chaosXp < 0 || this.chaosXp > (this.mod as VapeRPG).XpNeededForChaosRank[VapeRPG.MaxLevel])
+            if (this.chaosXp < 0 || this.chaosXp > vapeMod.XpNeededForChaosRank[VapeRPG.MaxLevel])
             {
                 this.chaosXp = chaosXp;
                 Main.NewText("[Vape RPG Warning]: Chaos Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
