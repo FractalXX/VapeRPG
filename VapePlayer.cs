@@ -398,7 +398,8 @@ namespace VapeRPG
             this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / 8.5f);
 
             this.player.minionDamage += this.EffectiveStats["Spirit"] / 400f;
-            this.player.maxMinions += this.EffectiveStats["Spirit"] / 100;
+            this.player.maxMinions += this.EffectiveStats["Spirit"] / VapeConfig.MaxMinionPerSpirit;
+            this.player.maxTurrets += this.EffectiveStats["Spirit"] / VapeConfig.MaxTurretPerSpirit;
 
             this.player.meleeSpeed += this.EffectiveStats["Haste"] / 900f;
             this.player.moveSpeed += this.EffectiveStats["Haste"] / 1800f;
@@ -422,6 +423,7 @@ namespace VapeRPG
 
             this.player.minionDamage += this.ChaosBonuses["Minion Damage"];
             this.player.maxMinions += (int)this.ChaosBonuses["Max Minions"];
+            this.player.maxTurrets += (int)Math.Floor(this.ChaosBonuses["Max Minions"] / 2);
 
             this.player.meleeSpeed += this.ChaosBonuses["Melee Speed"];
             this.player.maxRunSpeed += this.ChaosBonuses["Max Run Speed"] * 3;

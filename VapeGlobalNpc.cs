@@ -17,8 +17,6 @@ namespace VapeRPG
     {
         private const int expGainDistance = 3000; // The maximum distance at which players gain experience from mob kills
 
-        private static int chaosChance = 5; // Percent chance of a mob becoming a chaos mob
-
         /// <summary>
         /// Returns true if the mob is a chaos mob.
         /// </summary>
@@ -49,7 +47,7 @@ namespace VapeRPG
             // Fix for incompatibility with other mods such as Calamity, etc.
             if (npc != null && Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
             {
-                if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= chaosChance)
+                if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= VapeConfig.ChaosChance)
                 {
                     ChaosTransform(npc);
                 }
