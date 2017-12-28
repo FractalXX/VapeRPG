@@ -19,7 +19,21 @@ Current features:
 
 I repeat, the mod is highly volatile in Multiplayer. Don't expect tech support if you encounter any bugs with it. However, if you have time for testing MP, go ahead. You may report bugs here and when I have time, I'll try to fix it.
 
+Many things are tweakable via the config files. Please refer to the mod's thread for documentation.
+
 Changelog:
+v0.3.2.4:
+Config extension
+- Refactored config files
+- Added a lot of options
+- Added icon
+
+v0.3.2.3:
+Tweaks by Hugo the Dwarf:
+- 1 minion slot is awarded for every 50 points of Spirit.
+- 1 turret slot for every 100 points.
+- Moved some stuff to config file
+
 v0.3.2.2:
 - Updated to tModLoader v0.10.1
 

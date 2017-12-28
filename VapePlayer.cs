@@ -56,7 +56,7 @@ namespace VapeRPG
 
         static VapePlayer()
         {
-            statPointsPerLevel = 5;
+            statPointsPerLevel = VapeConfig.StatPointsPerLevel;
             rnd = new Random();
         }
 
@@ -196,7 +196,7 @@ namespace VapeRPG
                 {
                     // Fancy text above the player
                     CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
-                    this.xp += (long)value;
+                    this.xp += (long)(value * VapeConfig.GlobalXpMultiplier);
                 }
             }
 
@@ -335,20 +335,20 @@ namespace VapeRPG
 
         public override void ResetEffects()
         {
-            this.dodgeChance = 0;
+            this.player.meleeDamage = VapeConfig.DefMeleeDamage;
+            this.player.magicDamage = VapeConfig.DefMagicDamage;
+            this.player.rangedDamage = VapeConfig.DefRangedDamage;
+            this.player.minionDamage = VapeConfig.DefMinionDamage;
+            this.player.thrownDamage = VapeConfig.DefThrownDamage;
+
+            this.player.meleeCrit = VapeConfig.DefMeleeCrit;
+            this.player.magicCrit = VapeConfig.DefMagicCrit;
+            this.player.rangedCrit = VapeConfig.DefRangedCrit;
+            this.player.thrownCrit = VapeConfig.DefThrownCrit;
+
+            this.player.meleeSpeed = VapeConfig.DefMeleeSpeed;
+            this.dodgeChance = VapeConfig.DefDodge;
             this.blockChance = 0;
-
-            this.player.meleeDamage = 0.55f;
-            this.player.magicDamage = 0.6f;
-            this.player.rangedDamage = 0.575f;
-            this.player.minionDamage = 0.6f;
-            this.player.thrownDamage = 0.575f;
-            this.player.meleeSpeed = 0.8f;
-
-            this.player.meleeCrit = 1;
-            this.player.magicCrit = 1;
-            this.player.rangedCrit = 1;
-            this.player.thrownCrit = 1;
 
             this.rageBuff = false;
             this.energized = false;
@@ -385,26 +385,26 @@ namespace VapeRPG
 
         private void UpdateStatBonuses()
         {
-            this.player.statLifeMax = 100 + (this.level * 5) + this.EffectiveStats["Vitality"] * 2 + this.EffectiveStats["Strength"] / 2;
-            this.player.statManaMax = 20 + this.level * 4;
-            this.player.statDefense += this.EffectiveStats["Vitality"] / 10;
+            this.player.statLifeMax = 100 + (this.level * VapeConfig.LifePerLevel) + this.EffectiveStats["Vitality"] * VapeConfig.LifePerVitality + this.EffectiveStats["Strength"] / 2;
+            this.player.statManaMax = 20 + this.level * VapeConfig.ManaPerLevel + this.EffectiveStats["Magic power"] * VapeConfig.ManaPerMagicPower;
+            this.player.statDefense += this.EffectiveStats["Vitality"] / VapeConfig.VitalityPerDefense;
 
-            this.player.meleeDamage += this.EffectiveStats["Strength"] / 500f;
-            this.player.magicDamage += this.EffectiveStats["Magic power"] / 430f + this.EffectiveStats["Spirit"] / 860f;
-            this.player.rangedDamage += this.EffectiveStats["Dexterity"] / 465f;
+            this.player.meleeDamage += this.EffectiveStats["Strength"] / VapeConfig.MeleeDamageDivider;
+            this.player.magicDamage += this.EffectiveStats["Magic power"] / VapeConfig.MagicDamageDivider + this.EffectiveStats["Spirit"] / VapeConfig.MagicDamageBySpiritDivider;
+            this.player.rangedDamage += this.EffectiveStats["Dexterity"] / VapeConfig.RangedDamageDivider;
 
-            this.player.meleeCrit += this.EffectiveStats["Strength"] / 10;
-            this.player.magicCrit += (int)(this.EffectiveStats["Magic power"] / 7f);
-            this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / 8.5f);
+            this.player.meleeCrit += (int)(this.EffectiveStats["Strength"] / VapeConfig.MeleeCritDivider);
+            this.player.magicCrit += (int)(this.EffectiveStats["Magic power"] / VapeConfig.MagicCritDivider);
+            this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / VapeConfig.RangedCritDivider);
 
-            this.player.minionDamage += this.EffectiveStats["Spirit"] / 400f;
-            this.player.maxMinions += this.EffectiveStats["Spirit"] / VapeConfig.MaxMinionPerSpirit;
-            this.player.maxTurrets += this.EffectiveStats["Spirit"] / VapeConfig.MaxTurretPerSpirit;
+            this.player.minionDamage += this.EffectiveStats["Spirit"] / VapeConfig.MinionDamageDivider;
+            this.player.maxMinions += this.EffectiveStats["Spirit"] / VapeConfig.SpiritPerMaxMinion;
+            this.player.maxTurrets += this.EffectiveStats["Spirit"] / VapeConfig.SpiritPerMaxTurret;
 
-            this.player.meleeSpeed += this.EffectiveStats["Haste"] / 900f;
-            this.player.moveSpeed += this.EffectiveStats["Haste"] / 1800f;
+            this.player.meleeSpeed += this.EffectiveStats["Haste"] / VapeConfig.MeleeSpeedDivider;
+            this.player.moveSpeed += this.EffectiveStats["Haste"] / VapeConfig.MoveSpeedDivider;
 
-            this.dodgeChance += this.EffectiveStats["Haste"] / 1800f;
+            this.dodgeChance += this.EffectiveStats["Haste"] / VapeConfig.DodgeDivider;
 
             this.UpdateChaosBonuses();
 
@@ -428,9 +428,9 @@ namespace VapeRPG
             this.player.meleeSpeed += this.ChaosBonuses["Melee Speed"];
             this.player.maxRunSpeed += this.ChaosBonuses["Max Run Speed"] * 3;
             this.dodgeChance += this.ChaosBonuses["Dodge Chance"];
-            if (this.dodgeChance > 0.7)
+            if (this.dodgeChance > VapeConfig.MaxDodgeChance)
             {
-                this.dodgeChance = 0.7f;
+                this.dodgeChance = VapeConfig.MaxDodgeChance;
             }
         }
 

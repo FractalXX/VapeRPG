@@ -15,8 +15,6 @@ namespace VapeRPG
 {
     class VapeGlobalNpc : GlobalNPC
     {
-        private const int expGainDistance = 3000; // The maximum distance at which players gain experience from mob kills
-
         /// <summary>
         /// Returns true if the mob is a chaos mob.
         /// </summary>
@@ -73,17 +71,24 @@ namespace VapeRPG
                     // If it isn't a boss, only nearby players gain experience based on the npc's HP
                     foreach (Player player in Main.player.ToList().FindAll(x => x.active))
                     {
-                        if (Vector2.Distance(player.position, npc.position) <= expGainDistance)
+                        if (Vector2.Distance(player.position, npc.position) <= VapeConfig.ExperienceGainDistance)
                         {
                             VapePlayer vp = player.GetModPlayer<VapePlayer>();
-                            gainedXp = 0.5 * Math.Pow(2, Math.Sqrt((2 * (1 + npc.defDamage / (2 * npc.lifeMax)) * npc.lifeMax) / Math.Pow(npc.lifeMax, 1 / 2.6)));
-                            if (npc.lifeMax >= 1000)
+                            if(VapeConfig.VanillaXpTable.ContainsKey(npc.type))
                             {
-                                gainedXp = npc.lifeMax / 2;
+                                gainedXp = VapeConfig.VanillaXpTable[npc.type];
                             }
-                            else if (npc.lifeMax <= 20)
+                            else
                             {
-                                gainedXp /= 2;
+                                gainedXp = VapeConfig.FinalMultiplierForXpGain * Math.Pow(2, Math.Sqrt((2 * (1 + npc.defDamage / (2 * npc.lifeMax)) * npc.lifeMax) / Math.Pow(npc.lifeMax, 1 / 2.6)));
+                                if (npc.lifeMax >= 1000)
+                                {
+                                    gainedXp = npc.lifeMax / 2;
+                                }
+                                else if (npc.lifeMax <= 20)
+                                {
+                                    gainedXp /= 2;
+                                }
                             }
                             if (this.isChaos)
                             {
@@ -283,7 +288,7 @@ namespace VapeRPG
 
         public void ChaosTransform(NPC npc)
         {
-            this.chaosMultiplier = rnd.Next(3, 6);
+            this.chaosMultiplier = rnd.Next(VapeConfig.MinChaosMultiplier, VapeConfig.MaxChaosMultiplier);
 
             npc.scale *= this.chaosMultiplier / 2.7f;
             npc.lifeMax *= this.chaosMultiplier;
@@ -327,14 +332,14 @@ namespace VapeRPG
 
         private static bool IsIgnoredType(NPC npc)
         {
-            return ignoredTypes.Contains(npc.type) ||
+            return VapeConfig.IgnoredTypesForXpGain.Contains(npc.type) ||
                 npc.TypeName.ToLower().Contains("pillar");
         }
 
         private static bool IsIgnoredTypeChaos(NPC npc)
         {
-            return ignoredTypes.Contains(npc.type) ||
-                    ignoredTypesChaos.Contains(npc.type) ||
+            return VapeConfig.IgnoredTypesForXpGain.Contains(npc.type) ||
+                    VapeConfig.IgnoredTypesChaos.Contains(npc.type) ||
                     npc.TypeName.ToLower().Contains("head") ||
                     npc.TypeName.ToLower().Contains("body") ||
                     npc.TypeName.ToLower().Contains("tail") ||
@@ -349,104 +354,5 @@ namespace VapeRPG
                     npc.GivenName.ToLower().Contains("pillar") ||
                     npc.aiStyle == 6;
         }
-
-        // Types to be ignored by experience gain/chaos transform
-        private static int[] ignoredTypes =
-        {
-            NPCID.DungeonGuardian,
-            NPCID.Bunny,
-            NPCID.BunnySlimed,
-            NPCID.BunnyXmas,
-            NPCID.GoldBunny,
-            NPCID.PartyBunny,
-            NPCID.Penguin,
-            NPCID.PenguinBlack,
-            NPCID.Bird,
-            NPCID.GoldBird,
-            NPCID.ScorpionBlack,
-            NPCID.Buggy,
-            NPCID.Duck,
-            NPCID.Duck2,
-            NPCID.DuckWhite,
-            NPCID.DuckWhite2,
-            NPCID.Frog,
-            NPCID.GoldFrog,
-            NPCID.Worm,
-            NPCID.GoldWorm,
-            NPCID.TruffleWorm,
-            NPCID.Goldfish,
-            NPCID.GoldfishWalker,
-            NPCID.Grasshopper,
-            NPCID.GoldGrasshopper,
-            NPCID.LightningBug,
-            NPCID.Mouse,
-            NPCID.GoldMouse,
-            NPCID.Squirrel,
-            NPCID.SquirrelGold,
-            NPCID.SquirrelRed,
-            NPCID.Scorpion,
-            NPCID.Sluggy,
-            NPCID.Snail,
-            NPCID.GlowingSnail,
-            NPCID.SeaSnail,
-            NPCID.Butterfly,
-            NPCID.GoldButterfly,
-            NPCID.Firefly
-        };
-
-        private static int[] ignoredTypesChaos =
-        {
-            NPCID.EaterofWorldsBody,
-            NPCID.EaterofWorldsHead,
-            NPCID.EaterofWorldsTail,
-            NPCID.DevourerBody,
-            NPCID.DevourerHead,
-            NPCID.DevourerTail,
-            NPCID.GiantWormBody,
-            NPCID.GiantWormHead,
-            NPCID.GiantWormTail,
-            NPCID.DuneSplicerBody,
-            NPCID.DuneSplicerHead,
-            NPCID.DuneSplicerTail,
-            NPCID.LeechBody,
-            NPCID.LeechHead,
-            NPCID.LeechTail,
-            NPCID.StardustWormBody,
-            NPCID.StardustWormHead,
-            NPCID.StardustWormTail,
-            NPCID.SolarCrawltipedeBody,
-            NPCID.SolarCrawltipedeHead,
-            NPCID.SolarCrawltipedeTail,
-            NPCID.SeekerBody,
-            NPCID.SeekerHead,
-            NPCID.SeekerTail,
-            NPCID.DiggerBody,
-            NPCID.DiggerHead,
-            NPCID.DiggerTail,
-            NPCID.TheDestroyerBody,
-            NPCID.TheDestroyerTail,
-            NPCID.WyvernBody,
-            NPCID.WyvernBody2,
-            NPCID.WyvernBody3,
-            NPCID.WyvernHead,
-            NPCID.WyvernLegs,
-            NPCID.WyvernTail,
-            NPCID.TombCrawlerBody,
-            NPCID.TombCrawlerHead,
-            NPCID.TombCrawlerTail,
-            NPCID.BoneSerpentBody,
-            NPCID.BoneSerpentHead,
-            NPCID.BoneSerpentTail,
-            NPCID.CultistDragonBody1,
-            NPCID.CultistDragonBody2,
-            NPCID.CultistDragonBody3,
-            NPCID.CultistDragonBody4,
-            NPCID.CultistDragonHead,
-            NPCID.CultistDragonTail,
-            NPCID.GolemHead,
-            NPCID.GolemHeadFree,
-            NPCID.MoonLordHead,
-            NPCID.SkeletronHead
-        };
     }
 }
