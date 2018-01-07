@@ -22,6 +22,12 @@ I repeat, the mod is highly volatile in Multiplayer. Don't expect tech support i
 Many things are tweakable via the config files. Please refer to the mod's thread for documentation.
 
 Changelog:
+v0.3.2.6:
+- Fixed a bug that disallowed players from reaching max level.
+
+v0.3.2.5:
+- Updated to tModLoader v0.10.1.1
+
 v0.3.2.4:
 Config extension
 - Refactored config files

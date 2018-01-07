@@ -201,13 +201,13 @@ namespace VapeRPG
             }
 
             // For debugging
-            if (this.xp < 0 || this.xp > vapeMod.XpNeededForLevel[VapeRPG.MaxLevel])
+            if (this.xp < 0)
             {
                 this.xp = xp;
                 Main.NewText("[Vape RPG Warning]: Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
                 Main.NewText("[Vape RPG Warning]: Please report this bug with details in the mod's topic on the Terraria forums.", Color.Red);
             }
-            if (this.chaosXp < 0 || this.chaosXp > vapeMod.XpNeededForChaosRank[VapeRPG.MaxLevel])
+            if (this.chaosXp < 0)
             {
                 this.chaosXp = chaosXp;
                 Main.NewText("[Vape RPG Warning]: Chaos Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
