@@ -120,15 +120,15 @@ namespace VapeRPG
                 {
                     int chance = rnd.Next(0, 100);
 
-                    if (chance <= 5)
+                    if (chance <= 3)
                     {
                         this.Qualify(item, ItemQuality.Epic);
                     }
-                    else if (chance <= 15)
+                    else if (chance <= 10)
                     {
                         this.Qualify(item, ItemQuality.Rare);
                     }
-                    else if (chance <= 35)
+                    else if (chance <= 20)
                     {
                         this.Qualify(item, ItemQuality.Uncommon);
                     }
@@ -144,7 +144,7 @@ namespace VapeRPG
             this.statBonus.Clear();
             this.tooltipVisible = true;
 
-            if (item.accessory || item.defense > 0)
+            if (IsQualifiable(item))
             {
                 int chance = rnd.Next(0, 100);
 
@@ -165,6 +165,11 @@ namespace VapeRPG
             this.wasQualified = true;
         }
 
+        private static bool IsQualifiable(Item item)
+        {
+            return item.accessory || item.defense > 0;
+        }
+
         public void Qualify(Item item, ItemQuality newQuality)
         {
             this.quality = newQuality;
@@ -179,8 +184,8 @@ namespace VapeRPG
                 {
                     this.statBonus.Clear();
 
-                    int statMin = (item.rare + 1) * 4;
-                    int statMax = (item.rare + 1) * 8;
+                    int statMin = (item.rare + 1) * 6;
+                    int statMax = (item.rare + 1) * 9;
                     int statPairIndex = rnd.Next(0, uniqueStatPairs.GetLength(0));
 
                     // Fargo fix
@@ -345,6 +350,42 @@ namespace VapeRPG
                 return false;
             }
             return true;
+        }
+
+        public override void Update(Item item, ref float gravity, ref float maxFallSpeed)
+        {
+            if(IsQualifiable(item))
+            {
+                int dustType = 63;
+                switch (this.quality)
+                {
+                    case ItemQuality.Uncommon:
+                        dustType = 61;
+                        break;
+
+                    case ItemQuality.Rare:
+                        dustType = 59;
+                        break;
+
+                    case ItemQuality.Epic:
+                        dustType = 62;
+                        break;
+
+                    case ItemQuality.Unique:
+                        dustType = 64;
+                        break;
+                }
+
+                int dustCount = 360;
+                for (int i = 0; i < dustCount; i += 2)
+                {
+                    double angle = i * Math.PI / 180;
+                    Vector2 dustPosition = new Vector2(item.position.X + item.width / 2 + item.width * (float)Math.Cos(angle), item.position.Y + item.height / 2 + item.height * (float)Math.Sin(angle));
+
+                    Dust dust = Dust.NewDustPerfect(dustPosition, dustType, Vector2.Zero);
+                    dust.noGravity = true;
+                }
+            }
         }
 
         public override void UpdateInventory(Item item, Player player)

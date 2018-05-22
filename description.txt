@@ -1,10 +1,5 @@
-WARNING: This mod is heavily in development and is in only a testing phase. Expect updates/changes very often.
-
-ATTENTION: Multiplayer is not complete. No support will be given for any bugs you may encounter in MP, but you may report them on the mod's thread.
-You CAN use other UI mods such as Unleveled. All you have to do is to disable this mod's UI in its config file:
-(My Games/Terraria/ModLoader/ModConfig/VapeRPG.json) <- set EnableUI to false, then RELOAD/RESTART.
-
 This mod is going to be an action RPG mod. It's in a very early alpha stage, so some features might not function as intended, bugs are common, use the mod at your own risk.
+ATTENTION: Don't use it in conjunction with Vape Loot as this mod has it integrated.
 
 Current features:
  A simple RPG-like level system, XP can be gained from mob kills (the XP gain is determined by a function of the mob's HP, Defense, Damage)
@@ -13,7 +8,6 @@ Current features:
  Chaos mobs: When a hostile NPC spawns (if it's not a boss) it has a 10% chance of transforming to a Chaos mob. Killing these grants Chaos Experience.
  Chaos rank: If you gain enough experience, you'll rank up and get 1 Chaos Point. These can be spent for minor bonuses ad the character panel.
  Skills: They're all passive skills and I don't really intend to introduce active skills to the mod (they doesn't fit Terraria, imo). They are also on the character panel.
- Red means melee, Cyan means magic, Orange means ranged, Brown means tank, Green means utility (they doesn't fit any class)
  Despite the stats/skills there is no "class-restriction". You can make any kinds of hybrid builds.
  Vape Loot's item qualities are implemented but they give base stat bonuses (like Strength, Dexterity) instead of basic Terraria bonuses.
 
@@ -22,6 +16,27 @@ I repeat, the mod is highly volatile in Multiplayer. Don't expect tech support i
 Many things are tweakable via the config files. Please refer to the mod's thread for documentation.
 
 Changelog:
+v0.3.3:
+- NEW:
+-> Items on the ground now emit a small halo which resembles their quality.
+
+- FIXES:
+-> Enemy projectiles should no longer become Chaos NPCs
+-> Mobs with less than 10 HP will no longer award any experience.
+-> One Above All should no longer trigger on vanilla bosses (some mod bosses included, although it's hard to filter every one of them).
+-> One Above All now works for ranged.
+-> Fixed Kickstart having a chance of 50%/100% instead of 5%/10%.
+
+- BALANCE:
+-> Buffed unique items.
+-> Items now have less chance to gain high quality (10%/7%/3% respectively).
+-> Nerfed One Above All so it only has 2% chance to occur.
+-> Close Combat Specialist now only activates if the enemy is within ~10 tiles radius and only scales the damage to 1.5x.
+-> Buffed some starting stats as early game seemed harsh.
+
+v0.3.2.7:
+- Updated to tModLoader v0.10.1.4
+
 v0.3.2.6:
 - Fixed a bug that disallowed players from reaching max level.
 
@@ -121,3 +136,9 @@ v0.1.2:
 
 v0.1.1: 
 - Players now won't start with 100 chaos points.
+
+WARNING: This mod is heavily in development and is in only a testing phase. Expect updates/changes very often.
+
+ATTENTION: Multiplayer is not complete. No support will be given for any bugs you may encounter in MP, but you may report them on the mod's thread.
+You CAN use other UI mods such as Unleveled. All you have to do is to disable this mod's UI in its config file:
+(My Games/Terraria/ModLoader/ModConfig/VapeRPG.json) <- set EnableUI to false, then RELOAD/RESTART.

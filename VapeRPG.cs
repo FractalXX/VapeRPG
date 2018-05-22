@@ -120,7 +120,7 @@ namespace VapeRPG
                 new Skill("Spectral Sparks", "Magic sparks also reduce the defense of enemies by 15%.", 1, SkillTree.Reaper, GetSkillFrame("SpectralSparks")),
 
                 //Shredder Tree
-                new Skill("One Above All", "You have 3% chance to one hit kill any non-boss, non-pillar enemies.", 1, SkillTree.Shredder, GetSkillFrame("OneAboveAll")),
+                new Skill("One Above All", "You have 2% chance to one hit kill any non-boss, non-pillar enemy.", 1, SkillTree.Shredder, GetSkillFrame("OneAboveAll")),
 
                 new Skill("Bounce", "Magic hits have a chance (10%/level) to spawn a spark that bounces to another enemy. The spark's damage is 10%/20%/30% of the original damage.", 3, SkillTree.Shredder, GetSkillFrame("Bounce")),
                 new Skill("Leftover Supply", "Magic weapons have a chance to not consume mana. (4%/level)", 2, SkillTree.Shredder, GetSkillFrame("LeftoverSupply")),
@@ -132,7 +132,7 @@ namespace VapeRPG
                 new Skill("Titan Grip", "Critical hits have increased knockback (20%/level).", 2, SkillTree.Shredder, GetSkillFrame("TitanGrip")),
                 new Skill("Hawk Eye", "Your critical chance increases with distance to your enemy.", 1, SkillTree.Shredder, GetSkillFrame("HawkEye")),
 
-                new Skill("Close Combat Specialist", "Your ranged damage increases as you get closer to the enemy.", 1, SkillTree.Shredder, GetSkillFrame("CloseCombatSpecialist")),
+                new Skill("Close Combat Specialist", "You deal 1.5x damage to enemies within 10 tiles radius.", 1, SkillTree.Shredder, GetSkillFrame("CloseCombatSpecialist")),
 
                 //Power Tree
                 new Skill("Warmth", "Increases your HP/MP regen by 10%/level.", 2, SkillTree.Power, GetSkillFrame("Warmth")),

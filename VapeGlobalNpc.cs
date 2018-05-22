@@ -45,7 +45,7 @@ namespace VapeRPG
             // Fix for incompatibility with other mods such as Calamity, etc.
             if (npc != null && Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
             {
-                if (!npc.boss && !npc.SpawnedFromStatue && !npc.friendly && !IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= VapeConfig.ChaosChance)
+                if (!npc.boss && npc.lifeMax >= 40 && !npc.SpawnedFromStatue && !npc.friendly && !VapeConfig.IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= VapeConfig.ChaosChance)
                 {
                     ChaosTransform(npc);
                 }
@@ -54,7 +54,7 @@ namespace VapeRPG
 
         public override bool CheckDead(NPC npc)
         {
-            if (!IsIgnoredType(npc) && !npc.SpawnedFromStatue && !npc.friendly)
+            if (!VapeConfig.IsIgnoredType(npc) && !npc.SpawnedFromStatue && !npc.friendly)
             {
                 double gainedXp;
                 if (npc.boss)
@@ -66,7 +66,7 @@ namespace VapeRPG
                         vp.GainExperience((int)gainedXp);
                     }
                 }
-                else
+                else if(npc.lifeMax >= 10)
                 {
                     // If it isn't a boss, only nearby players gain experience based on the npc's HP
                     foreach (Player player in Main.player.ToList().FindAll(x => x.active))
@@ -328,31 +328,6 @@ namespace VapeRPG
                 nextSlot++;
             }
             base.SetupShop(type, shop, ref nextSlot);
-        }
-
-        private static bool IsIgnoredType(NPC npc)
-        {
-            return VapeConfig.IgnoredTypesForXpGain.Contains(npc.type) ||
-                npc.TypeName.ToLower().Contains("pillar");
-        }
-
-        private static bool IsIgnoredTypeChaos(NPC npc)
-        {
-            return VapeConfig.IgnoredTypesForXpGain.Contains(npc.type) ||
-                    VapeConfig.IgnoredTypesChaos.Contains(npc.type) ||
-                    npc.TypeName.ToLower().Contains("head") ||
-                    npc.TypeName.ToLower().Contains("body") ||
-                    npc.TypeName.ToLower().Contains("tail") ||
-                    npc.TypeName.ToLower().Contains("pillar") ||
-                    npc.FullName.ToLower().Contains("head") ||
-                    npc.FullName.ToLower().Contains("body") ||
-                    npc.FullName.ToLower().Contains("tail") ||
-                    npc.FullName.ToLower().Contains("pillar") ||
-                    npc.GivenName.ToLower().Contains("head") ||
-                    npc.GivenName.ToLower().Contains("body") ||
-                    npc.GivenName.ToLower().Contains("tail") ||
-                    npc.GivenName.ToLower().Contains("pillar") ||
-                    npc.aiStyle == 6;
         }
     }
 }

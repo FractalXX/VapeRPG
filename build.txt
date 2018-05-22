@@ -1,6 +1,6 @@
 author = FractalXX
 
-version = 0.3.2.6
+version = 0.3.3
 displayName = Vape RPG Alpha
 homepage = https://forums.terraria.org/index.php?threads/vapemods-by-fractalxx.60693/
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*, *.sln, *.git

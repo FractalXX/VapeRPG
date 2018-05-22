@@ -52,11 +52,11 @@ namespace VapeRPG
         public static int StrengthPerLife = 2;
 
         // Default stats
-        public static float DefMeleeDamage = 0.55f;
-        public static float DefMagicDamage = 0.6f;
-        public static float DefRangedDamage = 0.575f;
-        public static float DefMinionDamage = 0.6f;
-        public static float DefThrownDamage = 0.575f;
+        public static float DefMeleeDamage = 0.7f;
+        public static float DefMagicDamage = 0.9f;
+        public static float DefRangedDamage = 0.8f;
+        public static float DefMinionDamage = 0.8f;
+        public static float DefThrownDamage = 0.8f;
 
         public static int DefMeleeCrit = 1;
         public static int DefMagicCrit = 1;
@@ -163,6 +163,10 @@ namespace VapeRPG
             NPCID.BoneSerpentBody,
             NPCID.BoneSerpentHead,
             NPCID.BoneSerpentTail,
+            NPCID.PrimeCannon,
+            NPCID.PrimeLaser,
+            NPCID.PrimeSaw,
+            NPCID.PrimeVice,
             NPCID.CultistDragonBody1,
             NPCID.CultistDragonBody2,
             NPCID.CultistDragonBody3,
@@ -373,6 +377,31 @@ namespace VapeRPG
             }
 
             conf.Save();
+        }
+
+        public static bool IsIgnoredType(NPC npc)
+        {
+            return IgnoredTypesForXpGain.Contains(npc.type) ||
+                npc.TypeName.ToLower().Contains("pillar");
+        }
+
+        public static bool IsIgnoredTypeChaos(NPC npc)
+        {
+            return IgnoredTypesForXpGain.Contains(npc.type) ||
+                    IgnoredTypesChaos.Contains(npc.type) ||
+                    npc.TypeName.ToLower().Contains("head") ||
+                    npc.TypeName.ToLower().Contains("body") ||
+                    npc.TypeName.ToLower().Contains("tail") ||
+                    npc.TypeName.ToLower().Contains("pillar") ||
+                    npc.FullName.ToLower().Contains("head") ||
+                    npc.FullName.ToLower().Contains("body") ||
+                    npc.FullName.ToLower().Contains("tail") ||
+                    npc.FullName.ToLower().Contains("pillar") ||
+                    npc.GivenName.ToLower().Contains("head") ||
+                    npc.GivenName.ToLower().Contains("body") ||
+                    npc.GivenName.ToLower().Contains("tail") ||
+                    npc.GivenName.ToLower().Contains("pillar") ||
+                    npc.aiStyle == 6;
         }
     }
 }

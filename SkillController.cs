@@ -76,7 +76,7 @@ namespace VapeRPG
         {
             if (!crit)
             {
-                if (modPlayer.HasSkill("Kickstart") && target.life >= target.lifeMax * 0.7f && rnd.Next(0, 101) <= modPlayer.SkillLevels["Kickstart"] * 50)
+                if (modPlayer.HasSkill("Kickstart") && target.life >= target.lifeMax * 0.7f && rnd.Next(0, 101) <= modPlayer.SkillLevels["Kickstart"] * 5)
                 {
                     crit = true;
                 }
@@ -100,12 +100,10 @@ namespace VapeRPG
 
             if(modPlayer.HasSkill("Close Combat Specialist"))
             {
-                float distance = Vector2.Distance(modPlayer.player.position, target.position);
-                if(distance < 15)
+                if(Vector2.Distance(modPlayer.player.position, target.position) < 10)
                 {
-                    distance = 15;
+                    damage = (int)(damage * 1.5f);
                 }
-                damage += (int)Math.Ceiling(damage * 1500/distance);
             }
 
             if (modPlayer.HasSkill("Execution") && target.life <= target.lifeMax * 0.2f)
@@ -114,11 +112,15 @@ namespace VapeRPG
             }
             if (modPlayer.HasSkill("First Touch") && target.life == target.lifeMax)
             {
-                int amount = (int)Math.Ceiling(target.life * 0.1f);
+                int amount = (int)Math.Floor(target.life * 0.1f);
                 target.life -= amount;
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 50, 100, 100), Color.Cyan, amount);
             }
-
+            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredTypeChaos(target))
+            {
+                CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
+                target.StrikeNPC(target.life / 2, 0, 0);
+            }
         }
 
         public static void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
@@ -243,10 +245,10 @@ namespace VapeRPG
                 }
             }
             //On Hit
-            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 3 && target.type != NPCID.TargetDummy && !target.boss && !target.TypeName.ToLower().Contains("pillar") && !target.GivenName.ToLower().Contains("pillar"))
+            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredTypeChaos(target))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
-                target.StrikeNPC(target.lifeMax * 2, 0, 0);
+                target.StrikeNPC(target.life * 2, 0, 0);
             }
             if ((proj == null ? item.magic : proj.magic) && modPlayer.HasSkill("Bounce") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Bounce"] * 10)
             {
