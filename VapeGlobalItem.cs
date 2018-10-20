@@ -46,8 +46,6 @@ namespace VapeRPG
         private static Color epicColor = Color.BlueViolet;
         private static Color uniqueColor = Color.SkyBlue;
 
-        private static Hashtable reforgeBuffer = new Hashtable(); // For storing, then loading the item's properties when it's reforged
-
         // Stat pairs for unique items
         private static string[,] uniqueStatPairs =
         {
@@ -376,14 +374,17 @@ namespace VapeRPG
                         break;
                 }
 
-                int dustCount = 360;
-                for (int i = 0; i < dustCount; i += 2)
+                if(VapeConfig.VapeLootRariyRings)
                 {
-                    double angle = i * Math.PI / 180;
-                    Vector2 dustPosition = new Vector2(item.position.X + item.width / 2 + item.width * (float)Math.Cos(angle), item.position.Y + item.height / 2 + item.height * (float)Math.Sin(angle));
+                    int dustCount = 360;
+                    for (int i = 0; i < dustCount; i += 2)
+                    {
+                        double angle = i * Math.PI / 180;
+                        Vector2 dustPosition = new Vector2(item.position.X + item.width / 2 + item.width * (float)Math.Cos(angle), item.position.Y + item.height / 2 + item.height * (float)Math.Sin(angle));
 
-                    Dust dust = Dust.NewDustPerfect(dustPosition, dustType, Vector2.Zero);
-                    dust.noGravity = true;
+                        Dust dust = Dust.NewDustPerfect(dustPosition, dustType, Vector2.Zero);
+                        dust.noGravity = true;
+                    }
                 }
             }
         }
@@ -416,43 +417,12 @@ namespace VapeRPG
 
         public override void PostDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            /*Color frameColor = Color.White;
-            switch (item.GetGlobalItem<VapeGlobalItem>().quality)
-            {
-                case ItemQuality.Uncommon:
-                    frameColor = uncommonColor;
-                    break;
-
-                case ItemQuality.Rare:
-                    frameColor = rareColor;
-                    break;
-
-                case ItemQuality.Epic:
-                    frameColor = epicColor;
-                    break;
-            }
-            spriteBatch.Draw(VapeRPG.itemQualityFrame, Vector2.Zero, frame, frameColor);*/
+            // TODO: Draw colored frame for each quality
         }
 
-        public override void PreReforge(Item item)
+        public override bool NewPreReforge(Item item)
         {
-            Hashtable itemProperties = new Hashtable();
-            itemProperties.Add("StatBonus", this.statBonus);
-            itemProperties.Add("Quality", this.quality);
-            itemProperties.Add("WasQualified", this.wasQualified);
-
-            reforgeBuffer.Add(item, itemProperties);
-        }
-
-        public override void PostReforge(Item item)
-        {
-
-            Hashtable itemProperties = (Hashtable)reforgeBuffer[item];
-            this.statBonus = (Dictionary<string, int>)itemProperties["StatBonus"];
-            this.quality = (ItemQuality)itemProperties["Quality"];
-            this.wasQualified = (bool)itemProperties["WasQualified"];
-
-            reforgeBuffer.Remove(item);
+            return this.quality == ItemQuality.Common;
         }
 
         public override void NetSend(Item item, BinaryWriter writer)

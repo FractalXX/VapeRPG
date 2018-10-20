@@ -31,15 +31,15 @@ namespace ExampleMod.Commands
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            int val;
+            int value;
 
-            if(caller.Player.name == "vapetest")
+            if(caller.Player.name.Equals("vapetest", StringComparison.CurrentCultureIgnoreCase))
             {
                 VapePlayer player = caller.Player.GetModPlayer<VapePlayer>();
 
-                if (int.TryParse(args[0], out val))
+                if (int.TryParse(args[0], out value))
                 {
-                    player.GainExperience(val);
+                    player.GainExperience(value);
                 }
             }
             else
