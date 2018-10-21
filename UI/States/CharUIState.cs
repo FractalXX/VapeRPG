@@ -13,6 +13,10 @@ namespace VapeRPG.UI.States
 {
     class CharUIState : UIState
     {
+        public static bool visible = false;
+
+        public bool dragging = false;
+
         private UIPanel mainPanel;
         private UIPanel statPanel;
         private UIPanel miscPanel;
@@ -25,10 +29,10 @@ namespace VapeRPG.UI.States
 
         private UIImage statHelper;
 
-        public static bool visible = false;
-
         private float charPanelWidth;
         private float charPanelHeight;
+
+        private Vector2 offset;
 
         public override void OnInitialize()
         {
@@ -125,17 +129,6 @@ namespace VapeRPG.UI.States
             base.Append(this.mainPanel);
         }
 
-        public void UpdateStats(Dictionary<string, int> baseStats, Dictionary<string, int> effStats, int statPoints, int skillPoints)
-        {
-            foreach (UIStatInfo usi in statControls)
-            {
-                usi.statValue = baseStats[usi.stat];
-                usi.bonusValue = effStats[usi.stat] - baseStats[usi.stat];
-            }
-
-            this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
-        }
-
         public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
         {
             foreach (UIStatInfo usi in miscStatControls)
@@ -207,13 +200,15 @@ namespace VapeRPG.UI.States
             }
         }
 
-        private Vector2 offset;
-        public bool dragging = false;
-
-        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        public void UpdateStats(Dictionary<string, int> baseStats, Dictionary<string, int> effStats, int statPoints, int skillPoints)
         {
-            offset = new Vector2(evt.MousePosition.X - this.mainPanel.Left.Pixels, evt.MousePosition.Y - this.mainPanel.Top.Pixels);
-            dragging = true;
+            foreach (UIStatInfo usi in statControls)
+            {
+                usi.statValue = baseStats[usi.stat];
+                usi.bonusValue = effStats[usi.stat] - baseStats[usi.stat];
+            }
+
+            this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
         }
 
         private void DragEnd(UIMouseEvent evt, UIElement listeningElement)
@@ -225,6 +220,13 @@ namespace VapeRPG.UI.States
             this.mainPanel.Top.Set(end.Y - offset.Y, 0f);
 
             this.Recalculate();
+        }
+
+
+        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        {
+            offset = new Vector2(evt.MousePosition.X - this.mainPanel.Left.Pixels, evt.MousePosition.Y - this.mainPanel.Top.Pixels);
+            dragging = true;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)

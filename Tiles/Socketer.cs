@@ -11,6 +11,11 @@ namespace VapeRPG.Tiles
 {
     public class Socketer : ModTile
     {
+        public override void KillMultiTile(int i, int j, int frameX, int frameY)
+        {
+            Item.NewItem(i * 16, j * 16, 36, 30, mod.ItemType<Items.Socketer>());
+        }
+
         public override void SetDefaults()
         {
             Main.tileSolidTop[Type] = false;
@@ -24,11 +29,6 @@ namespace VapeRPG.Tiles
             TileObjectData.addTile(Type);
             AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
             adjTiles = new int[] { TileID.WorkBenches };
-        }
-
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Item.NewItem(i * 16, j * 16, 36, 30, mod.ItemType<Items.Socketer>());
         }
     }
 }

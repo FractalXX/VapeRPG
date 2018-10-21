@@ -10,10 +10,6 @@ namespace VapeRPG.UI.Elements
 {
     class UIVapeProgressBar : UIElement
     {
-        public float value;
-        public float maxValue;
-        public float minValue;
-
         private Color backgroundColor;
         private Color foregroundColor;
         private Texture2D backgroundTexture;
@@ -21,6 +17,10 @@ namespace VapeRPG.UI.Elements
         private UIText statusText;
 
         private float foregroundWidth;
+
+        public float value;
+        public float maxValue;
+        public float minValue;
 
         public int strokeThickness;
         public Color strokeColor;
@@ -38,6 +38,18 @@ namespace VapeRPG.UI.Elements
             this.strokeColor = Color.Black;
 
             this.backgroundTexture = ModLoader.GetTexture("VapeRPG/Textures/UI/Blank");
+        }
+
+        protected override void DrawSelf(SpriteBatch spriteBatch)
+        {
+            // Drawing the UIElement itself
+            CalculatedStyle dimensions = this.GetDimensions();
+            Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
+            int width = (int)Math.Ceiling(dimensions.Width);
+            int height = (int)Math.Ceiling(dimensions.Height);
+            spriteBatch.Draw(this.backgroundTexture, new Rectangle(point1.X - this.strokeThickness, point1.Y - this.strokeThickness, width + this.strokeThickness * 2, height + this.strokeThickness * 2), this.strokeColor);
+            spriteBatch.Draw(this.backgroundTexture, new Rectangle(point1.X, point1.Y, width, height), this.backgroundColor);
+            spriteBatch.Draw(this.backgroundTexture, new Rectangle(point1.X, point1.Y, (int)foregroundWidth, height), this.foregroundColor);
         }
 
         public override void OnInitialize()
@@ -63,18 +75,6 @@ namespace VapeRPG.UI.Elements
             this.statusText.Left.Set(this.Width.Pixels / 2 - this.statusText.MinWidth.Pixels / 2, 0);
 
             base.Update(gameTime);
-        }
-
-        protected override void DrawSelf(SpriteBatch spriteBatch)
-        {
-            // Drawing the UIElement itself
-            CalculatedStyle dimensions = this.GetDimensions();
-            Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
-            int width = (int)Math.Ceiling(dimensions.Width);
-            int height = (int)Math.Ceiling(dimensions.Height);
-            spriteBatch.Draw(this.backgroundTexture, new Rectangle(point1.X - this.strokeThickness, point1.Y - this.strokeThickness, width + this.strokeThickness * 2, height + this.strokeThickness * 2), this.strokeColor);
-            spriteBatch.Draw(this.backgroundTexture, new Rectangle(point1.X, point1.Y, width, height), this.backgroundColor);
-            spriteBatch.Draw(this.backgroundTexture, new Rectangle(point1.X, point1.Y, (int)foregroundWidth, height), this.foregroundColor);
         }
     }
 }

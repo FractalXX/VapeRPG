@@ -8,12 +8,6 @@ namespace VapeRPG.Items
 {
     class VapersGlobe : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Vaper's Globe");
-            Tooltip.SetDefault("Can be used to reset your stats and skills.");
-        }
-
         public override void SetDefaults()
         {
             item.width = 32;
@@ -26,6 +20,12 @@ namespace VapeRPG.Items
             item.consumable = true;
             item.UseSound = SoundID.Item29;
             item.value = 1000000;
+        }
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Vaper's Globe");
+            Tooltip.SetDefault("Can be used to reset your stats and skills.");
         }
 
         public override bool UseItem(Player player)

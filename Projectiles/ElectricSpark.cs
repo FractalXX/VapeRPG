@@ -7,9 +7,15 @@ namespace VapeRPG.Projectiles
 {
     public class ElectricSpark : ModProjectile
     {
-        public override void SetStaticDefaults()
+        public override void AI()
         {
-            DisplayName.SetDefault("Electric Spark");
+            this.CreateDust();
+            projectile.ai[0] += 0.1f;
+        }
+
+        private void CreateDust()
+        {
+            Dust.NewDustPerfect(new Vector2(projectile.position.X + projectile.width / 2, projectile.position.Y + projectile.height / 2), 15, Scale: 1.5f);
         }
 
         public override void SetDefaults()
@@ -29,15 +35,9 @@ namespace VapeRPG.Projectiles
             projectile.hide = false;
         }
 
-        public override void AI()
+        public override void SetStaticDefaults()
         {
-            this.CreateDust();
-            projectile.ai[0] += 0.1f;
-        }
-
-        private void CreateDust()
-        {
-            Dust.NewDustPerfect(new Vector2(projectile.position.X + projectile.width / 2, projectile.position.Y + projectile.height / 2), 15, Scale: 1.5f);
+            DisplayName.SetDefault("Electric Spark");
         }
     }
 }

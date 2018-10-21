@@ -12,19 +12,19 @@ namespace VapeRPG.UI.Elements
 {
     class VapeSkillPanel : UIPanel
     {
-        private List<UISkillTab> tabs;
-        private List<UIButton> buttons;
-
-        private UIPanel buttonPanel;
-
-        private byte currentTab;
-
         private static Dictionary<string, SkillTree> tabNames = new Dictionary<string, SkillTree>()
         {
             { "Reaper", SkillTree.Reaper },
             { "Shredder", SkillTree.Shredder },
             { "Power", SkillTree.Power }
         };
+
+        private List<UISkillTab> tabs;
+        private List<UIButton> buttons;
+
+        private UIPanel buttonPanel;
+
+        private byte currentTab;
 
         public VapeSkillPanel(float width, float height)
         {

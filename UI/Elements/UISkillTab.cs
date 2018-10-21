@@ -30,25 +30,13 @@ namespace VapeRPG.UI.Elements
             this.tooltip = new UISkillTooltip(VapeRPG.GetSkill("Excitement"));
         }
 
-        public void InitializeSkillInfos()
+        public void AddSkillInfo(UISkillInfo usi)
         {
-            foreach (Skill skill in VapeRPG.Skills.FindAll(x => x.tree == this.skillTypes))
-            {
-                UISkillInfo usi = new UISkillInfo(skill);
-                this.AddSkillInfo(usi);
-                TreeHelper.AddSkillInfo(usi);
-            }
+            this.skillInfos.Add(usi);
+            this.Append(usi);
 
-            foreach (var x in this.skillInfos)
-            {
-                if(x.skill.Prerequisites.Count > 0)
-                {
-                    foreach(Skill parent in x.skill.Prerequisites)
-                    {
-                        CreateLineBetweenSkills(this.skillInfos.Find(y => y.skill == parent), x);
-                    }
-                }
-            }
+            usi.OnMouseOver += UISkillInfo_OnMouseOver;
+            usi.OnMouseOut += UISkillInfo_OnMouseOut;
         }
 
         private void CreateLineBetweenSkills(UISkillInfo parent, UISkillInfo child)
@@ -112,13 +100,25 @@ namespace VapeRPG.UI.Elements
             }
         }
 
-        public void AddSkillInfo(UISkillInfo usi)
+        public void InitializeSkillInfos()
         {
-            this.skillInfos.Add(usi);
-            this.Append(usi);
+            foreach (Skill skill in VapeRPG.Skills.FindAll(x => x.tree == this.skillTypes))
+            {
+                UISkillInfo usi = new UISkillInfo(skill);
+                this.AddSkillInfo(usi);
+                TreeHelper.AddSkillInfo(usi);
+            }
 
-            usi.OnMouseOver += UISkillInfo_OnMouseOver;
-            usi.OnMouseOut += UISkillInfo_OnMouseOut;
+            foreach (var x in this.skillInfos)
+            {
+                if(x.skill.Prerequisites.Count > 0)
+                {
+                    foreach(Skill parent in x.skill.Prerequisites)
+                    {
+                        CreateLineBetweenSkills(this.skillInfos.Find(y => y.skill == parent), x);
+                    }
+                }
+            }
         }
 
         private void UISkillInfo_OnMouseOut(UIMouseEvent evt, UIElement listeningElement)

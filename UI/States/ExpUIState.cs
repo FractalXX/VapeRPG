@@ -13,15 +13,58 @@ namespace VapeRPG.UI.States
 {
     class ExpUIState : UIState
     {
+        public static bool visible = false;
+
+        public bool dragging = false;
+
+        private const float width = 220;
+        private const float height = 140;
+
         private UIVapeProgressBar xpBar;
         private UIVapeProgressBar chaosXpBar;
         private UIPanel levelPanel;
         private UIText levelText;
+        private Vector2 offset;
 
-        public static bool visible = false;
+        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        {
+            offset = new Vector2(evt.MousePosition.X - this.levelPanel.Left.Pixels, evt.MousePosition.Y - this.levelPanel.Top.Pixels);
+            dragging = true;
+        }
 
-        private const float width = 220;
-        private const float height = 140;
+        private void DragEnd(UIMouseEvent evt, UIElement listeningElement)
+        {
+            Vector2 end = evt.MousePosition;
+            dragging = false;
+
+            this.levelPanel.Left.Set(end.X - offset.X, 0f);
+            this.levelPanel.Top.Set(end.Y - offset.Y, 0f);
+
+            Recalculate();
+        }
+
+        protected override void DrawSelf(SpriteBatch spriteBatch)
+        {
+            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+            if (this.levelPanel.ContainsPoint(MousePosition))
+            {
+                Main.LocalPlayer.mouseInterface = true;
+            }
+            if (dragging)
+            {
+                this.levelPanel.Left.Set(MousePosition.X - offset.X, 0f);
+                this.levelPanel.Top.Set(MousePosition.Y - offset.Y, 0f);
+            }
+
+            this.Recalculate();
+
+            base.DrawSelf(spriteBatch);
+        }
+
+        public Vector2 GetPanelPosition()
+        {
+            return new Vector2(this.levelPanel.Left.Pixels, this.levelPanel.Top.Pixels);
+        }
 
         public override void OnInitialize()
         {
@@ -67,11 +110,12 @@ namespace VapeRPG.UI.States
             base.Append(this.levelPanel);
         }
 
-        public void UpdateXpBar(float value, float minValue, float maxValue)
+        public void SetPanelPosition(Vector2 position)
         {
-            this.xpBar.value = value;
-            this.xpBar.minValue = minValue;
-            this.xpBar.maxValue = maxValue;
+            this.levelPanel.Left.Set(position.X, 0);
+            this.levelPanel.Top.Set(position.Y, 0);
+
+            this.Recalculate();
         }
 
         public void UpdateChaosXpBar(float value, float minValue, float maxValue)
@@ -86,55 +130,11 @@ namespace VapeRPG.UI.States
             this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
         }
 
-        private Vector2 offset;
-        public bool dragging = false;
-
-        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        public void UpdateXpBar(float value, float minValue, float maxValue)
         {
-            offset = new Vector2(evt.MousePosition.X - this.levelPanel.Left.Pixels, evt.MousePosition.Y - this.levelPanel.Top.Pixels);
-            dragging = true;
-        }
-
-        private void DragEnd(UIMouseEvent evt, UIElement listeningElement)
-        {
-            Vector2 end = evt.MousePosition;
-            dragging = false;
-
-            this.levelPanel.Left.Set(end.X - offset.X, 0f);
-            this.levelPanel.Top.Set(end.Y - offset.Y, 0f);
-
-            Recalculate();
-        }
-
-        protected override void DrawSelf(SpriteBatch spriteBatch)
-        {
-            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-            if (this.levelPanel.ContainsPoint(MousePosition))
-            {
-                Main.LocalPlayer.mouseInterface = true;
-            }
-            if (dragging)
-            {
-                this.levelPanel.Left.Set(MousePosition.X - offset.X, 0f);
-                this.levelPanel.Top.Set(MousePosition.Y - offset.Y, 0f);
-            }
-
-            this.Recalculate();
-
-            base.DrawSelf(spriteBatch);
-        }
-
-        public void SetPanelPosition(Vector2 position)
-        {
-            this.levelPanel.Left.Set(position.X, 0);
-            this.levelPanel.Top.Set(position.Y, 0);
-
-            this.Recalculate();
-        }
-
-        public Vector2 GetPanelPosition()
-        {
-            return new Vector2(this.levelPanel.Left.Pixels, this.levelPanel.Top.Pixels);
+            this.xpBar.value = value;
+            this.xpBar.minValue = minValue;
+            this.xpBar.maxValue = maxValue;
         }
     }
 }

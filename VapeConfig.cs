@@ -38,19 +38,19 @@ namespace VapeRPG
         public static float MoveSpeedDivider = 1800f;
         public static float DodgeDivider = 1800f;
 
-        public static int SpiritPerMaxMinion = 50;
-        public static int SpiritPerMaxTurret = 100;
+        public static float SpiritPerMaxMinion = 50;
+        public static float SpiritPerMaxTurret = 100;
 
         public static float MaxDodgeChance = 0.7f;
 
-        public static int LifePerLevel = 5;
-        public static int ManaPerLevel = 4;
+        public static float LifePerLevel = 5;
+        public static float ManaPerLevel = 4;
 
-        public static int LifePerVitality = 2;
-        public static int ManaPerMagicPower = 0;
+        public static float LifePerVitality = 2;
+        public static float ManaPerMagicPower = 0;
 
-        public static int VitalityPerDefense = 10;
-        public static int StrengthPerLife = 2;
+        public static float VitalityPerDefense = 10;
+        public static float StrengthPerLife = 2;
 
         // Default stats
         public static float DefMeleeDamage = 0.7f;
@@ -180,17 +180,42 @@ namespace VapeRPG
             NPCID.SkeletronHead
         };
 
-        private static string CommonConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Common.json");
-        private static string StatConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Stats.json");
-        private static string DefaultStatConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_DefaultStats.json");
-        private static string IgnoresConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Ignores.json");
-        private static string XpConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_XpOverrides.json");
+        private static readonly string CommonConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Common.json");
+        private static readonly string StatConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Stats.json");
+        private static readonly string DefaultStatConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_DefaultStats.json");
+        private static readonly string IgnoresConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Ignores.json");
+        private static readonly string XpConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_XpOverrides.json");
 
-        private static Preferences CommonConfig = new Preferences(CommonConfigPath);
-        private static Preferences StatConfig = new Preferences(StatConfigPath);
-        private static Preferences DefaultStatsConfig = new Preferences(DefaultStatConfigPath);
-        private static Preferences IgnoresConfig = new Preferences(IgnoresConfigPath);
-        private static Preferences XpConfig = new Preferences(XpConfigPath);
+        private static readonly Preferences CommonConfig = new Preferences(CommonConfigPath);
+        private static readonly Preferences StatConfig = new Preferences(StatConfigPath);
+        private static readonly Preferences DefaultStatsConfig = new Preferences(DefaultStatConfigPath);
+        private static readonly Preferences IgnoresConfig = new Preferences(IgnoresConfigPath);
+        private static readonly Preferences XpConfig = new Preferences(XpConfigPath);
+
+        public static bool IsIgnoredType(NPC npc)
+        {
+            return IgnoredTypesForXpGain.Contains(npc.type) ||
+                npc.TypeName.ToLower().Contains("pillar");
+        }
+
+        public static bool IsIgnoredTypeChaos(NPC npc)
+        {
+            return IgnoredTypesForXpGain.Contains(npc.type) ||
+                    IgnoredTypesChaos.Contains(npc.type) ||
+                    npc.TypeName.ToLower().Contains("head") ||
+                    npc.TypeName.ToLower().Contains("body") ||
+                    npc.TypeName.ToLower().Contains("tail") ||
+                    npc.TypeName.ToLower().Contains("pillar") ||
+                    npc.FullName.ToLower().Contains("head") ||
+                    npc.FullName.ToLower().Contains("body") ||
+                    npc.FullName.ToLower().Contains("tail") ||
+                    npc.FullName.ToLower().Contains("pillar") ||
+                    npc.GivenName.ToLower().Contains("head") ||
+                    npc.GivenName.ToLower().Contains("body") ||
+                    npc.GivenName.ToLower().Contains("tail") ||
+                    npc.GivenName.ToLower().Contains("pillar") ||
+                    npc.aiStyle == 6;
+        }
 
         public static void Load()
         {
@@ -221,8 +246,7 @@ namespace VapeRPG
             }
         }
 
-        //Returns "true" if the config file was found and successfully loaded.
-        static bool ReadConfig(Preferences conf)
+        private static bool ReadConfig(Preferences conf)
         {
             if (conf.Load())
             {
@@ -307,8 +331,7 @@ namespace VapeRPG
             return false;
         }
 
-        //It would make more sense to call this method SaveConfig(), but since we don't have an in-game editor or anything, this will only be called if a config file wasn't found or it's invalid.
-        static void CreateConfig(Preferences conf)
+        private static void CreateConfig(Preferences conf)
         {
             conf.Clear();
 
@@ -380,31 +403,6 @@ namespace VapeRPG
             }
 
             conf.Save();
-        }
-
-        public static bool IsIgnoredType(NPC npc)
-        {
-            return IgnoredTypesForXpGain.Contains(npc.type) ||
-                npc.TypeName.ToLower().Contains("pillar");
-        }
-
-        public static bool IsIgnoredTypeChaos(NPC npc)
-        {
-            return IgnoredTypesForXpGain.Contains(npc.type) ||
-                    IgnoredTypesChaos.Contains(npc.type) ||
-                    npc.TypeName.ToLower().Contains("head") ||
-                    npc.TypeName.ToLower().Contains("body") ||
-                    npc.TypeName.ToLower().Contains("tail") ||
-                    npc.TypeName.ToLower().Contains("pillar") ||
-                    npc.FullName.ToLower().Contains("head") ||
-                    npc.FullName.ToLower().Contains("body") ||
-                    npc.FullName.ToLower().Contains("tail") ||
-                    npc.FullName.ToLower().Contains("pillar") ||
-                    npc.GivenName.ToLower().Contains("head") ||
-                    npc.GivenName.ToLower().Contains("body") ||
-                    npc.GivenName.ToLower().Contains("tail") ||
-                    npc.GivenName.ToLower().Contains("pillar") ||
-                    npc.aiStyle == 6;
         }
     }
 }

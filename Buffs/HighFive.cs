@@ -6,6 +6,13 @@ namespace VapeRPG.Buffs
 {
     class HighFive : ModBuff
     {
+        public override void ModifyBuffTip(ref string tip, ref int rare)
+        {
+            VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
+            tip += String.Format(" (Current: {0}%)", vp.highfiveStacks * 2);
+            base.ModifyBuffTip(ref tip, ref rare);
+        }
+
         public override void SetDefaults()
         {
             DisplayName.SetDefault("High Five");
@@ -23,13 +30,6 @@ namespace VapeRPG.Buffs
                 player.ClearBuff(Type);
             }
             return base.ReApply(player, time, buffIndex);
-        }
-
-        public override void ModifyBuffTip(ref string tip, ref int rare)
-        {
-            VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
-            tip += String.Format(" (Current: {0}%)", vp.highfiveStacks * 2);
-            base.ModifyBuffTip(ref tip, ref rare);
         }
 
         public override void Update(Player player, ref int buffIndex)

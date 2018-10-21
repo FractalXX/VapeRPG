@@ -12,15 +12,15 @@ namespace VapeRPG.UI.Elements
 {
     class UISkillInfo : UIElement
     {
+        private const float defaultWidth = 64;
+        private const float defaultHeight = 64;
+
         internal Skill skill;
 
         private UIImage icon;
         private UIText skillLevelText;
 
         private Texture2D skillShade;
-
-        private const float defaultWidth = 64;
-        private const float defaultHeight = 64;
 
         public UISkillInfo(Skill skill, float width = defaultWidth, float height = defaultHeight)
         {
@@ -57,14 +57,6 @@ namespace VapeRPG.UI.Elements
             this.Append(this.skillLevelText);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-
-            VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
-            this.skillLevelText.SetText(String.Format("{0}/{1}", vp.SkillLevels[this.skill.name], this.skill.maxLevel));
-        }
-
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
@@ -77,6 +69,14 @@ namespace VapeRPG.UI.Elements
                 int height = (int)Math.Ceiling(dimensions.Height);
                 spriteBatch.Draw(this.skillShade, new Rectangle(point1.X, point1.Y, width, height), Color.White);
             }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
+            this.skillLevelText.SetText(String.Format("{0}/{1}", vp.SkillLevels[this.skill.name], this.skill.maxLevel));
         }
     }
 }

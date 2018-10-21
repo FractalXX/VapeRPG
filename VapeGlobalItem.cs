@@ -12,11 +12,25 @@ using Terraria.ModLoader.IO;
 
 namespace VapeRPG
 {
-    enum ItemQuality { Unique = -1, Common, Uncommon, Rare, Epic }
+    public enum ItemQuality { Unique = -1, Common, Uncommon, Rare, Epic }
 
     class VapeGlobalItem : GlobalItem
     {
         private static Random rnd = new Random();
+
+        // Quality Colors
+        private static Color uncommonColor = Color.LimeGreen;
+        private static Color rareColor = Color.Blue;
+        private static Color epicColor = Color.BlueViolet;
+        private static Color uniqueColor = Color.SkyBlue;
+
+        // Stat pairs for unique items
+        private static string[,] uniqueStatPairs =
+        {
+            {"Strength", "Haste" },
+            {"Dexterity", "Haste" },
+            {"Spirit", "Magic Power" }
+        };
 
         /// <summary>
         /// The quality of the item.
@@ -40,19 +54,14 @@ namespace VapeRPG
 
         public bool tooltipVisible;
 
-        // Quality Colors
-        private static Color uncommonColor = Color.LimeGreen;
-        private static Color rareColor = Color.Blue;
-        private static Color epicColor = Color.BlueViolet;
-        private static Color uniqueColor = Color.SkyBlue;
-
-        // Stat pairs for unique items
-        private static string[,] uniqueStatPairs =
+        public VapeGlobalItem()
         {
-            {"Strength", "Haste" },
-            {"Dexterity", "Haste" },
-            {"Spirit", "Magic Power" }
-        };
+            this.statBonus = new Dictionary<string, int>();
+            this.wasQualified = false;
+            this.blockChance = 0;
+            this.quality = ItemQuality.Common;
+            this.tooltipVisible = false;
+        }
 
         public override bool InstancePerEntity
         {
@@ -62,13 +71,23 @@ namespace VapeRPG
             }
         }
 
-        public VapeGlobalItem()
+        private static bool IsQualifiable(Item item)
         {
-            this.statBonus = new Dictionary<string, int>();
-            this.wasQualified = false;
-            this.blockChance = 0;
-            this.quality = ItemQuality.Common;
-            this.tooltipVisible = false;
+            return item.accessory || item.defense > 0;
+        }
+
+        public override bool AltFunctionUse(Item item, Player player)
+        {
+            return base.AltFunctionUse(item, player);
+        }
+
+        public override bool CanUseItem(Item item, Player player)
+        {
+            if (item.type == ItemID.LifeCrystal || item.type == ItemID.ManaCrystal || item.type == ItemID.LifeFruit)
+            {
+                return false;
+            }
+            return true;
         }
 
         public override GlobalItem Clone(Item item, Item itemClone)
@@ -86,6 +105,166 @@ namespace VapeRPG
             }
 
             return global;
+        }
+
+        public override void Load(Item item, TagCompound tag)
+        {
+            TagCompound statBonusTC = tag.GetCompound("StatBonuses");
+            this.wasQualified = tag.GetBool("WasQualified");
+            this.statBonus.Clear();
+
+            if (this.wasQualified)
+            {
+                this.quality = (ItemQuality)Enum.Parse(ItemQuality.Common.GetType(), tag.GetString("Quality"));
+                foreach (var x in statBonusTC)
+                {
+                    // Fix for potential error due to removing Intellect from stats
+                    if (x.Key != "Intellect")
+                    {
+                        this.statBonus.Add(x.Key, (int)x.Value);
+                    }
+                }
+
+                if (this.quality == ItemQuality.Unique)
+                {
+                    item.expert = true;
+                }
+            }
+        }
+
+        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
+        {
+            if (this.tooltipVisible)
+            {
+                if (this.quality != ItemQuality.Common)
+                {
+                    TooltipLine itemQuality = new TooltipLine(this.mod, "Quality", this.quality.ToString());
+                    Color qualityColor = Color.White;
+                    switch (this.quality)
+                    {
+                        case ItemQuality.Uncommon:
+                            qualityColor = uncommonColor;
+                            break;
+
+                        case ItemQuality.Rare:
+                            qualityColor = rareColor;
+                            break;
+
+                        case ItemQuality.Epic:
+                            qualityColor = epicColor;
+                            break;
+
+                        case ItemQuality.Unique:
+                            qualityColor = uniqueColor;
+                            break;
+                    }
+
+                    itemQuality.overrideColor = qualityColor;
+                    tooltips.Add(itemQuality);
+                }
+
+                foreach (var x in this.statBonus)
+                {
+                    if (x.Value > 0)
+                    {
+                        TooltipLine bonus = new TooltipLine(this.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
+                        bonus.overrideColor = Color.Yellow;
+                        tooltips.Add(bonus);
+                    }
+                }
+
+                if (this.blockChance > 0)
+                {
+                    TooltipLine bonus = new TooltipLine(this.mod, "Block Chance", String.Format("{0} Block Chance", this.blockChance));
+                    bonus.overrideColor = Color.White;
+                    tooltips.Add(bonus);
+                }
+            }
+        }
+
+        public override bool NeedsSaving(Item item)
+        {
+            return true;
+        }
+
+        public override void NetSend(Item item, BinaryWriter writer)
+        {
+            writer.Write((int)this.quality);
+            writer.Write(this.wasQualified);
+            writer.Write(this.statBonus.Count);
+
+            foreach (var x in this.statBonus)
+            {
+                writer.Write(String.Format("{0}:{1}", x.Key, x.Value));
+            }
+
+            base.NetSend(item, writer);
+        }
+
+        public override void NetReceive(Item item, BinaryReader reader)
+        {
+            this.quality = (ItemQuality)reader.ReadInt32();
+            this.wasQualified = reader.ReadBoolean();
+            int statCount = reader.ReadInt32();
+
+            this.statBonus.Clear();
+
+            for (int i = 0; i < statCount; i++)
+            {
+                string[] keyValuePair = reader.ReadString().Split(':');
+                this.statBonus[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+            }
+
+            base.NetReceive(item, reader);
+        }
+
+        public override bool NewPreReforge(Item item)
+        {
+            return this.quality == ItemQuality.Common;
+        }
+
+        public override void OnCraft(Item item, Recipe recipe)
+        {
+            this.quality = ItemQuality.Common;
+            this.statBonus.Clear();
+            this.tooltipVisible = true;
+
+            if (IsQualifiable(item))
+            {
+                int chance = rnd.Next(0, 100);
+
+                if (chance <= 5)
+                {
+                    this.Qualify(item, ItemQuality.Epic);
+                }
+                else if (chance <= 15)
+                {
+                    this.Qualify(item, ItemQuality.Rare);
+                }
+                else if (chance <= 35)
+                {
+                    this.Qualify(item, ItemQuality.Uncommon);
+                }
+            }
+
+            this.wasQualified = true;
+        }
+
+        public override bool OnPickup(Item item, Player player)
+        {
+            this.tooltipVisible = true;
+            return base.OnPickup(item, player);
+        }
+
+        public override void PostDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            // TODO: Draw colored frame for each quality
+        }
+
+        public void Qualify(Item item, ItemQuality newQuality)
+        {
+            this.quality = newQuality;
+            this.GenerateStatBonuses(item, newQuality);
         }
 
         public override void SetDefaults(Item item)
@@ -136,42 +315,87 @@ namespace VapeRPG
             }
         }
 
-        public override void OnCraft(Item item, Recipe recipe)
+        public override TagCompound Save(Item item)
         {
-            this.quality = ItemQuality.Common;
-            this.statBonus.Clear();
-            this.tooltipVisible = true;
+            TagCompound itemTC = new TagCompound();
+            TagCompound statBonusTC = new TagCompound();
 
-            if (IsQualifiable(item))
+            foreach (var x in this.statBonus)
             {
-                int chance = rnd.Next(0, 100);
-
-                if (chance <= 5)
-                {
-                    this.Qualify(item, ItemQuality.Epic);
-                }
-                else if (chance <= 15)
-                {
-                    this.Qualify(item, ItemQuality.Rare);
-                }
-                else if (chance <= 35)
-                {
-                    this.Qualify(item, ItemQuality.Uncommon);
-                }
+                statBonusTC.Add(x.Key, x.Value);
             }
 
-            this.wasQualified = true;
+            itemTC.Add("Quality", Convert.ToString(this.quality));
+            itemTC.Add("StatBonuses", statBonusTC);
+            itemTC.Add("WasQualified", this.wasQualified);
+
+            return itemTC;
         }
 
-        private static bool IsQualifiable(Item item)
+        public override void Update(Item item, ref float gravity, ref float maxFallSpeed)
         {
-            return item.accessory || item.defense > 0;
+            if(IsQualifiable(item))
+            {
+                int dustType = 63;
+                switch (this.quality)
+                {
+                    case ItemQuality.Uncommon:
+                        dustType = 61;
+                        break;
+
+                    case ItemQuality.Rare:
+                        dustType = 59;
+                        break;
+
+                    case ItemQuality.Epic:
+                        dustType = 62;
+                        break;
+
+                    case ItemQuality.Unique:
+                        dustType = 64;
+                        break;
+                }
+
+                if(VapeConfig.VapeLootRariyRings)
+                {
+                    int dustCount = 360;
+                    for (int i = 0; i < dustCount; i += 2)
+                    {
+                        double angle = i * Math.PI / 180;
+                        Vector2 dustPosition = new Vector2(item.position.X + item.width / 2 + item.width * (float)Math.Cos(angle), item.position.Y + item.height / 2 + item.height * (float)Math.Sin(angle));
+
+                        Dust dust = Dust.NewDustPerfect(dustPosition, dustType, Vector2.Zero);
+                        dust.noGravity = true;
+                    }
+                }
+            }
         }
 
-        public void Qualify(Item item, ItemQuality newQuality)
+        public override void UpdateInventory(Item item, Player player)
         {
-            this.quality = newQuality;
-            this.GenerateStatBonuses(item, newQuality);
+            this.tooltipVisible = true;
+        }
+
+        public override void UpdateEquip(Item item, Player player)
+        {
+            VapePlayer vp = player.GetModPlayer<VapePlayer>();
+            this.tooltipVisible = true;
+
+            vp.blockChance += this.blockChance;
+
+            if (this.statBonus.Count > 0)
+            {
+                foreach (var x in this.statBonus)
+                {
+                    vp.EffectiveStats[x.Key] += x.Value;
+                }
+            }
+        }
+
+        public override bool UseItem(Item item, Player player)
+        {
+            SkillController.UseItem(player.GetModPlayer<VapePlayer>(), item);
+            return base.UseItem(item, player);
         }
 
         private void GenerateStatBonuses(Item item, ItemQuality newQuality)
@@ -236,230 +460,6 @@ namespace VapeRPG
                     }
                 }
             }
-        }
-
-        public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
-        {
-            if(this.tooltipVisible)
-            {
-                if (this.quality != ItemQuality.Common)
-                {
-                    TooltipLine itemQuality = new TooltipLine(this.mod, "Quality", this.quality.ToString());
-                    Color qualityColor = Color.White;
-                    switch (this.quality)
-                    {
-                        case ItemQuality.Uncommon:
-                            qualityColor = uncommonColor;
-                            break;
-
-                        case ItemQuality.Rare:
-                            qualityColor = rareColor;
-                            break;
-
-                        case ItemQuality.Epic:
-                            qualityColor = epicColor;
-                            break;
-
-                        case ItemQuality.Unique:
-                            qualityColor = uniqueColor;
-                            break;
-                    }
-
-                    itemQuality.overrideColor = qualityColor;
-                    tooltips.Add(itemQuality);
-                }
-
-                foreach (var x in this.statBonus)
-                {
-                    if (x.Value > 0)
-                    {
-                        TooltipLine bonus = new TooltipLine(this.mod, x.Key, String.Format("+{0} {1}", x.Value, x.Key));
-                        bonus.overrideColor = Color.Yellow;
-                        tooltips.Add(bonus);
-                    }
-                }
-
-                if (this.blockChance > 0)
-                {
-                    TooltipLine bonus = new TooltipLine(this.mod, "Block Chance", String.Format("{0} Block Chance", this.blockChance));
-                    bonus.overrideColor = Color.White;
-                    tooltips.Add(bonus);
-                }
-            }
-        }
-
-        public override bool OnPickup(Item item, Player player)
-        {
-            this.tooltipVisible = true;
-            return base.OnPickup(item, player);
-        }
-
-        public override bool NeedsSaving(Item item)
-        {
-            return true;
-        }
-
-        public override TagCompound Save(Item item)
-        {
-            TagCompound itemTC = new TagCompound();
-            TagCompound statBonusTC = new TagCompound();
-
-            foreach (var x in this.statBonus)
-            {
-                statBonusTC.Add(x.Key, x.Value);
-            }
-
-            itemTC.Add("Quality", Convert.ToString(this.quality));
-            itemTC.Add("StatBonuses", statBonusTC);
-            itemTC.Add("WasQualified", this.wasQualified);
-
-            return itemTC;
-        }
-
-        public override void Load(Item item, TagCompound tag)
-        {
-            TagCompound statBonusTC = tag.GetCompound("StatBonuses");
-            this.wasQualified = tag.GetBool("WasQualified");
-            this.statBonus.Clear();
-
-            if (this.wasQualified)
-            {
-                this.quality = (ItemQuality)Enum.Parse(ItemQuality.Common.GetType(), tag.GetString("Quality"));
-                foreach (var x in statBonusTC)
-                {
-                    // Fix for potential error due to removing Intellect from stats
-                    if(x.Key != "Intellect")
-                    {
-                        this.statBonus.Add(x.Key, (int)x.Value);
-                    }
-                }
-
-                if (this.quality == ItemQuality.Unique)
-                {
-                    item.expert = true;
-                }
-            }
-        }
-
-        public override bool CanUseItem(Item item, Player player)
-        {
-            if(item.type == ItemID.LifeCrystal || item.type == ItemID.ManaCrystal || item.type == ItemID.LifeFruit)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public override void Update(Item item, ref float gravity, ref float maxFallSpeed)
-        {
-            if(IsQualifiable(item))
-            {
-                int dustType = 63;
-                switch (this.quality)
-                {
-                    case ItemQuality.Uncommon:
-                        dustType = 61;
-                        break;
-
-                    case ItemQuality.Rare:
-                        dustType = 59;
-                        break;
-
-                    case ItemQuality.Epic:
-                        dustType = 62;
-                        break;
-
-                    case ItemQuality.Unique:
-                        dustType = 64;
-                        break;
-                }
-
-                if(VapeConfig.VapeLootRariyRings)
-                {
-                    int dustCount = 360;
-                    for (int i = 0; i < dustCount; i += 2)
-                    {
-                        double angle = i * Math.PI / 180;
-                        Vector2 dustPosition = new Vector2(item.position.X + item.width / 2 + item.width * (float)Math.Cos(angle), item.position.Y + item.height / 2 + item.height * (float)Math.Sin(angle));
-
-                        Dust dust = Dust.NewDustPerfect(dustPosition, dustType, Vector2.Zero);
-                        dust.noGravity = true;
-                    }
-                }
-            }
-        }
-
-        public override void UpdateInventory(Item item, Player player)
-        {
-            this.tooltipVisible = true;
-        }
-
-        public override void UpdateEquip(Item item, Player player)
-        {
-            VapePlayer vp = player.GetModPlayer<VapePlayer>();
-            this.tooltipVisible = true;
-
-            vp.blockChance += this.blockChance;
-
-            if (this.statBonus.Count > 0)
-            {
-                foreach (var x in this.statBonus)
-                {
-                    vp.EffectiveStats[x.Key] += x.Value;
-                }
-            }
-        }
-
-        public override bool AltFunctionUse(Item item, Player player)
-        {
-            return base.AltFunctionUse(item, player);
-        }
-
-        public override void PostDrawInInventory(Item item, SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
-        {
-            // TODO: Draw colored frame for each quality
-        }
-
-        public override bool NewPreReforge(Item item)
-        {
-            return this.quality == ItemQuality.Common;
-        }
-
-        public override void NetSend(Item item, BinaryWriter writer)
-        {
-            writer.Write((int)this.quality);
-            writer.Write(this.wasQualified);
-            writer.Write(this.statBonus.Count);
-
-            foreach (var x in this.statBonus)
-            {
-                writer.Write(String.Format("{0}:{1}", x.Key, x.Value));
-            }
-
-            base.NetSend(item, writer);
-        }
-
-        public override bool UseItem(Item item, Player player)
-        {
-            SkillController.UseItem(player.GetModPlayer<VapePlayer>(), item);
-            return base.UseItem(item, player);
-        }
-
-        public override void NetReceive(Item item, BinaryReader reader)
-        {
-            this.quality = (ItemQuality)reader.ReadInt32();
-            this.wasQualified = reader.ReadBoolean();
-            int statCount = reader.ReadInt32();
-
-            this.statBonus.Clear();
-
-            for (int i = 0; i < statCount; i++)
-            {
-                string[] keyValuePair = reader.ReadString().Split(':');
-                this.statBonus[keyValuePair[0]] = int.Parse(keyValuePair[1]);
-            }
-
-            base.NetReceive(item, reader);
         }
     }
 }

@@ -16,6 +16,10 @@ I repeat, the mod is highly volatile in Multiplayer. Don't expect tech support i
 Many things are tweakable via the config files. Please refer to the mod's thread for documentation.
 
 Changelog:
+v0.3.3.2:
+- NEW:
+-> Allow floats for some stats in the config.
+
 v0.3.3.1:
 - NEW:
 -> Rarity rings graphics can be enabled/disabled in the config.

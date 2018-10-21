@@ -22,9 +22,9 @@ namespace VapeRPG
 
         public Texture2D icon;
 
-        internal List<Skill> Prerequisites { get; private set; }
-
         public SkillTree tree;
+
+        internal List<Skill> Prerequisites { get; private set; }
 
         public Skill(string name, string description, int maxLevel, SkillTree tree, Texture2D icon)
         {

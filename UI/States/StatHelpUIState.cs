@@ -13,10 +13,10 @@ namespace VapeRPG.UI.States
 {
     class StatHelpUIState : UIState
     {
+        public static bool visible = false;
+
         private UIPanel helpPanel;
         private UIText[] statHelpTexts;
-
-        public static bool visible = false;
 
         public override void OnInitialize()
         {

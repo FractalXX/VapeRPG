@@ -16,6 +16,13 @@ namespace VapeRPG
     class VapeGlobalNpc : GlobalNPC
     {
         /// <summary>
+        /// The override color for chaos mobs.
+        /// </summary>
+        public static Color ChaosColor = new Color(179, 104, 255, 127);
+
+        private static Random rnd = new Random();
+
+        /// <summary>
         /// Returns true if the mob is a chaos mob.
         /// </summary>
         public bool isChaos = false;
@@ -25,13 +32,6 @@ namespace VapeRPG
         /// </summary>
         public int chaosMultiplier = 1;
 
-        /// <summary>
-        /// The override color for chaos mobs.
-        /// </summary>
-        public static Color ChaosColor = new Color(179, 104, 255, 127);
-
-        private static Random rnd = new Random();
-
         public override bool InstancePerEntity
         {
             get
@@ -40,15 +40,29 @@ namespace VapeRPG
             }
         }
 
-        public override void SetDefaults(NPC npc)
+        public void ChaosTransform(NPC npc)
         {
-            // Fix for incompatibility with other mods such as Calamity, etc.
-            if (npc != null && Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
+            this.chaosMultiplier = rnd.Next(VapeConfig.MinChaosMultiplier, VapeConfig.MaxChaosMultiplier);
+
+            npc.scale *= this.chaosMultiplier / 2.7f;
+            npc.lifeMax *= this.chaosMultiplier;
+            npc.life = npc.lifeMax;
+            npc.defDamage *= this.chaosMultiplier;
+            npc.defDefense *= this.chaosMultiplier / 2;
+            npc.color = ChaosColor;
+            npc.stepSpeed *= this.chaosMultiplier / 2f;
+
+            this.isChaos = true;
+
+            if (Main.netMode == NetmodeID.Server)
             {
-                if (!npc.boss && npc.lifeMax >= 40 && !npc.SpawnedFromStatue && !npc.friendly && !VapeConfig.IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= VapeConfig.ChaosChance)
-                {
-                    ChaosTransform(npc);
-                }
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, NetworkText.Empty, npc.whoAmI);
+
+                ModPacket packet = this.mod.GetPacket();
+                packet.Write((byte)VapeRPGMessageType.ServerTransformChaosNPC);
+                packet.Write(this.chaosMultiplier);
+                packet.Write(npc.whoAmI);
+                packet.Send();
             }
         }
 
@@ -286,37 +300,23 @@ namespace VapeRPG
             base.NPCLoot(npc);
         }
 
-        public void ChaosTransform(NPC npc)
-        {
-            this.chaosMultiplier = rnd.Next(VapeConfig.MinChaosMultiplier, VapeConfig.MaxChaosMultiplier);
-
-            npc.scale *= this.chaosMultiplier / 2.7f;
-            npc.lifeMax *= this.chaosMultiplier;
-            npc.life = npc.lifeMax;
-            npc.defDamage *= this.chaosMultiplier;
-            npc.defDefense *= this.chaosMultiplier / 2;
-            npc.color = ChaosColor;
-            npc.stepSpeed *= this.chaosMultiplier / 2f;
-
-            this.isChaos = true;
-
-            if (Main.netMode == NetmodeID.Server)
-            {
-                NetMessage.SendData(MessageID.SyncNPC, -1, -1, NetworkText.Empty, npc.whoAmI);
-
-                ModPacket packet = this.mod.GetPacket();
-                packet.Write((byte)VapeRPGMessageType.ServerTransformChaosNPC);
-                packet.Write(this.chaosMultiplier);
-                packet.Write(npc.whoAmI);
-                packet.Send();
-            }
-        }
-
         public override void ResetEffects(NPC npc)
         {
             if (this.isChaos)
             {
                 npc.GivenName = String.Format("Chaos {0}", npc.TypeName);
+            }
+        }
+
+        public override void SetDefaults(NPC npc)
+        {
+            // Fix for incompatibility with other mods such as Calamity, etc.
+            if (npc != null && Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
+            {
+                if (!npc.boss && npc.lifeMax >= 40 && !npc.SpawnedFromStatue && !npc.friendly && !VapeConfig.IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= VapeConfig.ChaosChance)
+                {
+                    ChaosTransform(npc);
+                }
             }
         }
 

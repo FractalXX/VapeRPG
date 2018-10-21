@@ -11,28 +11,16 @@ namespace VapeRPG.UI.Elements
 {
     class UIStatInfo : UIElement
     {
-        private UIImageButton button;
-        private UIText bonusText;
-        private UIText statText;
-
-        private bool isMinorStat;
-
         public string stat;
         public float statValue;
 
         public float bonusValue;
 
-        public Color TextColor
-        {
-            get
-            {
-                return this.statText.TextColor;
-            }
-            set
-            {
-                this.statText.TextColor = value;
-            }
-        }
+        private UIImageButton button;
+        private UIText bonusText;
+        private UIText statText;
+
+        private bool isMinorStat;
 
         public UIStatInfo(string stat, float width, float height, bool isMinorStat = false, bool button = true, float textScale = 1f)
         {
@@ -123,6 +111,18 @@ namespace VapeRPG.UI.Elements
             }
 
             this.Append(this.statText);
+        }
+
+        public Color TextColor
+        {
+            get
+            {
+                return this.statText.TextColor;
+            }
+            set
+            {
+                this.statText.TextColor = value;
+            }
         }
 
         public override void Update(GameTime gameTime)

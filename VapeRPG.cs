@@ -13,7 +13,7 @@ using VapeRPG.UI.States;
 
 namespace VapeRPG
 {
-    enum VapeRPGMessageType : byte
+    internal enum VapeRPGMessageType : byte
     {
         ServerTransformChaosNPC,
         ClientSyncXp,
@@ -23,19 +23,8 @@ namespace VapeRPG
 
     class VapeRPG : Mod
     {
-        public const int MaxLevel = 200; // Self-explanatory
-        public int[] XpNeededForLevel { get; private set; }
-        public int[] XpNeededForChaosRank { get; private set; }
-        public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
-        public CharUIState CharUI { get; private set; } // For the character panel
-        public StatHelpUIState StatHelpUI { get; private set; }
-        private UserInterface expUserInterface;
-        private UserInterface charUserInterface;
-
-        //public static Texture2D itemQualityFrame;
-
         public static string[] BaseStats =
-        {
+{
             "Strength",
             "Magic power",
             "Dexterity",
@@ -64,6 +53,16 @@ namespace VapeRPG
 
         public static ModHotKey CharWindowHotKey;
 
+        public const int MaxLevel = 200; // Self-explanatory
+
+        public int[] XpNeededForLevel { get; private set; }
+        public int[] XpNeededForChaosRank { get; private set; }
+        public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
+        public CharUIState CharUI { get; private set; } // For the character panel
+        public StatHelpUIState StatHelpUI { get; private set; }
+        private UserInterface expUserInterface;
+        private UserInterface charUserInterface;
+
         public VapeRPG()
         {
             this.Properties = new ModProperties()
@@ -73,6 +72,106 @@ namespace VapeRPG
                 AutoloadSounds = true,
                 AutoloadBackgrounds = true
             };
+        }
+
+        public static string GetBuffDescription(int type)
+        {
+            string description = Lang.GetBuffDescription(type);
+
+            if (type > 0)
+            {
+                if (type == 26 && Main.expertMode) description = Language.GetTextValue("BuffDescription.WellFed_Expert");
+                if (type == 94)
+                {
+                    int num31 = (int)(Main.player[Main.myPlayer].manaSickReduction * 100f) + 1;
+                    description += num31 + "%";
+                }
+            }
+            return description;
+        }
+
+        public static Skill GetSkill(string name)
+        {
+            return Skills.Find(x => x.name == name);
+        }
+
+        private static Texture2D GetSkillFrame(string name)
+        {
+            Texture2D frame;
+            try
+            {
+                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/" + name);
+            }
+            catch (Exception)
+            {
+                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
+            }
+
+            return frame;
+        }
+
+        public override void HandlePacket(BinaryReader reader, int whoAmI)
+        {
+            VapeRPGMessageType msgType = (VapeRPGMessageType)reader.ReadByte();
+
+            switch (msgType)
+            {
+                case VapeRPGMessageType.ServerTransformChaosNPC:
+                    int chaosMultiplier = reader.ReadInt32();
+                    int index = reader.ReadInt32();
+
+                    NPC npc = Main.npc[index];
+                    VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
+
+                    global.chaosMultiplier = chaosMultiplier;
+                    global.isChaos = true;
+                    break;
+
+                case VapeRPGMessageType.ClientSyncStats:
+                    Player player = Main.player[reader.ReadInt32()];
+
+                    if (!player.Equals(Main.LocalPlayer) || Main.netMode == NetmodeID.Server)
+                    {
+                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
+
+                        for (int i = 0; i < BaseStats.Length; i++)
+                        {
+                            string[] keyValuePair = reader.ReadString().Split(' ');
+                            modPlayer.BaseStats[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+                        }
+
+                        for (int i = 0; i < BaseStats.Length; i++)
+                        {
+                            string[] keyValuePair = reader.ReadString().Split(' ');
+                            modPlayer.EffectiveStats[keyValuePair[0]] = int.Parse(keyValuePair[1]);
+                        }
+                    }
+
+                    break;
+
+                case VapeRPGMessageType.ClientSyncXp:
+                    player = Main.player[reader.ReadInt32()];
+
+                    if (Main.netMode == NetmodeID.Server || !player.Equals(Main.LocalPlayer))
+                    {
+                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
+
+                        modPlayer.xp = reader.ReadInt32();
+                        modPlayer.chaosXp = reader.ReadInt32();
+                    }
+                    break;
+
+                case VapeRPGMessageType.ClientSyncLevel:
+                    player = Main.player[reader.ReadInt32()];
+
+                    if (Main.netMode == NetmodeID.Server || !player.Equals(Main.LocalPlayer))
+                    {
+                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
+
+                        modPlayer.level = reader.ReadInt32();
+                    }
+                    break;
+            }
         }
 
         public override void Load()
@@ -227,106 +326,6 @@ namespace VapeRPG
                     InterfaceScaleType.UI)
                 );
             }
-        }
-
-        public override void HandlePacket(BinaryReader reader, int whoAmI)
-        {
-            VapeRPGMessageType msgType = (VapeRPGMessageType)reader.ReadByte();
-
-            switch (msgType)
-            {
-                case VapeRPGMessageType.ServerTransformChaosNPC:
-                    int chaosMultiplier = reader.ReadInt32();
-                    int index = reader.ReadInt32();
-
-                    NPC npc = Main.npc[index];
-                    VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
-
-                    global.chaosMultiplier = chaosMultiplier;
-                    global.isChaos = true;
-                    break;
-
-                case VapeRPGMessageType.ClientSyncStats:
-                    Player player = Main.player[reader.ReadInt32()];
-
-                    if (!player.Equals(Main.LocalPlayer) || Main.netMode == NetmodeID.Server)
-                    {
-                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
-
-                        for (int i = 0; i < BaseStats.Length; i++)
-                        {
-                            string[] keyValuePair = reader.ReadString().Split(' ');
-                            modPlayer.BaseStats[keyValuePair[0]] = int.Parse(keyValuePair[1]);
-                        }
-
-                        for (int i = 0; i < BaseStats.Length; i++)
-                        {
-                            string[] keyValuePair = reader.ReadString().Split(' ');
-                            modPlayer.EffectiveStats[keyValuePair[0]] = int.Parse(keyValuePair[1]);
-                        }
-                    }
-
-                    break;
-
-                case VapeRPGMessageType.ClientSyncXp:
-                    player = Main.player[reader.ReadInt32()];
-
-                    if (Main.netMode == NetmodeID.Server || !player.Equals(Main.LocalPlayer))
-                    {
-                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
-
-                        modPlayer.xp = reader.ReadInt32();
-                        modPlayer.chaosXp = reader.ReadInt32();
-                    }
-                    break;
-
-                case VapeRPGMessageType.ClientSyncLevel:
-                    player = Main.player[reader.ReadInt32()];
-
-                    if (Main.netMode == NetmodeID.Server || !player.Equals(Main.LocalPlayer))
-                    {
-                        VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
-
-                        modPlayer.level = reader.ReadInt32();
-                    }
-                    break;
-            }
-        }
-
-        public static string GetBuffDescription(int type)
-        {
-            string description = Lang.GetBuffDescription(type);
-
-            if (type > 0)
-            {
-                if (type == 26 && Main.expertMode) description = Language.GetTextValue("BuffDescription.WellFed_Expert");
-                if (type == 94)
-                {
-                    int num31 = (int)(Main.player[Main.myPlayer].manaSickReduction * 100f) + 1;
-                    description += num31 + "%";
-                }
-            }
-            return description;
-        }
-
-        public static Skill GetSkill(string name)
-        {
-            return Skills.Find(x => x.name == name);
-        }
-
-        private static Texture2D GetSkillFrame(string name)
-        {
-            Texture2D frame;
-            try
-            {
-                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/" + name);
-            }
-            catch(Exception)
-            {
-                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
-            }
-
-            return frame;
         }
     }
 }
