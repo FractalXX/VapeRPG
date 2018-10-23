@@ -27,12 +27,50 @@ namespace VapeRPG.UI.States
         private UIText pointsText;
         private UIText chaosPointsText;
 
+        private UIVapeProgressBar xpBar;
+        private UIVapeProgressBar chaosXpBar;
+        private UIText levelText;
+
         private UIImage statHelper;
 
         private float charPanelWidth;
         private float charPanelHeight;
 
         private Vector2 offset;
+
+        private void DragEnd(UIMouseEvent evt, UIElement listeningElement)
+        {
+            Vector2 end = evt.MousePosition;
+            dragging = false;
+
+            this.mainPanel.Left.Set(end.X - offset.X, 0f);
+            this.mainPanel.Top.Set(end.Y - offset.Y, 0f);
+
+            this.Recalculate();
+        }
+
+
+        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        {
+            offset = new Vector2(evt.MousePosition.X - this.mainPanel.Left.Pixels, evt.MousePosition.Y - this.mainPanel.Top.Pixels);
+            dragging = true;
+        }
+
+        protected override void DrawSelf(SpriteBatch spriteBatch)
+        {
+            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+            Main.LocalPlayer.mouseInterface = this.mainPanel.ContainsPoint(MousePosition);
+
+            if (dragging)
+            {
+                this.mainPanel.Left.Set(MousePosition.X - offset.X, 0f);
+                this.mainPanel.Top.Set(MousePosition.Y - offset.Y, 0f);
+            }
+
+            this.Recalculate();
+
+            base.DrawSelf(spriteBatch);
+        }
 
         public override void OnInitialize()
         {
@@ -68,20 +106,41 @@ namespace VapeRPG.UI.States
             this.statPanel.BorderColor = Color.Black;
             this.statPanel.BackgroundColor = new Color(100, 118, 183);
 
+            UIPanel statListContainer = new UIPanel();
+            statListContainer.Width.Set(0f, 1f);
+            statListContainer.Height.Set(this.statPanel.Height.Pixels - 140, 0);
+            statListContainer.Top.Set(70, 0f);
+
+            UIList statList = new UIList();
+            statList.ListPadding = 5f;
+            statList.Width.Set(0f, 1f);
+            statList.Height.Set(0f, 1f);
+
+            statListContainer.Append(statList);
+            this.statPanel.Append(statListContainer);
+
+            UIScrollbar statScrollBar = new UIScrollbar();
+            statScrollBar.SetView(100f, 1000f);
+            statScrollBar.Height.Set(0f, 1f);
+            statScrollBar.HAlign = 1f;
+
+            statListContainer.Append(statScrollBar);
+            statList.SetScrollbar(statScrollBar);
+
             #region statPanel texts
 
             for (int i = 0; i < statControls.Length; i++)
             {
                 this.statControls[i] = new UIStatInfo(VapeRPG.BaseStats[i], this.statPanel.Width.Pixels, 20);
-                this.statControls[i].Top.Set(30 + 1.2f * i * this.statControls[i].Height.Pixels + 5, 0);
+                this.statControls[i].Top.Set(70 + 1.2f * i * this.statControls[i].Height.Pixels + 5, 0);
                 this.statControls[i].TextColor = Color.Yellow;
-                this.statPanel.Append(this.statControls[i]);
+                statList.Add(this.statControls[i]);
             }
 
             this.statHelper = new UIImage(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/HelpButton"));
-            this.statHelper.Width.Set(30, 0);
-            this.statHelper.Height.Set(30, 0);
-            this.statHelper.Left.Set(-30, 1f);
+            this.statHelper.Width.Set(20, 0);
+            this.statHelper.Height.Set(20, 0);
+            this.statHelper.Left.Set(-25, 1f);
             this.statHelper.Top.Set(0, 0);
             this.statHelper.OnMouseOver += (x, y) => StatHelpUIState.visible = true;
             this.statHelper.OnMouseOut += (x, y) => StatHelpUIState.visible = false;
@@ -89,11 +148,42 @@ namespace VapeRPG.UI.States
             this.statPanel.Append(this.statHelper);
 
             this.pointsText = new UIText("Stat points: 0\nSkill points: 0", 0.8f);
-            this.pointsText.Width.Set(this.statPanel.Width.Pixels / 3, 0);
-            this.pointsText.HAlign = 0.5f;
             this.pointsText.Top.Set(-this.pointsText.MinHeight.Pixels * 2 - 10, 1f);
             this.statPanel.Append(this.pointsText);
+
+            UIButton resetXpUI = new UIButton("Reset status bar", false, 0.8f);
+            resetXpUI.Top.Set(-40, 1f);
+            resetXpUI.Left.Set(-resetXpUI.MinWidth.Pixels, 1f);
+            resetXpUI.OnClick += (evt, element) =>
+            {
+                VapeRPG vapeMod = ModLoader.GetMod("VapeRPG") as VapeRPG;
+                vapeMod.ExpUI.SetPanelPosition(ExpUIState.DefaultPanelPosition);
+            };
+            this.statPanel.Append(resetXpUI);
             #endregion
+
+            this.xpBar = new UIVapeProgressBar(1, 0, 100, Color.Green, Color.Lime);
+            this.xpBar.SetPadding(0);
+            this.xpBar.Left.Set(0, 0.45f);
+            this.xpBar.Top.Set(10, 0);
+            this.xpBar.Width.Set(100, 0);
+            this.xpBar.Height.Set(15, 0);
+            this.xpBar.strokeThickness = 2;
+            this.statPanel.Append(this.xpBar);
+
+            this.chaosXpBar = new UIVapeProgressBar(0, 0, 100, Color.Purple, Color.Violet);
+            this.chaosXpBar.SetPadding(0);
+            this.chaosXpBar.Left.Set(0, 0.45f);
+            this.chaosXpBar.Top.Set(30, 0);
+            this.chaosXpBar.Width.Set(100, 0);
+            this.chaosXpBar.Height.Set(15, 0);
+            this.chaosXpBar.strokeThickness = 2;
+            this.statPanel.Append(this.chaosXpBar);
+
+            this.levelText = new UIText("Level: 1\nChaos rank: 0", 0.8f);
+            this.levelText.Left.Set(0, 0);
+            this.levelText.Top.Set(10, 0);
+            this.statPanel.Append(this.levelText);
 
             this.miscPanel = new UIPanel();
             this.miscPanel.SetPadding(10);
@@ -104,11 +194,29 @@ namespace VapeRPG.UI.States
             this.miscPanel.BorderColor = Color.Black;
             this.miscPanel.BackgroundColor = new Color(100, 118, 183);
 
-            this.chaosPointsText = new UIText("Chaos points: 0");
+            this.chaosPointsText = new UIText("Chaos points: 0", 0.8f);
             this.chaosPointsText.Top.Set(-10, 1f);
             this.chaosPointsText.HAlign = 0.5f;
             this.chaosPointsText.TextColor = Color.Violet;
             this.miscPanel.Append(this.chaosPointsText);
+
+            UIPanel miscStatListContainer = new UIPanel();
+            miscStatListContainer.Width.Set(0f, 1f);
+            miscStatListContainer.Height.Set(this.miscPanel.Height.Pixels - 40, 0f);
+
+            UIList miscStatList = new UIList();
+            miscStatList.Width.Set(0f, 1f);
+            miscStatList.Height.Set(0f, 1f);
+            miscStatListContainer.Append(miscStatList);
+
+            UIScrollbar miscStatScrollBar = new UIScrollbar();
+            miscStatScrollBar.SetView(100f, 1000f);
+            miscStatScrollBar.Height.Set(0f, 1f);
+            miscStatScrollBar.HAlign = 1f;
+            miscStatListContainer.Append(miscStatScrollBar);
+            miscStatList.SetScrollbar(miscStatScrollBar);
+
+            this.miscPanel.Append(miscStatListContainer);
 
             #region miscPanel texts
 
@@ -117,7 +225,7 @@ namespace VapeRPG.UI.States
                 this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels, 20, true, !VapeRPG.MinorStats[i].Contains("Block Chance"), 0.8f);
                 this.miscStatControls[i].Top.Set(i * this.miscStatControls[i].Height.Pixels + 5, 0);
 
-                this.miscPanel.Append(this.miscStatControls[i]);
+                miscStatList.Add(this.miscStatControls[i]);
             }
 
             #endregion
@@ -131,7 +239,7 @@ namespace VapeRPG.UI.States
 
         public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
         {
-            foreach (UIStatInfo usi in miscStatControls)
+            foreach (UIStatInfo usi in this.miscStatControls)
             {
                 if (usi.stat.Contains("Melee Damage"))
                 {
@@ -200,6 +308,18 @@ namespace VapeRPG.UI.States
             }
         }
 
+        public void UpdateChaosXpBar(float value, float minValue, float maxValue)
+        {
+            this.chaosXpBar.value = value;
+            this.chaosXpBar.minValue = minValue;
+            this.chaosXpBar.maxValue = maxValue;
+        }
+
+        public void UpdateLevel(int newLevel, int newChaosRank)
+        {
+            this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
+        }
+
         public void UpdateStats(Dictionary<string, int> baseStats, Dictionary<string, int> effStats, int statPoints, int skillPoints)
         {
             foreach (UIStatInfo usi in statControls)
@@ -211,40 +331,11 @@ namespace VapeRPG.UI.States
             this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
         }
 
-        private void DragEnd(UIMouseEvent evt, UIElement listeningElement)
+        public void UpdateXpBar(float value, float minValue, float maxValue)
         {
-            Vector2 end = evt.MousePosition;
-            dragging = false;
-
-            this.mainPanel.Left.Set(end.X - offset.X, 0f);
-            this.mainPanel.Top.Set(end.Y - offset.Y, 0f);
-
-            this.Recalculate();
-        }
-
-
-        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
-        {
-            offset = new Vector2(evt.MousePosition.X - this.mainPanel.Left.Pixels, evt.MousePosition.Y - this.mainPanel.Top.Pixels);
-            dragging = true;
-        }
-
-        protected override void DrawSelf(SpriteBatch spriteBatch)
-        {
-            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-            if (this.mainPanel.ContainsPoint(MousePosition))
-            {
-                Main.LocalPlayer.mouseInterface = true;
-            }
-            if (dragging)
-            {
-                this.mainPanel.Left.Set(MousePosition.X - offset.X, 0f);
-                this.mainPanel.Top.Set(MousePosition.Y - offset.Y, 0f);
-            }
-
-            this.Recalculate();
-
-            base.DrawSelf(spriteBatch);
+            this.xpBar.value = value;
+            this.xpBar.minValue = minValue;
+            this.xpBar.maxValue = maxValue;
         }
     }
 }

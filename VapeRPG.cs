@@ -63,6 +63,8 @@ namespace VapeRPG
         private UserInterface expUserInterface;
         private UserInterface charUserInterface;
 
+        public static UserInterface ui;
+
         public VapeRPG()
         {
             this.Properties = new ModProperties()
@@ -252,7 +254,7 @@ namespace VapeRPG
             };
 
 
-            foreach(Skill skill in Skills)
+            foreach (Skill skill in Skills)
             {
                 skill.AddPrerequisites();
             }
@@ -277,6 +279,7 @@ namespace VapeRPG
 
                 this.charUserInterface = new UserInterface();
                 this.charUserInterface.SetState(this.CharUI);
+                ui = this.charUserInterface;
 
                 ExpUIState.visible = true;
             }
@@ -288,17 +291,18 @@ namespace VapeRPG
             if (MouseTextIndex != -1)
             {
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
-                "VapeRPG: StatHelp",
-                delegate
-                {
-                    if (StatHelpUIState.visible)
+                    "VapeRPG: StatHelp",
+                    delegate
                     {
-                        StatHelpUI.Draw(Main.spriteBatch);
-                    }
-                    return true;
-                },
-                InterfaceScaleType.UI)
-            );
+                        if (StatHelpUIState.visible)
+                        {
+                            StatHelpUI.Draw(Main.spriteBatch);
+                        }
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
                     "VapeRPG: StatWindow",
                     delegate
@@ -312,6 +316,7 @@ namespace VapeRPG
                     },
                     InterfaceScaleType.UI)
                 );
+
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
                     "VapeRPG: ExperienceBar",
                     delegate

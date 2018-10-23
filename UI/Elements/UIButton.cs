@@ -38,7 +38,7 @@ namespace VapeRPG.UI.Elements
             }
         }
 
-        public UIButton(string name, bool isToggle = false) : base(name)
+        public UIButton(string name, bool isToggle = false, float textScale = 1f) : base(name, textScale)
         {
             this.BackgroundColor = new Color(60, 78, 143);
             this.isToggleButton = isToggle;
