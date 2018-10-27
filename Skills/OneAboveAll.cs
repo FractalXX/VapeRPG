@@ -24,7 +24,7 @@ namespace VapeRPG.Skills
             if(VapeRPG.rand.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredTypeChaos(target))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
-                target.StrikeNPC(target.life / 2, 0, 0);
+                target.StrikeNPC(target.life, 0, 0);
             }
         }
 
@@ -33,7 +33,7 @@ namespace VapeRPG.Skills
             if (VapeRPG.rand.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredTypeChaos(target))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
-                target.StrikeNPC(target.life / 2, 0, 0);
+                target.StrikeNPC(target.life, 0, 0);
             }
         }
     }

@@ -22,9 +22,12 @@ namespace VapeRPG.Skills
 
         public override void ModifyHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
-            int amount = (int)Math.Floor(target.life * 0.1f);
-            target.life -= amount;
-            CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 50, 100, 100), Color.Cyan, amount);
+            if(target.life == target.lifeMax)
+            {
+                int amount = (int)Math.Floor(target.life * 0.1f);
+                target.life -= amount;
+                CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 50, 100, 100), Color.Cyan, amount);
+            }
         }
     }
 }

@@ -650,7 +650,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.UpdateStats(this);
+                if(this.HasSkill(skill.GetType()))
+                {
+                    skill.OnHitNPC(this, null, proj, target, damage, knockback, crit);
+                }
             }
         }
 
@@ -658,7 +661,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.ModifyHitByNPC(this, npc, ref damage, ref crit);
+                if (this.HasSkill(skill.GetType()))
+                {
+                    skill.ModifyHitByNPC(this, npc, ref damage, ref crit);
+                }
             }
         }
 
@@ -666,7 +672,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.ModifyHitByProjectile(this, proj, ref damage, ref crit);
+                if (this.HasSkill(skill.GetType()))
+                {
+                    skill.ModifyHitByProjectile(this, proj, ref damage, ref crit);
+                }
             }
         }
 
@@ -674,7 +683,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.ModifyHitNPC(this, item, null, target, ref damage, ref knockback, ref crit);
+                if (this.HasSkill(skill.GetType()))
+                {
+                    skill.ModifyHitNPC(this, item, null, target, ref damage, ref knockback, ref crit);
+                }
             }
         }
 
@@ -682,7 +694,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.OnHitNPC(this, item, null, target, damage, knockback, crit);
+                if (this.HasSkill(skill.GetType()))
+                {
+                    skill.OnHitNPC(this, item, null, target, damage, knockback, crit);
+                }
             }
         }
 
@@ -690,7 +705,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.ModifyHitNPC(this, null, proj, target, ref damage, ref knockback, ref crit);
+                if (this.HasSkill(skill.GetType()))
+                {
+                    skill.ModifyHitNPC(this, null, proj, target, ref damage, ref knockback, ref crit);
+                }
             }
         }
 
@@ -698,7 +716,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.Shoot(this, item, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
+                if (this.HasSkill(skill.GetType()))
+                {
+                    skill.Shoot(this, item, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
+                }
             }
             return true;
         }
@@ -707,7 +728,10 @@ namespace VapeRPG
         {
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skill.Hurt(this, pvp, quiet, damage, hitDirection, crit);
+                if (this.HasSkill(skill.GetType()))
+                {
+                    skill.Hurt(this, pvp, quiet, damage, hitDirection, crit);
+                }
             }
         }
         #endregion

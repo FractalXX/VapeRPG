@@ -22,7 +22,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if((proj == null ? item.magic : proj.magic) && VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<MagicSparks>() * 10)
+            if(target.life <= 0 && (proj == null ? item.magic : proj.magic) && VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<MagicSparks>() * 10)
             {
                 int dustCount = 20;
                 int sparkRange = 30;
