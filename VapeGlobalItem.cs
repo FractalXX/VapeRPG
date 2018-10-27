@@ -394,7 +394,10 @@ namespace VapeRPG
 
         public override bool UseItem(Item item, Player player)
         {
-            SkillController.UseItem(player.GetModPlayer<VapePlayer>(), item);
+            foreach(Skill skill in VapeRPG.Skills)
+            {
+                skill.UseItem(player.GetModPlayer<VapePlayer>(), item);
+            }
             return base.UseItem(item, player);
         }
 

@@ -1,158 +1,67 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.Localization;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.GameInput;
-
-using VapeRPG.UI.Elements;
 
 namespace VapeRPG
 {
     enum SkillTree { Shredder, Reaper, Power }
 
-    class Skill
+    abstract class Skill
     {
-        public string name;
-        public string description;
+        public string Name { get; protected set; }
+        public string Description { get; protected set; }
+        public int MaxLevel { get; protected set; }
+        public SkillTree Tree { get; protected set; }
+        public Texture2D Icon { get; private set; }
 
-        public int maxLevel;
+        private IList<Type> prerequisites;
 
-        public Texture2D icon;
-
-        public SkillTree tree;
-
-        internal List<Skill> Prerequisites { get; private set; }
-
-        public Skill(string name, string description, int maxLevel, SkillTree tree, Texture2D icon)
+        protected Skill()
         {
-            this.name = name;
-            this.description = description;
-            this.icon = icon;
-            this.maxLevel = maxLevel;
-
-            this.Prerequisites = new List<Skill>();
-
-            this.tree = tree;
+            this.prerequisites = new List<Type>();
+            this.Icon = this.TryGetSkillFrame();
+            this.SetDefaults();
         }
 
-        public Skill(string name, string description, int maxLevel, SkillTree type) : this(name, description, maxLevel, type, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame")) { }
-
-        internal void AddPrerequisites()
+        public IList<Type> GetPrerequisites()
         {
-            // Reaper tree
-
-            if (this.name == "Rage" || this.name == "Mana Addict" || this.name == "Static Field")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Excitement"));
-            }
-
-            else if (this.name == "Bloodlust")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Rage"));
-            }
-            else if (this.name == "Exploding Rage")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Bloodlust"));
-            }
-
-            else if (this.name == "Overkill")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Rage"));
-            }
-            else if (this.name == "Fury")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Overkill"));
-            }
-
-            else if (this.name == "High-Voltage Field")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Static Field"));
-                this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
-            }
-
-            else if(this.name == "Magic Sparks")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Mana Addict"));
-            }
-            else if(this.name == "Overkill Charge")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Magic Sparks"));
-            }
-            else if(this.name == "Spectral Sparks")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Overkill Charge"));
-                this.Prerequisites.Add(VapeRPG.GetSkill("Energizing Kills"));
-            }
-
-            else if(this.name == "Energizing Kills")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Mana Addict"));
-            }
-
-            //Shredder tree
-
-            else if(this.name == "Bounce" || this.name == "Confusion" || this.name == "High Five" || this.name == "Close Combat Specialist" || this.name == "Ammo Hoarding")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("One Above All"));
-            }
-            
-            else if(this.name == "Leftover Supply")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Bounce"));
-            }
-            
-            else if(this.name == "Confusion Field")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Confusion"));
-            }
-
-            else if (this.name == "Titan Grip")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("High Five"));
-            }
-            else if (this.name == "Hawk Eye")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Titan Grip"));
-            }
-
-            // Power
-
-            else if(this.name == "First Touch" || this.name == "Aggro" || this.name == "Longer Flight" || this.name == "Reflection" || this.name == "Damage to Defense")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Warmth"));
-            }
-
-            else if(this.name == "Kickstart")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("First Touch"));
-            }
-            else if (this.name == "Execution")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Kickstart"));
-            }
-
-            else if (this.name == "Strengthen")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Reflection"));
-            }
-
-            else if (this.name == "Vital Supplies")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Damage to Defense"));
-            }
-            else if (this.name == "Hardened Skin")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Vital Supplies"));
-                this.Prerequisites.Add(VapeRPG.GetSkill("Strengthen"));
-            }
-
-            else if (this.name == "Angel")
-            {
-                this.Prerequisites.Add(VapeRPG.GetSkill("Longer Flight"));
-            }
+            return this.prerequisites;
         }
+
+        public void AddPrerequisite<T>()
+            where T: Skill
+        {
+            this.prerequisites.Add(typeof(T));
+        }
+
+        protected abstract void SetDefaults();
+
+        private Texture2D TryGetSkillFrame()
+        {
+            Texture2D frame;
+            try
+            {
+                frame = ModLoader.GetTexture("VapeRPG/Skills/" + this.GetType().Name);
+            }
+            catch (Exception)
+            {
+                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
+            }
+
+            return frame;
+        }
+
+        public virtual void Hurt(VapePlayer modPlayer, bool pvp, bool quiet, double damage, int hitDirection, bool crit) { }
+        public virtual void ModifyHitByNPC(VapePlayer modPlayer, NPC npc, ref int damage, ref bool crit) { }
+        public virtual void ModifyHitByProjectile(VapePlayer modPlayer, Projectile proj, ref int damage, ref bool crit) { }
+        public virtual void ModifyHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit) { }
+        public virtual void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit) { }
+        public virtual void Shoot(VapePlayer modPlayer, Item item, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack) { }
+        public virtual void UpdateStats(VapePlayer modPlayer) { }
+        public virtual void UseItem(VapePlayer modPlayer, Item item) { }
     }
 }

@@ -44,8 +44,8 @@ namespace VapeRPG.Items
 
             foreach (Skill skill in VapeRPG.Skills)
             {
-                skillPoints += vp.SkillLevels[skill.name];
-                vp.SkillLevels[skill.name] = 0;
+                skillPoints += vp.GetSkillLevel(skill.GetType());
+                vp.SetSkillLevel(skill.GetType(), 0);
             }
 
             foreach (string bonus in VapeRPG.MinorStats)

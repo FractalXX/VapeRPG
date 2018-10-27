@@ -27,7 +27,6 @@ namespace VapeRPG.UI.Elements
 
             this.skillInfos = new List<UISkillInfo>();
             this.bars = new List<UIElement>();
-            this.tooltip = new UISkillTooltip(VapeRPG.GetSkill("Excitement"));
         }
 
         public void AddSkillInfo(UISkillInfo usi)
@@ -102,7 +101,7 @@ namespace VapeRPG.UI.Elements
 
         public void InitializeSkillInfos()
         {
-            foreach (Skill skill in VapeRPG.Skills.FindAll(x => x.tree == this.skillTypes))
+            foreach (Skill skill in VapeRPG.Skills.FindAll(x => x.Tree == this.skillTypes))
             {
                 UISkillInfo usi = new UISkillInfo(skill);
                 this.AddSkillInfo(usi);
@@ -111,11 +110,12 @@ namespace VapeRPG.UI.Elements
 
             foreach (var x in this.skillInfos)
             {
-                if(x.skill.Prerequisites.Count > 0)
+                var prerequisites = x.skill.GetPrerequisites();
+                if(prerequisites.Count > 0)
                 {
-                    foreach(Skill parent in x.skill.Prerequisites)
+                    foreach(Type parentType in prerequisites)
                     {
-                        CreateLineBetweenSkills(this.skillInfos.Find(y => y.skill == parent), x);
+                        CreateLineBetweenSkills(this.skillInfos.Find(y => y.skill.GetType() == parentType), x);
                     }
                 }
             }

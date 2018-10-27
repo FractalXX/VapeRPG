@@ -320,7 +320,7 @@ namespace VapeRPG.UI.States
             this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
         }
 
-        public void UpdateStats(Dictionary<string, int> baseStats, Dictionary<string, int> effStats, int statPoints, int skillPoints)
+        public void UpdateStats(IDictionary<string, int> baseStats, IDictionary<string, int> effStats, int statPoints, int skillPoints)
         {
             foreach (UIStatInfo usi in statControls)
             {

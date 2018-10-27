@@ -20,7 +20,7 @@ namespace VapeRPG
             modPlayer.skillPoints = tag.GetAsInt("SkillPoints");
             modPlayer.chaosPoints = tag.GetAsInt("ChaosPoints");
 
-            // Unboxing values into the proper dictionary
+            // Unboxing values into the proper dictionaries
             foreach (var stat in stats)
             {
                 key = stat.Key;
@@ -31,7 +31,7 @@ namespace VapeRPG
                     continue;
                 }
                 // Agility was renamed to Haste in v0.3.1
-                else if(key == "Agility")
+                else if (key == "Agility")
                 {
                     key = "Haste";
                 }
@@ -40,14 +40,14 @@ namespace VapeRPG
 
             foreach (var skillLevel in skillLevels)
             {
-                modPlayer.SkillLevels[skillLevel.Key] = (int)skillLevel.Value;
+                modPlayer.SetSkillLevel(Type.GetType("VapeRPG.Skills." + GetTypeNameFromOldSave(skillLevel.Key)), (int)skillLevel.Value);
             }
 
             foreach (var chaosBonus in chaosBonuses)
             {
                 key = chaosBonus.Key;
                 // Movement Speed as a chaos bonus was replaced with Max Run Speed in v0.3.1
-                if(key == "Movement Speed")
+                if (key == "Movement Speed")
                 {
                     key = "Max Run Speed";
                 }
@@ -62,6 +62,15 @@ namespace VapeRPG
 
             VapeRPG vapeMod = (modPlayer.mod as VapeRPG);
             vapeMod.ExpUI.SetPanelPosition(expUIPos);
+        }
+
+        internal static string GetTypeNameFromOldSave(string key)
+        {
+            if(key.Equals("Damage to Defense", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return "DamageToDefense";
+            }
+            return key.Replace(" ", "").Replace("-", "");
         }
     }
 }

@@ -31,7 +31,7 @@ namespace VapeRPG.UI.Elements
             this.Width.Set(width, 0);
             this.Height.Set(height, 0);
 
-            this.icon = new UIImage(this.skill.icon);
+            this.icon = new UIImage(this.skill.Icon);
             this.icon.SetPadding(0);
             this.icon.Width.Set(width, 0);
             this.icon.Height.Set(height, 0);
@@ -46,9 +46,9 @@ namespace VapeRPG.UI.Elements
             {
                 VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
 
-                if (vp.HasPrerequisiteForSkill(this.skill) && vp.skillPoints > 0 && vp.SkillLevels[this.skill.name] < this.skill.maxLevel)
+                if (vp.HasPrerequisiteForSkill(this.skill) && vp.skillPoints > 0 && vp.GetSkillLevel(this.skill.GetType()) < this.skill.MaxLevel)
                 {
-                    vp.SkillLevels[this.skill.name]++;
+                    vp.SetSkillLevel(this.skill.GetType(), vp.GetSkillLevel(this.skill.GetType()) + 1);
                     if(vp.player.name != "vp") vp.skillPoints--;
                 }
             };
@@ -61,7 +61,7 @@ namespace VapeRPG.UI.Elements
         {
             base.Draw(spriteBatch);
             VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
-            if (this.skill.Prerequisites.Count > 0 && !vp.HasPrerequisiteForSkill(this.skill))
+            if (this.skill.GetPrerequisites().Count > 0 && !vp.HasPrerequisiteForSkill(this.skill))
             {
                 CalculatedStyle dimensions = this.GetDimensions();
                 Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
@@ -76,7 +76,7 @@ namespace VapeRPG.UI.Elements
             base.Update(gameTime);
 
             VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
-            this.skillLevelText.SetText(String.Format("{0}/{1}", vp.SkillLevels[this.skill.name], this.skill.maxLevel));
+            this.skillLevelText.SetText(String.Format("{0}/{1}", vp.GetSkillLevel(this.skill.GetType()), this.skill.MaxLevel));
         }
     }
 }

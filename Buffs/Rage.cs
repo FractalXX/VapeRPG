@@ -9,11 +9,11 @@ namespace VapeRPG.Buffs
         public override void ModifyBuffTip(ref string tip, ref int rare)
         {
             VapePlayer vp = Main.LocalPlayer.GetModPlayer<VapePlayer>();
-            if (vp.HasSkill("Fury"))
+            if (vp.HasSkill<Skills.Fury>())
             {
                 tip += String.Format(" and melee speed");
             }
-            tip += String.Format(" ({0}%)", vp.SkillLevels["Rage"] * 3);
+            tip += String.Format(" ({0}%)", vp.GetSkillLevel<Skills.Rage>() * 3);
             base.ModifyBuffTip(ref tip, ref rare);
         }
 

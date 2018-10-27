@@ -12,195 +12,195 @@ namespace VapeRPG.UI
 
             float offsetX = 0;
 
-            string name = skillInfo.skill.name;
+            string name = skillInfo.skill.Name;
 
-            if (skillInfo.skill.tree == SkillTree.Reaper)
+            if (skillInfo.skill.Tree == SkillTree.Reaper)
             {
                 offsetX = 50;
-                if(name == "Excitement")
+                if(name.Equals("Excitement", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 10;
                 }
 
-                else if(name == "Bloodlust")
+                else if(name.Equals("Bloodlust", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 0;
                     y = 94;
                 }
-                else if(name == "Exploding Rage")
+                else if(name.Equals("Exploding Rage", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 0;
                     y = 198;
                 }
 
-                else if(name == "Rage")
+                else if(name.Equals("Rage", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 74;
                     y = 94;
                 }
-                else if(name == "Overkill")
+                else if(name.Equals("Overkill", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 74;
                     y = 198;
                 }
-                else if(name == "Fury")
+                else if(name.Equals("Fury", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 74;
                     y = 292;
                 }
 
-                else if (name == "Static Field")
+                else if (name.Equals("Static Field", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 198;
                 }
-                else if (name == "High-Voltage Field")
+                else if (name.Equals("High-Voltage Field", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 292;
                 }
 
-                else if(name == "Mana Addict")
+                else if(name.Equals("Mana Addict", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 94;
                 }
-                else if(name == "Energizing Kills")
+                else if(name.Equals("Energizing Kills", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 198;
                 }
 
-                else if(name == "Magic Sparks")
+                else if(name.Equals("Magic Sparks", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 296;
                     y = 198;
                 }
-                else if(name == "Overkill Charge")
+                else if(name.Equals("Overkill Charge", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 296;
                     y = 292;
                 }
-                else if(name == "Spectral Sparks")
+                else if(name.Equals("Spectral Sparks", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 296;
                     y = 396;
                 }
 
             }
-            if (skillInfo.skill.tree == SkillTree.Shredder)
+            if (skillInfo.skill.Tree == SkillTree.Shredder)
             {
                 offsetX = 50;
-                if(name == "One Above All")
+                if(name.Equals("One Above All", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 10;
                 }
 
-                else if(name == "Bounce")
+                else if(name.Equals("Bounce", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 0;
                     y = 94;
                 }
-                else if (name == "Leftover Supply")
+                else if (name.Equals("Leftover Supply", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 0;
                     y = 198;
                 }
 
-                else if(name == "Confusion")
+                else if(name.Equals("Confusion", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 74;
                     y = 94;
                 }
-                else if(name == "Confusion Field")
+                else if(name.Equals("Confusion Field", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 74;
                     y = 198;
                 }
 
-                else if(name == "High Five")
+                else if(name.Equals("High Five", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 94;
                 }
-                else if(name == "Titan Grip")
+                else if(name.Equals("Titan Grip", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 198;
                 }
-                else if(name == "Hawk Eye")
+                else if(name.Equals("Hawk Eye", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 292;
                 }
 
-                else if(name == "Close Combat Specialist")
+                else if(name.Equals("Close Combat Specialist", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 94;
                 }
             }
-            if(skillInfo.skill.tree == SkillTree.Power)
+            if(skillInfo.skill.Tree == SkillTree.Power)
             {
                 offsetX = 50;
 
-                if(name == "Warmth")
+                if(name.Equals("Warmth", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 10;
                 }
 
-                else if (name == "First Touch")
+                else if (name.Equals("First Touch", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 94;
                 }
-                else if(name == "Kickstart")
+                else if(name.Equals("Kickstart", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 198;
                 }
-                else if(name == "Execution")
+                else if(name.Equals("Execution", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 222;
                     y = 292;
                 }
 
-                else if(name == "Reflection")
+                else if(name.Equals("Reflection", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 74;
                     y = 94;
                 }
-                else if(name == "Strengthen")
+                else if(name.Equals("Strengthen", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 74;
                     y = 198;
                 }
 
-                else if(name == "Damage to Defense")
+                else if(name.Equals("Damage to Defense", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 94;
                 }
-                else if(name == "Vital Supplies")
+                else if(name.Equals("Vital Supplies", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 198;
                 }
-                else if(name == "Hardened Skin")
+                else if(name.Equals("Hardened Skin", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 148;
                     y = 292;
                 }
 
-                else if(name == "Longer Flight")
+                else if(name.Equals("Longer Flight", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 0;
                     y = 94;
                 }
-                else if(name == "Angel")
+                else if(name.Equals("Angel", StringComparison.CurrentCultureIgnoreCase))
                 {
                     x = 0;
                     y = 198;

@@ -17,18 +17,18 @@ namespace VapeRPG
 {
     static class SkillController
     {
-        private static Random rnd = new Random();
+        /*private static Random rnd = new Random();
 
         public static void UpdateStatBonuses(VapePlayer modPlayer)
         {
             if (modPlayer.HasSkill("Warmth"))
             {
-                modPlayer.player.lifeRegen += (int)Math.Ceiling(modPlayer.player.lifeRegen * 0.1f * modPlayer.SkillLevels["Warmth"]);
-                modPlayer.player.manaRegen += (int)Math.Ceiling(modPlayer.player.manaRegen * 0.1f * modPlayer.SkillLevels["Warmth"]);
+                modPlayer.player.lifeRegen += (int)Math.Ceiling(modPlayer.player.lifeRegen * 0.1f * modPlayer.skillLevels["Warmth"]);
+                modPlayer.player.manaRegen += (int)Math.Ceiling(modPlayer.player.manaRegen * 0.1f * modPlayer.skillLevels["Warmth"]);
             }
             if (modPlayer.HasSkill("Damage to Defense"))
             {
-                float amount = modPlayer.SkillLevels["Damage to Defense"] * 0.1f;
+                float amount = modPlayer.skillLevels["Damage to Defense"] * 0.1f;
                 modPlayer.player.meleeDamage -= amount;
                 modPlayer.player.magicDamage -= amount;
                 modPlayer.player.rangedDamage -= amount;
@@ -42,11 +42,11 @@ namespace VapeRPG
             }
             if (modPlayer.HasSkill("Longer Flight"))
             {
-                modPlayer.player.wingTimeMax += (int)Math.Ceiling(modPlayer.player.wingTimeMax * 0.3f * modPlayer.SkillLevels["Longer Flight"]);
+                modPlayer.player.wingTimeMax += (int)Math.Ceiling(modPlayer.player.wingTimeMax * 0.3f * modPlayer.skillLevels["Longer Flight"]);
             }
             if (modPlayer.HasSkill("Angel") && modPlayer.player.wingTime < modPlayer.player.wingTimeMax)
             {
-                float amount = modPlayer.SkillLevels["Angel"] * 0.05f;
+                float amount = modPlayer.skillLevels["Angel"] * 0.05f;
                 modPlayer.player.meleeDamage += amount;
                 modPlayer.player.rangedDamage += amount;
                 modPlayer.player.magicDamage += amount;
@@ -59,11 +59,11 @@ namespace VapeRPG
         {
             if (modPlayer.HasSkill("Reflection"))
             {
-                npc.StrikeNPC((int)Math.Ceiling(damage * 0.05f * modPlayer.SkillLevels["Reflection"]), 30, npc.direction);
+                npc.StrikeNPC((int)Math.Ceiling(damage * 0.05f * modPlayer.skillLevels["Reflection"]), 30, npc.direction);
             }
             if (modPlayer.HasSkill("Hardened Skin"))
             {
-                damage -= (int)Math.Ceiling(damage * 0.05f * modPlayer.SkillLevels["Hardened Skin"]);
+                damage -= (int)Math.Ceiling(damage * 0.05f * modPlayer.skillLevels["Hardened Skin"]);
             }
         }
 
@@ -76,7 +76,7 @@ namespace VapeRPG
         {
             if (!crit)
             {
-                if (modPlayer.HasSkill("Kickstart") && target.life >= target.lifeMax * 0.7f && rnd.Next(0, 101) <= modPlayer.SkillLevels["Kickstart"] * 5)
+                if (modPlayer.HasSkill("Kickstart") && target.life >= target.lifeMax * 0.7f && rnd.Next(0, 101) <= modPlayer.skillLevels["Kickstart"] * 5)
                 {
                     crit = true;
                 }
@@ -94,7 +94,7 @@ namespace VapeRPG
             {
                 if (modPlayer.HasSkill("Titan Grip"))
                 {
-                    knockback += knockback * modPlayer.SkillLevels["Titan Grip"] * 0.2f;
+                    knockback += knockback * modPlayer.skillLevels["Titan Grip"] * 0.2f;
                 }
             }
 
@@ -108,7 +108,7 @@ namespace VapeRPG
 
             if (modPlayer.HasSkill("Execution") && target.life <= target.lifeMax * 0.2f)
             {
-                damage += (int)Math.Ceiling(damage * 0.1f * modPlayer.SkillLevels["Execution"]);
+                damage += (int)Math.Ceiling(damage * 0.1f * modPlayer.skillLevels["Execution"]);
             }
             if (modPlayer.HasSkill("First Touch") && target.life == target.lifeMax)
             {
@@ -136,7 +136,7 @@ namespace VapeRPG
                 {
                     modPlayer.player.AddBuff(2, 600);
                 }
-                if (modPlayer.HasSkill("Exploding Rage") && (proj == null ? item.melee : proj.melee) && rnd.Next(101) <= modPlayer.SkillLevels["Exploding Rage"] * 10)
+                if (modPlayer.HasSkill("Exploding Rage") && (proj == null ? item.melee : proj.melee) && rnd.Next(101) <= modPlayer.skillLevels["Exploding Rage"] * 10)
                 {
                     int dustCount = 20;
                     int bloodRange = 15;
@@ -172,7 +172,7 @@ namespace VapeRPG
                 {
                     modPlayer.player.AddBuff(6, 600);
                 }
-                if (modPlayer.HasSkill("Magic Sparks") && (proj == null ? item.magic : proj.magic) && rnd.Next(0, 101) <= modPlayer.SkillLevels["Magic Sparks"] * 10)
+                if (modPlayer.HasSkill("Magic Sparks") && (proj == null ? item.magic : proj.magic) && rnd.Next(0, 101) <= modPlayer.skillLevels["Magic Sparks"] * 10)
                 {
                     int dustCount = 20;
                     int sparkRange = 30;
@@ -196,7 +196,7 @@ namespace VapeRPG
                     {
                         if (npc != target && Vector2.Distance(npc.position, target.position) <= 180)
                         {
-                            int amount = (int)Math.Ceiling(npc.lifeMax * modPlayer.SkillLevels["Magic Sparks"] * 0.05f);
+                            int amount = (int)Math.Ceiling(npc.lifeMax * modPlayer.skillLevels["Magic Sparks"] * 0.05f);
                             npc.life -= amount;
                             CombatText.NewText(new Rectangle((int)npc.position.X, (int)npc.position.Y - 50, 100, 100), Color.Cyan, amount);
                             if (modPlayer.HasSkill("Spectral Sparks"))
@@ -214,7 +214,7 @@ namespace VapeRPG
                     }
                     modPlayer.player.AddBuff(modPlayer.mod.BuffType<Energized>(), 60);
                 }
-                if(modPlayer.HasSkill("Static Field") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Static Field"] * 5 && (proj == null ? item.magic : proj.magic))
+                if(modPlayer.HasSkill("Static Field") && rnd.Next(0, 101) <= modPlayer.skillLevels["Static Field"] * 5 && (proj == null ? item.magic : proj.magic))
                 {
                     int duration = 600;
                     if(modPlayer.HasSkill("High-Voltage Field"))
@@ -232,13 +232,13 @@ namespace VapeRPG
                 {
                     if (modPlayer.HasSkill("Overkill"))
                     {
-                        int amount = (int)Math.Ceiling(modPlayer.player.statLifeMax * modPlayer.SkillLevels["Overkill"] * 0.03f);
+                        int amount = (int)Math.Ceiling(modPlayer.player.statLifeMax * modPlayer.skillLevels["Overkill"] * 0.03f);
                         modPlayer.player.HealEffect(amount);
                         modPlayer.player.statLife += amount;
                     }
                     if (modPlayer.HasSkill("Overkill Charge"))
                     {
-                        int amount = (int)Math.Ceiling(modPlayer.player.statLifeMax * modPlayer.SkillLevels["Overkill Charge"] * 0.04f);
+                        int amount = (int)Math.Ceiling(modPlayer.player.statLifeMax * modPlayer.skillLevels["Overkill Charge"] * 0.04f);
                         modPlayer.player.ManaEffect(amount);
                         modPlayer.player.statMana += amount;
                     }
@@ -250,7 +250,7 @@ namespace VapeRPG
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
                 target.StrikeNPC(target.life * 2, 0, 0);
             }
-            if ((proj == null ? item.magic : proj.magic) && modPlayer.HasSkill("Bounce") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Bounce"] * 10)
+            if ((proj == null ? item.magic : proj.magic) && modPlayer.HasSkill("Bounce") && rnd.Next(0, 101) <= modPlayer.skillLevels["Bounce"] * 10)
             {
                 NPC closest = null;
                 float closestDistance = 500;
@@ -277,12 +277,12 @@ namespace VapeRPG
                     sparkVelocity.X = speedMul * sparkVelocity.X;
                     sparkVelocity.Y = speedMul * sparkVelocity.Y;
 
-                    float sparkDamage = (proj == null ? item.damage : proj.damage) * modPlayer.SkillLevels["Bounce"] * 0.1f;
+                    float sparkDamage = (proj == null ? item.damage : proj.damage) * modPlayer.skillLevels["Bounce"] * 0.1f;
                     Projectile spark = Projectile.NewProjectileDirect(new Vector2(target.position.X + target.width / 2, target.position.Y + target.height / 2), sparkVelocity, modPlayer.mod.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(sparkDamage), 20, modPlayer.player.whoAmI);
                     Main.PlaySound(modPlayer.mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Electricity"), modPlayer.player.position);
                 }
             }
-            if (modPlayer.HasSkill("Confusion") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Confusion"] * 5)
+            if (modPlayer.HasSkill("Confusion") && rnd.Next(0, 101) <= modPlayer.skillLevels["Confusion"] * 5)
             {
                 target.AddBuff(31, 300);
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.OrangeRed, "Confused");
@@ -333,10 +333,10 @@ namespace VapeRPG
 
         public static void UseItem(VapePlayer modPlayer, Item item)
         {
-            if (item.magic && modPlayer.HasSkill("Leftover Supply") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Leftover Supply"] * 2f)
+            if (item.magic && modPlayer.HasSkill("Leftover Supply") && rnd.Next(0, 101) <= modPlayer.skillLevels["Leftover Supply"] * 2f)
             {
                 modPlayer.player.statMana += item.mana;
             }
-        }
+        }*/
     }
 }

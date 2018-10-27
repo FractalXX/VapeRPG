@@ -10,6 +10,8 @@ using Terraria.ID;
 using Microsoft.Xna.Framework.Graphics;
 
 using VapeRPG.UI.States;
+using System.Reflection;
+using System.Linq;
 
 namespace VapeRPG
 {
@@ -23,8 +25,10 @@ namespace VapeRPG
 
     class VapeRPG : Mod
     {
+        public static Random rand = new Random();
+
         public static string[] BaseStats =
-{
+        {
             "Strength",
             "Magic power",
             "Dexterity",
@@ -65,6 +69,11 @@ namespace VapeRPG
 
         public static UserInterface ui;
 
+        static VapeRPG()
+        {
+            Skills = new List<Skill>();
+        }
+
         public VapeRPG()
         {
             this.Properties = new ModProperties()
@@ -92,9 +101,15 @@ namespace VapeRPG
             return description;
         }
 
-        public static Skill GetSkill(string name)
+        public static Skill GetSkill<T>()
+            where T : Skill
         {
-            return Skills.Find(x => x.name == name);
+            return Skills.Find(x => x.GetType() == typeof(T));
+        }
+
+        public static Skill GetSkill(Type type)
+        {
+            return Skills.Find(x => x.GetType() == type);
         }
 
         private static Texture2D GetSkillFrame(string name)
@@ -197,69 +212,11 @@ namespace VapeRPG
                 XpNeededForChaosRank[i] = (int)(value / 1.5f);
             }
 
-            Skills = new List<Skill>()
+            Type[] skillTypes = GetTypesInNamespace(Assembly.GetExecutingAssembly(), "VapeRPG.Skills");
+            foreach (Type type in skillTypes)
             {
-                //Reaper Tree
-                new Skill("Excitement", "Killing enemies grants you a shine buff for 6 seconds.", 1, SkillTree.Reaper, GetSkillFrame("Excitement")),
-
-                new Skill("Rage", "Killing enemies grants you the Rage buff, increasing your melee damage (3%/level) for 10 seconds.", 3, SkillTree.Reaper, GetSkillFrame("Rage")),
-
-                new Skill("Bloodlust", "Killing enemies grants you a regeneration buff for 10 seconds.", 1, SkillTree.Reaper, GetSkillFrame("Bloodlust")),
-                new Skill("Exploding Rage", "Killing enemies with melee has a chance (10%/20%/30%) to result in their bodies exploding dealing 10% of their maximum life in a medium sized area.", 3, SkillTree.Reaper, GetSkillFrame("ExplodingRage")),
-
-                new Skill("Overkill", "Killing enemies with critical hits restore a small percent of your life (3%/level).", 3, SkillTree.Reaper, GetSkillFrame("Overkill")),
-                new Skill("Fury", "The Rage buff also increases your melee speed by the same amount.", 1, SkillTree.Reaper, GetSkillFrame("Fury")),
-
-                new Skill("Static Field", "Killing enemies has a chance (5%/10%/15%) to summon an electric shield around you. The shield does summon damage (20/level) and lasts 10 seconds.", 3, SkillTree.Reaper, GetSkillFrame("StaticField")),
-                new Skill("High-Voltage Field", "Static Field applies slow debuff on hit and grants the night vision buff while it lasts. Upon taking fatal damage, your life gets restored to 50. This effect can only occur every 5 minutes. Duration also increases to 20 seconds.", 1, SkillTree.Reaper, GetSkillFrame("HighVoltageField")),
-
-                new Skill("Mana Addict", "Kills give you a mana regen buff for 10 seconds.", 1, SkillTree.Reaper, GetSkillFrame("ManaAddict")),
-                new Skill("Energizing Kills", "Killing enemies with magic or summon damage grants you a stack of 'Energized'. After getting 20 stacks you receive a movement speed increase and release low-damaging sparks with mediocre knockback on being hit for 10 seconds.", 1, SkillTree.Reaper, GetSkillFrame("EnergizingKills")),
-
-                new Skill("Magic Sparks", "Magic kills have a chance (10%/level) to release little magic sparks which reduces the life of nearby enemies by 5%/level.", 2, SkillTree.Reaper, GetSkillFrame("MagicSparks")),
-                new Skill("Overkill Charge", "Killing enemies with critical hits restore a small percent of your mana (4%/level).", 3, SkillTree.Reaper, GetSkillFrame("OverkillCharge")),
-                new Skill("Spectral Sparks", "Magic sparks also reduce the defense of enemies by 15%.", 1, SkillTree.Reaper, GetSkillFrame("SpectralSparks")),
-
-                //Shredder Tree
-                new Skill("One Above All", "You have 2% chance to one hit kill any non-boss, non-pillar enemy.", 1, SkillTree.Shredder, GetSkillFrame("OneAboveAll")),
-
-                new Skill("Bounce", "Magic hits have a chance (10%/level) to spawn a spark that bounces to another enemy. The spark's damage is 10%/20%/30% of the original damage.", 3, SkillTree.Shredder, GetSkillFrame("Bounce")),
-                new Skill("Leftover Supply", "Magic weapons have a chance to not consume mana. (4%/level)", 2, SkillTree.Shredder, GetSkillFrame("LeftoverSupply")),
-
-                new Skill("Confusion", "Hits have a chance to confuse your enemy. (5%/level)", 3, SkillTree.Shredder, GetSkillFrame("Confusion")),
-                new Skill("Confusion Field", "Confusion applies to multiple enemies in a small radius.", 1, SkillTree.Shredder, GetSkillFrame("ConfusionField")),
-
-                new Skill("High Five", "Critical hits further increase your crit and damage by 2%. Resets on non-crits or 50 stacks.", 1, SkillTree.Shredder, GetSkillFrame("HighFive")),
-                new Skill("Titan Grip", "Critical hits have increased knockback (20%/level).", 2, SkillTree.Shredder, GetSkillFrame("TitanGrip")),
-                new Skill("Hawk Eye", "Your critical chance increases with distance to your enemy.", 1, SkillTree.Shredder, GetSkillFrame("HawkEye")),
-
-                new Skill("Close Combat Specialist", "You deal 1.5x damage to enemies within 10 tiles radius.", 1, SkillTree.Shredder, GetSkillFrame("CloseCombatSpecialist")),
-
-                //Power Tree
-                new Skill("Warmth", "Increases your HP/MP regen by 10%/level.", 2, SkillTree.Power, GetSkillFrame("Warmth")),
-
-                new Skill("First Touch", "If your enemy is at its max health, your first hit (minions included) instantly damages it for 10% of their health.", 1, SkillTree.Power, GetSkillFrame("FirstTouch")),
-                new Skill("Kickstart", "Your critical chance increases by 5%/10% against enemies above 70% health.", 2, SkillTree.Power, GetSkillFrame("Kickstart")),
-                new Skill("Execution", "If your enemy is under 20% health you deal increased damage (10%/level) to them.", 3, SkillTree.Power, GetSkillFrame("Execution")),
-
-                new Skill("Reflection", "You reflect 10%/20% of melee damage done by your enemy.", 2, SkillTree.Power, GetSkillFrame("Reflection")),
-                new Skill("Strengthen", "After a dodge or block, the next time you take damage, the amount is reduced by 15%/level.", 2, SkillTree.Power, GetSkillFrame("Strengthen")),
-
-                new Skill("Damage to Defense", "Your damage is reduced by 10%/level but your defense increases by the same amount.", 3, SkillTree.Power, GetSkillFrame("DamageToDefense")),
-                new Skill("Vital Supplies", "Damage to Defense increases life as well.", 1, SkillTree.Power, GetSkillFrame("VitalSupplies")),
-                new Skill("Hardened Skin", "Melee hits deal 5%/10% less damage to you.", 2, SkillTree.Power, GetSkillFrame("HardenedSkin")),
-
-                new Skill("Longer Flight", "Your flight time is increased by 30%/level.", 3, SkillTree.Power, GetSkillFrame("LongerFlight")),
-                new Skill("Angel", "You deal increased damage (5%/level) while using your wing. Doesn't apply on jumps.", 2, SkillTree.Power, GetSkillFrame("Angel"))
-            };
-
-
-            foreach (Skill skill in Skills)
-            {
-                skill.AddPrerequisites();
+                Skills.Add(Activator.CreateInstance(type) as Skill);
             }
-
-            //itemQualityFrame = ModLoader.GetTexture("VapeRPG/Textures/UI/QualityFrame");
 
             CharWindowHotKey = RegisterHotKey("Character window", "C");
 
@@ -331,6 +288,14 @@ namespace VapeRPG
                     InterfaceScaleType.UI)
                 );
             }
+        }
+
+        private static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
+        {
+            return
+              assembly.GetTypes()
+                      .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
+                      .ToArray();
         }
     }
 }

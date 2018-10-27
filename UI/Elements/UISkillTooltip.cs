@@ -24,23 +24,23 @@ namespace VapeRPG.UI.Elements
             this.Width.Set(300, 0);
             this.Height.Set(400, 0);
 
-            this.skillNameText = new UITextPanel<string>(skill.name);
+            this.skillNameText = new UITextPanel<string>(skill.Name);
             this.skillNameText.Left.Set(0, 0);
             this.skillNameText.Top.Set(0, 0);
             this.skillNameText.Width.Set(0, 1f);
             this.skillNameText.TextColor = Color.Lime;
             this.skillNameText.BackgroundColor = new Color(80, 128, 163);
 
-            string[] requirements = new string[skill.Prerequisites.Count];
+            var prerequisites = skill.GetPrerequisites();
+            string[] requirements = new string[prerequisites.Count];
 
             StringBuilder sb = new StringBuilder();
             sb.Append("Requires: ");
-            if (skill.Prerequisites.Count > 0)
+            if (prerequisites.Count > 0)
             {
-
-                for (int i = 0; i < skill.Prerequisites.Count; i++)
+                for (int i = 0; i < prerequisites.Count; i++)
                 {
-                    requirements[i] = skill.Prerequisites[i].name;
+                    requirements[i] = VapeRPG.GetSkill(prerequisites[i]).Name;
                     if (i > 0)
                     {
                         sb.Append(" and ");
@@ -54,7 +54,7 @@ namespace VapeRPG.UI.Elements
                 sb.Append("Nothing");
             }
 
-            this.tooltipText = new UITextPanel<string>(skill.description, 0.8f);
+            this.tooltipText = new UITextPanel<string>(skill.Description, 0.8f);
             this.tooltipText.Top.Set(this.skillNameText.MinHeight.Pixels, 0);
             this.tooltipText.Width.Set(0, 1f);
             this.tooltipText.MaxWidth.Set(0, 1f);

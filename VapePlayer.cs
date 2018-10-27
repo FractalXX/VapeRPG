@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -21,12 +22,11 @@ namespace VapeRPG
         private static Random rnd;
 
         //Dictionary for the stats, and skill levels
-        public Dictionary<string, int> BaseStats { get; private set; }
-        public Dictionary<string, int> SkillLevels { get; private set; }
+        public IDictionary<string, int> BaseStats { get; private set; }
 
-        public Dictionary<string, int> EffectiveStats { get; private set; }
+        public IDictionary<string, int> EffectiveStats { get; private set; }
 
-        public Dictionary<string, float> ChaosBonuses { get; private set; }
+        public IDictionary<string, float> ChaosBonuses { get; private set; }
 
         public int level;
         public long xp;
@@ -50,6 +50,8 @@ namespace VapeRPG
         // Buff Stacks
         internal int energizedStacks;
         internal int highfiveStacks;
+
+        private Dictionary<Type, int> skillLevels;
 
         private Vector2 expUIPos;
 
@@ -139,29 +141,57 @@ namespace VapeRPG
         /// </summary>
         /// <param name="skillName">The name of the skill.</param>
         /// <returns></returns>
-        public bool HasSkill(string skillName)
+        public bool HasSkill<T>()
+            where T : Skill
         {
-            return this.SkillLevels.ContainsKey(skillName) && this.SkillLevels[skillName] > 0;
+            return this.skillLevels.ContainsKey(typeof(T)) && this.skillLevels[typeof(T)] > 0;
+        }
+
+        public bool HasSkill(Type type)
+        {
+            return this.skillLevels.ContainsKey(type) && this.skillLevels[type] > 0;
+        }
+
+        public int GetSkillLevel<T>()
+            where T : Skill
+        {
+            return this.skillLevels[typeof(T)];
+        }
+
+        public int GetSkillLevel(Type type)
+        {
+            return this.skillLevels[type];
+        }
+
+        public void SetSkillLevel<T>(int level)
+        {
+            this.skillLevels[typeof(T)] = level;
+        }
+
+        public void SetSkillLevel(Type type, int level)
+        {
+            this.skillLevels[type] = level;
         }
 
         public bool HasPrerequisiteForSkill(Skill skill)
         {
             int c = 0;
-            foreach (Skill s in skill.Prerequisites)
+            var prerequisites = skill.GetPrerequisites();
+            foreach (Type s in prerequisites)
             {
-                if (this.HasSkill(s.name))
+                if (this.HasSkill(s))
                 {
                     c++;
                 }
             }
-            return c == skill.Prerequisites.Count;
+            return c == prerequisites.Count;
         }
 
         public override void Initialize()
         {
             // Instantiating the dictionaries
             this.BaseStats = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            this.SkillLevels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            this.skillLevels = new Dictionary<Type, int>();
             this.EffectiveStats = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             this.ChaosBonuses = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
 
@@ -177,7 +207,7 @@ namespace VapeRPG
 
             foreach (Skill skill in VapeRPG.Skills)
             {
-                this.SkillLevels.Add(skill.name, 0);
+                this.skillLevels.Add(skill.GetType(), 0);
             }
 
             foreach (string stat in VapeRPG.MinorStats)
@@ -328,9 +358,9 @@ namespace VapeRPG
                     {
                         if (Vector2.Distance(npc.position, player.position) <= StaticField.range)
                         {
-                            int baseDamage = 15 * this.SkillLevels["Static Field"];
+                            int baseDamage = 15 * this.GetSkillLevel<Skills.StaticField>();
                             npc.StrikeNPC((int)Math.Ceiling(baseDamage * this.player.minionDamage), 0, 0);
-                            if (this.HasSkill("High-Voltage Field"))
+                            if (this.HasSkill<Skills.HighVoltageField>())
                             {
                                 npc.AddBuff(32, 300);
                             }
@@ -374,10 +404,10 @@ namespace VapeRPG
         {
             if (this.rageBuff)
             {
-                this.player.meleeDamage += this.SkillLevels["Rage"] * 0.03f;
-                if (this.HasSkill("Fury"))
+                this.player.meleeDamage += this.GetSkillLevel<Skills.Rage>() * 0.03f;
+                if (this.HasSkill<Skills.Fury>())
                 {
-                    this.player.meleeSpeed += this.SkillLevels["Rage"] * 0.03f;
+                    this.player.meleeSpeed += this.GetSkillLevel<Skills.Rage>() * 0.03f;
                 }
             }
             if (this.player.FindBuffIndex(mod.BuffType<StaticField>()) != -1)
@@ -407,7 +437,6 @@ namespace VapeRPG
                 playSound = false;
                 genGore = false;
                 failed = true;
-                return false;
             }
 
             if (rnd.NextDouble() <= this.blockChance)
@@ -419,10 +448,9 @@ namespace VapeRPG
                 playSound = false;
                 genGore = false;
                 failed = true;
-                return false;
             }
 
-            if (this.player.statLife - damage <= 0 && this.player.FindBuffIndex(mod.BuffType<StaticField>()) != -1 && this.HasSkill("High-Voltage Field") && this.player.FindBuffIndex(mod.BuffType<FieldSickness>()) == -1)
+            if (this.player.statLife - damage <= 0 && this.player.FindBuffIndex(mod.BuffType<StaticField>()) != -1 && this.HasSkill<Skills.HighVoltageField>() && this.player.FindBuffIndex(mod.BuffType<FieldSickness>()) == -1)
             {
                 this.player.immune = true;
                 this.player.immuneTime = 120;
@@ -431,17 +459,16 @@ namespace VapeRPG
                 CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y + 10, 100, 100), Color.Lime, "Defibrillated");
                 Main.PlaySound(37, this.player.position);
                 failed = true;
-                return false;
             }
 
-            if (failed && this.HasSkill("Strengthen"))
+            if (failed && this.GetSkillLevel<Skills.Strengthen>() > 0)
             {
                 this.player.AddBuff(mod.BuffType<Strengthened>(), 18000);
             }
 
             if (this.strengthened)
             {
-                damage -= (int)(damage * 0.15f * this.SkillLevels["Strengthen"]);
+                damage -= (int)(damage * 0.15f * this.GetSkillLevel<Skills.Strengthen>());
                 this.player.ClearBuff(mod.BuffType<Strengthened>());
             }
 
@@ -464,7 +491,7 @@ namespace VapeRPG
                 }
             }
 
-            return true;
+            return !failed;
         }
 
         public override void ResetEffects()
@@ -512,9 +539,9 @@ namespace VapeRPG
                 baseStatsTC.Add(x.Key, x.Value);
             }
 
-            foreach (var x in SkillLevels)
+            foreach (var x in skillLevels)
             {
-                skillLevelsTC.Add(x.Key, x.Value);
+                skillLevelsTC.Add(x.Key.Name, x.Value);
             }
 
             foreach (var x in ChaosBonuses)
@@ -612,49 +639,76 @@ namespace VapeRPG
 
             this.UpdateChaosBonuses();
 
-            SkillController.UpdateStatBonuses(this);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.UpdateStats(this);
+            }
         }
 
         #region Forwarding events to skills
         public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            SkillController.OnHitNPC(this, null, proj, target, damage, knockback, crit);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.UpdateStats(this);
+            }
         }
 
         public override void ModifyHitByNPC(NPC npc, ref int damage, ref bool crit)
         {
-            SkillController.ModifyHitByNPC(this, npc, ref damage, ref crit);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.ModifyHitByNPC(this, npc, ref damage, ref crit);
+            }
         }
 
         public override void ModifyHitByProjectile(Projectile proj, ref int damage, ref bool crit)
         {
-            SkillController.ModifyHitByProjectile(this, proj, ref damage, ref crit);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.ModifyHitByProjectile(this, proj, ref damage, ref crit);
+            }
         }
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
-            SkillController.ModifyHitNPC(this, item, null, target, ref damage, ref knockback, ref crit);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.ModifyHitNPC(this, item, null, target, ref damage, ref knockback, ref crit);
+            }
         }
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
         {
-            SkillController.OnHitNPC(this, item, null, target, damage, knockback, crit);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.OnHitNPC(this, item, null, target, damage, knockback, crit);
+            }
         }
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            SkillController.ModifyHitNPC(this, null, proj, target, ref damage, ref knockback, ref crit);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.ModifyHitNPC(this, null, proj, target, ref damage, ref knockback, ref crit);
+            }
         }
 
         public override bool Shoot(Item item, ref Vector2 position, ref float speedX, ref float speedY, ref int type, ref int damage, ref float knockBack)
         {
-            SkillController.Shoot(this, item, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.Shoot(this, item, ref position, ref speedX, ref speedY, ref type, ref damage, ref knockBack);
+            }
             return true;
         }
 
         public override void Hurt(bool pvp, bool quiet, double damage, int hitDirection, bool crit)
         {
-            SkillController.Hurt(this, pvp, quiet, damage, hitDirection, crit);
+            foreach (Skill skill in VapeRPG.Skills)
+            {
+                skill.Hurt(this, pvp, quiet, damage, hitDirection, crit);
+            }
         }
         #endregion
     }
