@@ -14,6 +14,7 @@ namespace VapeRPG.Items
     {
         public int cooldown;
         public int cooldownRemaining;
+        public int damage;
 
         public override void NetSend(BinaryWriter writer)
         {
@@ -47,6 +48,7 @@ namespace VapeRPG.Items
             {
                 this.CastSpell(player, Main.MouseWorld);
                 this.cooldownRemaining = this.cooldown;
+                return true;
             }
             return false;
         }

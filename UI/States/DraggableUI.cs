@@ -82,12 +82,15 @@ namespace VapeRPG.UI.States
 
         public override void Update(GameTime gameTime)
         {
-            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-            Main.LocalPlayer.mouseInterface = this.container.ContainsPoint(MousePosition);
+            Vector2 mousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+            if(this.container.ContainsPoint(mousePosition))
+            {
+                Main.LocalPlayer.mouseInterface = this.container.ContainsPoint(mousePosition);
+            }
 
             if (this.isDragging)
             {
-                this.SetPosition(new Vector2(MousePosition.X - this.dragOffset.X, MousePosition.Y - this.dragOffset.Y));
+                this.SetPosition(new Vector2(mousePosition.X - this.dragOffset.X, mousePosition.Y - this.dragOffset.Y));
                 this.Recalculate();
             }
 
