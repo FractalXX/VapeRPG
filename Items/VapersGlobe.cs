@@ -10,16 +10,16 @@ namespace VapeRPG.Items
     {
         public override void SetDefaults()
         {
-            item.width = 32;
-            item.height = 32;
-            item.rare = 10;
-            item.maxStack = 1;
-            item.useAnimation = 15;
-            item.useTime = 15;
-            item.useStyle = 2;
-            item.consumable = true;
-            item.UseSound = SoundID.Item29;
-            item.value = 1000000;
+            this.item.width = 32;
+            this.item.height = 32;
+            this.item.rare = 10;
+            this.item.maxStack = 1;
+            this.item.useAnimation = 15;
+            this.item.useTime = 15;
+            this.item.useStyle = 2;
+            this.item.consumable = true;
+            this.item.UseSound = SoundID.Item29;
+            this.item.value = 1000000;
         }
 
         public override void SetStaticDefaults()

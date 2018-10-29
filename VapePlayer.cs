@@ -16,7 +16,7 @@ using VapeRPG.Projectiles;
 
 namespace VapeRPG
 {
-    class VapePlayer : ModPlayer
+    public class VapePlayer : ModPlayer
     {
         private static int statPointsPerLevel;
         private static Random rnd;

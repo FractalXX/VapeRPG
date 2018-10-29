@@ -25,14 +25,6 @@ namespace VapeRPG.UI.States
         public override Vector2 DefaultPosition => new Vector2(10, Main.screenHeight - 160);
         public override Vector2 DefaultSize => new Vector2(220, 140);
 
-        protected override void DragStart(UIMouseEvent evt, UIElement listeningElement)
-        {
-            if (this.container.ContainsPoint(evt.MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(evt.MousePosition))
-            {
-                base.DragStart(evt, listeningElement);
-            }
-        }
-
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (!this.minimized)
@@ -42,6 +34,52 @@ namespace VapeRPG.UI.States
             else
             {
                 this.minimizeButton.Draw(spriteBatch);
+            }
+        }
+
+        public void SetPanelPosition(Vector2 position)
+        {
+            this.container.Left.Set(position.X, 0);
+            this.container.Top.Set(position.Y, 0);
+
+            this.Recalculate();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
+            if (this.container.ContainsPoint(MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(MousePosition))
+            {
+                Main.LocalPlayer.mouseInterface = true;
+            }
+
+            base.Update(gameTime);
+        }
+
+        public void UpdateChaosXpBar(float value, float minValue, float maxValue)
+        {
+            this.chaosXpBar.value = value;
+            this.chaosXpBar.minValue = minValue;
+            this.chaosXpBar.maxValue = maxValue;
+        }
+
+        public void UpdateLevel(int newLevel, int newChaosRank)
+        {
+            this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
+        }
+
+        public void UpdateXpBar(float value, float minValue, float maxValue)
+        {
+            this.xpBar.value = value;
+            this.xpBar.minValue = minValue;
+            this.xpBar.maxValue = maxValue;
+        }
+
+        protected override void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        {
+            if (this.container.ContainsPoint(evt.MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(evt.MousePosition))
+            {
+                base.DragStart(evt, listeningElement);
             }
         }
 
@@ -93,44 +131,6 @@ namespace VapeRPG.UI.States
             };
 
             this.container.Append(this.minimizeButton);
-        }
-
-        public void SetPanelPosition(Vector2 position)
-        {
-            this.container.Left.Set(position.X, 0);
-            this.container.Top.Set(position.Y, 0);
-
-            this.Recalculate();
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-            if (this.container.ContainsPoint(MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(MousePosition))
-            {
-                Main.LocalPlayer.mouseInterface = true;
-            }
-
-            base.Update(gameTime);
-        }
-
-        public void UpdateChaosXpBar(float value, float minValue, float maxValue)
-        {
-            this.chaosXpBar.value = value;
-            this.chaosXpBar.minValue = minValue;
-            this.chaosXpBar.maxValue = maxValue;
-        }
-
-        public void UpdateLevel(int newLevel, int newChaosRank)
-        {
-            this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
-        }
-
-        public void UpdateXpBar(float value, float minValue, float maxValue)
-        {
-            this.xpBar.value = value;
-            this.xpBar.minValue = minValue;
-            this.xpBar.maxValue = maxValue;
         }
     }
 }

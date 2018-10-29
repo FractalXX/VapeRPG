@@ -14,6 +14,7 @@ namespace VapeRPG.UI.States
     class CharUIState : DraggableUI
     {
         public static bool visible = false;
+        private const int PANEL_PADDING = 10;
 
         private UIPanel statPanel;
         private UIPanel miscPanel;
@@ -33,7 +34,106 @@ namespace VapeRPG.UI.States
         public override Vector2 DefaultPosition => new Vector2(Main.screenWidth / 2 - this.DefaultSize.X / 2, Main.screenHeight / 2 - this.DefaultSize.Y / 2);
         public override Vector2 DefaultSize => new Vector2(800, 600);
 
-        private const int PANEL_PADDING = 10;
+        public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
+        {
+            foreach (UIStatInfo usi in this.miscStatControls)
+            {
+                if (usi.stat.Contains("Melee Damage"))
+                {
+                    usi.statValue = meleeDamage * 100;
+                    usi.TextColor = Color.Red;
+                }
+                if (usi.stat.Contains("Ranged Damage"))
+                {
+                    usi.statValue = rangedDamage * 100;
+                    usi.TextColor = Color.Orange;
+                }
+                if (usi.stat.Contains("Magic Damage"))
+                {
+                    usi.statValue = magicDamage * 100;
+                    usi.TextColor = Color.Cyan;
+                }
+
+                if (usi.stat.Contains("Melee Crit"))
+                {
+                    usi.statValue = meleeCrit;
+                    usi.TextColor = Color.Red;
+                }
+                if (usi.stat.Contains("Ranged Crit"))
+                {
+                    usi.statValue = rangedCrit;
+                    usi.TextColor = Color.Orange;
+                }
+                if (usi.stat.Contains("Magic Crit"))
+                {
+                    usi.statValue = magicCrit;
+                    usi.TextColor = Color.Cyan;
+                }
+
+                if (usi.stat.Contains("Minion Damage"))
+                {
+                    usi.statValue = minionDamage * 100;
+                }
+
+                if (usi.stat.Contains("Max Minions"))
+                {
+                    usi.statValue = maxMinions;
+                }
+
+                if (usi.stat.Contains("Melee Speed"))
+                {
+                    usi.statValue = meleeSpeed * 100;
+                    usi.TextColor = Color.Red;
+                }
+                if (usi.stat.Contains("Max Run Speed"))
+                {
+                    usi.statValue = moveSpeed;
+                    usi.TextColor = Color.LimeGreen;
+                }
+                if (usi.stat.Contains("Dodge Chance"))
+                {
+                    usi.statValue = dodgeChance * 100;
+                    usi.TextColor = Color.LimeGreen;
+                }
+                if (usi.stat.Contains("Block Chance"))
+                {
+                    usi.statValue = blockChance * 100;
+                    usi.TextColor = Color.LimeGreen;
+                }
+
+                this.chaosPointsText.SetText(String.Format("Chaos points: {0}", chaosPoints));
+            }
+        }
+
+        public void UpdateChaosXpBar(float value, float minValue, float maxValue)
+        {
+            this.chaosXpBar.value = value;
+            this.chaosXpBar.minValue = minValue;
+            this.chaosXpBar.maxValue = maxValue;
+        }
+
+        public void UpdateLevel(int newLevel, int newChaosRank)
+        {
+            this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
+        }
+
+        public void UpdateStats(IDictionary<string, int> baseStats, IDictionary<string, int> effStats, int statPoints, int skillPoints)
+        {
+            foreach (UIStatInfo usi in statControls)
+            {
+                usi.statValue = baseStats[usi.stat];
+                usi.bonusValue = effStats[usi.stat] - baseStats[usi.stat];
+            }
+
+            this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
+        }
+
+        public void UpdateXpBar(float value, float minValue, float maxValue)
+        {
+            this.xpBar.value = value;
+            this.xpBar.minValue = minValue;
+            this.xpBar.maxValue = maxValue;
+        }
 
         protected override UIElement CreateContainer()
         {
@@ -189,107 +289,6 @@ namespace VapeRPG.UI.States
             this.container.Append(this.statPanel);
             this.container.Append(this.miscPanel);
             this.container.Append(this.skillPanel);
-        }
-
-        public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
-        {
-            foreach (UIStatInfo usi in this.miscStatControls)
-            {
-                if (usi.stat.Contains("Melee Damage"))
-                {
-                    usi.statValue = meleeDamage * 100;
-                    usi.TextColor = Color.Red;
-                }
-                if (usi.stat.Contains("Ranged Damage"))
-                {
-                    usi.statValue = rangedDamage * 100;
-                    usi.TextColor = Color.Orange;
-                }
-                if (usi.stat.Contains("Magic Damage"))
-                {
-                    usi.statValue = magicDamage * 100;
-                    usi.TextColor = Color.Cyan;
-                }
-
-                if (usi.stat.Contains("Melee Crit"))
-                {
-                    usi.statValue = meleeCrit;
-                    usi.TextColor = Color.Red;
-                }
-                if (usi.stat.Contains("Ranged Crit"))
-                {
-                    usi.statValue = rangedCrit;
-                    usi.TextColor = Color.Orange;
-                }
-                if (usi.stat.Contains("Magic Crit"))
-                {
-                    usi.statValue = magicCrit;
-                    usi.TextColor = Color.Cyan;
-                }
-
-                if (usi.stat.Contains("Minion Damage"))
-                {
-                    usi.statValue = minionDamage * 100;
-                }
-
-                if (usi.stat.Contains("Max Minions"))
-                {
-                    usi.statValue = maxMinions;
-                }
-
-                if (usi.stat.Contains("Melee Speed"))
-                {
-                    usi.statValue = meleeSpeed * 100;
-                    usi.TextColor = Color.Red;
-                }
-                if (usi.stat.Contains("Max Run Speed"))
-                {
-                    usi.statValue = moveSpeed;
-                    usi.TextColor = Color.LimeGreen;
-                }
-                if (usi.stat.Contains("Dodge Chance"))
-                {
-                    usi.statValue = dodgeChance * 100;
-                    usi.TextColor = Color.LimeGreen;
-                }
-                if (usi.stat.Contains("Block Chance"))
-                {
-                    usi.statValue = blockChance * 100;
-                    usi.TextColor = Color.LimeGreen;
-                }
-
-                this.chaosPointsText.SetText(String.Format("Chaos points: {0}", chaosPoints));
-            }
-        }
-
-        public void UpdateChaosXpBar(float value, float minValue, float maxValue)
-        {
-            this.chaosXpBar.value = value;
-            this.chaosXpBar.minValue = minValue;
-            this.chaosXpBar.maxValue = maxValue;
-        }
-
-        public void UpdateLevel(int newLevel, int newChaosRank)
-        {
-            this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
-        }
-
-        public void UpdateStats(IDictionary<string, int> baseStats, IDictionary<string, int> effStats, int statPoints, int skillPoints)
-        {
-            foreach (UIStatInfo usi in statControls)
-            {
-                usi.statValue = baseStats[usi.stat];
-                usi.bonusValue = effStats[usi.stat] - baseStats[usi.stat];
-            }
-
-            this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
-        }
-
-        public void UpdateXpBar(float value, float minValue, float maxValue)
-        {
-            this.xpBar.value = value;
-            this.xpBar.minValue = minValue;
-            this.xpBar.maxValue = maxValue;
         }
     }
 }

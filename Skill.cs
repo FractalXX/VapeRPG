@@ -8,9 +8,9 @@ using Terraria.ModLoader;
 
 namespace VapeRPG
 {
-    enum SkillTree { Shredder, Reaper, Power }
+    public enum SkillTree { Shredder, Reaper, Power }
 
-    abstract class Skill
+    public abstract class Skill
     {
         public string Name { get; protected set; }
         public string Description { get; protected set; }
