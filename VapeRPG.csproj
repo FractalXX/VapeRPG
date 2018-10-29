@@ -52,7 +52,6 @@
     <Compile Include="Projectiles\ElectricSpark.cs" />
     <Compile Include="SaveVersionHandler.cs" />
     <Compile Include="Skill.cs" />
-    <Compile Include="SkillController.cs" />
     <Compile Include="Skills\Angel.cs" />
     <Compile Include="Skills\Bloodlust.cs" />
     <Compile Include="Skills\Bounce.cs" />
@@ -92,6 +91,8 @@
     <Compile Include="Sounds\Custom\StaticFieldApply.cs" />
     <Compile Include="Tiles\Socketer.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
+    <Compile Include="UI\Elements\UIInteractableItemPanel.cs" />
+    <Compile Include="UI\Elements\UIItemPanel.cs" />
     <Compile Include="UI\Elements\UISkillTooltip.cs" />
     <Compile Include="UI\Elements\UISkillTreeBranch.cs" />
     <Compile Include="UI\Elements\VapeSkillPanel.cs" />
@@ -100,7 +101,9 @@
     <Compile Include="UI\Elements\UIStatInfo.cs" />
     <Compile Include="UI\States\CharUIState.cs" />
     <Compile Include="UI\Elements\UIVapeProgressBar.cs" />
+    <Compile Include="UI\States\DraggableUI.cs" />
     <Compile Include="UI\States\ExpUIState.cs" />
+    <Compile Include="UI\States\SkillBarUIState.cs" />
     <Compile Include="UI\States\StatHelpUIState.cs" />
     <Compile Include="UI\TreeHelper.cs" />
     <Compile Include="VapeConfig.cs" />

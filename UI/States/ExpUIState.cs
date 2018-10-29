@@ -11,43 +11,26 @@ using VapeRPG.UI.Elements;
 
 namespace VapeRPG.UI.States
 {
-    class ExpUIState : UIState
+    class ExpUIState : DraggableUI
     {
         public static bool visible = false;
-        public static readonly Vector2 DefaultPanelPosition = new Vector2(10, Main.screenHeight - 160);
-
-        private bool dragging = false;
 
         private bool minimized = false;
-
-        private const float width = 220;
-        private const float height = 140;
 
         private UIVapeProgressBar xpBar;
         private UIVapeProgressBar chaosXpBar;
         private UIImageButton minimizeButton;
-        private UIPanel levelPanel;
         private UIText levelText;
-        private Vector2 offset;
 
-        private void DragStart(UIMouseEvent evt, UIElement listeningElement)
+        public override Vector2 DefaultPosition => new Vector2(10, Main.screenHeight - 160);
+        public override Vector2 DefaultSize => new Vector2(220, 140);
+
+        protected override void DragStart(UIMouseEvent evt, UIElement listeningElement)
         {
-            if (this.levelPanel.ContainsPoint(evt.MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(evt.MousePosition))
+            if (this.container.ContainsPoint(evt.MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(evt.MousePosition))
             {
-                this.offset = new Vector2(evt.MousePosition.X - this.levelPanel.Left.Pixels, evt.MousePosition.Y - this.levelPanel.Top.Pixels);
-                this.dragging = true;
+                base.DragStart(evt, listeningElement);
             }
-        }
-
-        private void DragEnd(UIMouseEvent evt, UIElement listeningElement)
-        {
-            Vector2 end = evt.MousePosition;
-            this.dragging = false;
-
-            this.levelPanel.Left.Set(end.X - offset.X, 0f);
-            this.levelPanel.Top.Set(end.Y - offset.Y, 0f);
-
-            Recalculate();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -62,51 +45,40 @@ namespace VapeRPG.UI.States
             }
         }
 
-        public Vector2 GetPanelPosition()
+        protected override UIElement CreateContainer()
         {
-            return new Vector2(this.levelPanel.Left.Pixels, this.levelPanel.Top.Pixels);
+            UIPanel container = new UIPanel();
+            container.SetPadding(0);
+            container.BackgroundColor = Color.SkyBlue;
+            return container;
         }
 
-        public override void OnInitialize()
+        protected override void Construct()
         {
-            this.Width.Set(width, 0);
-            this.Height.Set(height, 0);
-
-            this.levelPanel = new UIPanel();
-            this.levelPanel.SetPadding(0);
-            this.levelPanel.Left.Set(DefaultPanelPosition.X, 0);
-            this.levelPanel.Top.Set(DefaultPanelPosition.Y, 0);
-            this.levelPanel.Width.Set(width, 0);
-            this.levelPanel.Height.Set(height, 0);
-            this.levelPanel.BackgroundColor = Color.SkyBlue;
-
-            this.levelPanel.OnMouseDown += new MouseEvent(this.DragStart);
-            this.levelPanel.OnMouseUp += new MouseEvent(this.DragEnd);
-
             this.xpBar = new UIVapeProgressBar(1, 0, 100, Color.Green, Color.Lime);
             this.xpBar.SetPadding(0);
             this.xpBar.Left.Set(10, 0);
-            this.xpBar.Top.Set(this.levelPanel.Height.Pixels - 60, 0);
+            this.xpBar.Top.Set(this.container.Height.Pixels - 60, 0);
             this.xpBar.Width.Set(200, 0);
             this.xpBar.Height.Set(20, 0);
             this.xpBar.strokeThickness = 2;
-            this.levelPanel.Append(this.xpBar);
+            this.container.Append(this.xpBar);
 
             this.chaosXpBar = new UIVapeProgressBar(0, 0, 100, Color.Purple, Color.Violet);
             this.chaosXpBar.SetPadding(0);
             this.chaosXpBar.Left.Set(10, 0);
-            this.chaosXpBar.Top.Set(this.levelPanel.Height.Pixels - 30, 0);
+            this.chaosXpBar.Top.Set(this.container.Height.Pixels - 30, 0);
             this.chaosXpBar.Width.Set(200, 0);
             this.chaosXpBar.Height.Set(20, 0);
             this.chaosXpBar.strokeThickness = 2;
-            this.levelPanel.Append(this.chaosXpBar);
+            this.container.Append(this.chaosXpBar);
 
             this.levelText = new UIText("Level: 1\nChaos rank: 0");
-            this.levelText.Width.Set(this.levelPanel.Width.Pixels / 2, 0);
+            this.levelText.Width.Set(this.container.Width.Pixels / 2, 0);
             this.levelText.Height.Set(5, 0f);
-            this.levelText.Left.Set(this.levelPanel.Width.Pixels / 2 - this.levelText.Width.Pixels / 2, 0);
+            this.levelText.Left.Set(this.container.Width.Pixels / 2 - this.levelText.Width.Pixels / 2, 0);
             this.levelText.Top.Set(20, 0);
-            this.levelPanel.Append(this.levelText);
+            this.container.Append(this.levelText);
 
             this.minimizeButton = new UIImageButton(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButton"));
             this.minimizeButton.Width.Set(50, 0f);
@@ -120,15 +92,13 @@ namespace VapeRPG.UI.States
                 this.minimizeButton.SetImage(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/" + (this.minimized ? "MinimizeButtonFlipped" : "MinimizeButton")));
             };
 
-            this.levelPanel.Append(this.minimizeButton);
-
-            base.Append(this.levelPanel);
+            this.container.Append(this.minimizeButton);
         }
 
         public void SetPanelPosition(Vector2 position)
         {
-            this.levelPanel.Left.Set(position.X, 0);
-            this.levelPanel.Top.Set(position.Y, 0);
+            this.container.Left.Set(position.X, 0);
+            this.container.Top.Set(position.Y, 0);
 
             this.Recalculate();
         }
@@ -136,17 +106,10 @@ namespace VapeRPG.UI.States
         public override void Update(GameTime gameTime)
         {
             Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-            if (this.levelPanel.ContainsPoint(MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(MousePosition))
+            if (this.container.ContainsPoint(MousePosition) && !this.minimized || this.minimizeButton.ContainsPoint(MousePosition))
             {
                 Main.LocalPlayer.mouseInterface = true;
             }
-            if (this.dragging)
-            {
-                this.levelPanel.Left.Set(MousePosition.X - this.offset.X, 0f);
-                this.levelPanel.Top.Set(MousePosition.Y - this.offset.Y, 0f);
-            }
-
-            this.Recalculate();
 
             base.Update(gameTime);
         }

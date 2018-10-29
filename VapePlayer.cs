@@ -302,7 +302,7 @@ namespace VapeRPG
         {
             VapeRPG vapeMod = (this.mod as VapeRPG);
             // Just for saving it properly when the player exits
-            this.expUIPos = vapeMod.ExpUI.GetPanelPosition();
+            this.expUIPos = vapeMod.ExpUI.Position;
 
             if (this.level > VapeRPG.MaxLevel) this.level = VapeRPG.MaxLevel;
             else if (this.level < 1) this.level = 1;
@@ -469,7 +469,7 @@ namespace VapeRPG
             if (this.strengthened)
             {
                 damage -= (int)(damage * 0.15f * this.GetSkillLevel<Skills.Strengthen>());
-                this.player.ClearBuff(mod.BuffType<Strengthened>());
+                this.player.ClearBuff(this.mod.BuffType<Strengthened>());
             }
 
             if (this.energized)

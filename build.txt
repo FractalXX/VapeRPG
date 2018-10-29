@@ -6,3 +6,4 @@ buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, .git\*, *.sln, *.git
 includePDB = true
 hideCode = false
 includeSource = true
+languageVersion = 6
