@@ -16,6 +16,10 @@ I repeat, the mod is highly volatile in Multiplayer. Don't expect tech support i
 Many things are tweakable via the config files. Please refer to the mod's thread for documentation.
 
 Changelog:
+v0.3.4.1:
+- FIXES:
+-> Fixed a game-breaking bug that caused usable items to get used when clicking in the inventory.
+
 v0.3.4:
 - NEW:
 -> Make the stat and the chaos stat panels scrollable.
