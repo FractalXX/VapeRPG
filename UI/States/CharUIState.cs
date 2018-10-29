@@ -59,7 +59,11 @@ namespace VapeRPG.UI.States
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
             Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-            Main.LocalPlayer.mouseInterface = this.mainPanel.ContainsPoint(MousePosition);
+                
+            if(this.mainPanel.ContainsPoint(MousePosition))
+            {
+                Main.LocalPlayer.mouseInterface = true;
+            }
 
             if (dragging)
             {
