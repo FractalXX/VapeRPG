@@ -44,6 +44,7 @@
     <Compile Include="Buffs\StaticField.cs" />
     <Compile Include="Buffs\Strengthened.cs" />
     <Compile Include="Commands\XpCommand.cs" />
+    <Compile Include="Items\ScrollAnsatsu.cs" />
     <Compile Include="Items\ScrollBase.cs" />
     <Compile Include="Items\ScrollBlink.cs" />
     <Compile Include="Items\Socketer.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="Projectiles\AssassinScythe.cs" />
     <Compile Include="Projectiles\ElectricSpark.cs" />
     <Compile Include="SaveVersionHandler.cs" />
     <Compile Include="Skill.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="UI\States\SkillBarUIState.cs" />
     <Compile Include="UI\States\StatHelpUIState.cs" />
     <Compile Include="UI\TreeHelper.cs" />
+    <Compile Include="Util\Textures.cs" />
     <Compile Include="VapeConfig.cs" />
     <Compile Include="VapeGlobalItem.cs" />
     <Compile Include="VapeGlobalNpc.cs" />

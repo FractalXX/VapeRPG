@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +17,15 @@ namespace VapeRPG.Items
         public int cooldownRemaining;
         public int damage;
 
-        public override void NetSend(BinaryWriter writer)
+        public override ModItem Clone(Item item)
+        {
+            ModItem clone =  base.Clone(item);
+            (clone as ScrollBase).cooldown = this.cooldown;
+            (clone as ScrollBase).cooldownRemaining = this.cooldownRemaining;
+            return clone;
+        }
+
+        /*public override void NetSend(BinaryWriter writer)
         {
             writer.Write(this.cooldownRemaining);
         }
@@ -24,6 +33,14 @@ namespace VapeRPG.Items
         public override void NetRecieve(BinaryReader reader)
         {
             this.cooldownRemaining = reader.ReadByte();
+        }*/
+
+        public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            if (this.cooldownRemaining > 0)
+            {
+                this.cooldownRemaining--;
+            }
         }
 
         public override void SetDefaults()
@@ -44,23 +61,20 @@ namespace VapeRPG.Items
 
         public override bool UseItem(Player player)
         {
-            if(cooldownRemaining <= 0)
+            return this.Use(player);
+        }
+
+        public bool Use(Player player)
+        {
+            if (this.cooldownRemaining <= 0)
             {
-                this.CastSpell(player, Main.MouseWorld);
+                this.CastSpell(player);
                 this.cooldownRemaining = this.cooldown;
                 return true;
             }
             return false;
         }
 
-        public override void UpdateInventory(Player player)
-        {
-            if(cooldownRemaining > 0)
-            {
-                cooldownRemaining--;
-            }
-        }
-
-        public abstract void CastSpell(Player player, Vector2 mousePosition);
+        public abstract void CastSpell(Player player);
     }
 }

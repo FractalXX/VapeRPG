@@ -93,7 +93,7 @@ namespace VapeRPG.UI.Elements
                 }
                 // Mouse has an item
                 // Can take mouse item
-                else if (CanTakeItem(Main.mouseItem))
+                else if (this.CanTakeItem(Main.mouseItem))
                 {
                     Main.playerInventory = true;
                     // Items are the same type
@@ -129,7 +129,7 @@ namespace VapeRPG.UI.Elements
             }
             // Slot has no item
             // Slot can take mouse item
-            else if (CanTakeItem(Main.mouseItem))
+            else if (this.CanTakeItem(Main.mouseItem))
             {
                 Main.playerInventory = true;
                 item = Main.mouseItem.Clone();

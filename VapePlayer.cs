@@ -13,6 +13,7 @@ using Terraria.DataStructures;
 using VapeRPG.UI.States;
 using VapeRPG.Buffs;
 using VapeRPG.Projectiles;
+using VapeRPG.Items;
 
 namespace VapeRPG
 {
@@ -53,7 +54,8 @@ namespace VapeRPG
 
         private Dictionary<Type, int> skillLevels;
 
-        private Vector2 expUIPos;
+        private Vector2 expUIPosition;
+        private Vector2 skillUIPosition;
 
         static VapePlayer()
         {
@@ -296,13 +298,23 @@ namespace VapeRPG
                 CharUIState.visible = !CharUIState.visible;
                 StatHelpUIState.visible = false;
             }
+
+            VapeRPG vapeMod = this.mod as VapeRPG;
+            for(int i = 0; i < SkillBarUIState.SKILL_SLOT_COUNT; i++)
+            {
+                if(VapeRPG.SkillHotKeys[i].JustPressed)
+                {
+                    vapeMod.SkillBarUI.SkillSlots[i].UseSkill(this.player);
+                }
+            }
         }
 
         public override void PostUpdate()
         {
             VapeRPG vapeMod = (this.mod as VapeRPG);
             // Just for saving it properly when the player exits
-            this.expUIPos = vapeMod.ExpUI.Position;
+            this.expUIPosition = vapeMod.ExpUI.Position;
+            this.skillUIPosition = vapeMod.SkillBarUI.Position;
 
             if (this.level > VapeRPG.MaxLevel) this.level = VapeRPG.MaxLevel;
             else if (this.level < 1) this.level = 1;
@@ -532,6 +544,7 @@ namespace VapeRPG
             TagCompound baseStatsTC = new TagCompound();
             TagCompound skillLevelsTC = new TagCompound();
             TagCompound chaosBonusesTC = new TagCompound();
+            TagCompound skillScrollsTC = new TagCompound();
 
             // Boxing values into the compounds
             foreach (var x in BaseStats)
@@ -549,9 +562,16 @@ namespace VapeRPG
                 chaosBonusesTC.Add(x.Key, x.Value);
             }
 
+            VapeRPG vapeMod = this.mod as VapeRPG;
+            for(int i = 0; i < vapeMod.SkillBarUI.SkillSlots.Length; i++)
+            {
+                skillScrollsTC.Add(i.ToString(), vapeMod.SkillBarUI.SkillSlots[i].item);
+            }
+
             tc.Add("BaseStats", baseStatsTC);
             tc.Add("SkillLevels", skillLevelsTC);
             tc.Add("ChaosBonuses", chaosBonusesTC);
+            tc.Add("SkillScrolls", skillScrollsTC);
 
             tc.Add("Level", this.level);
             tc.Add("Xp", this.xp);
@@ -562,7 +582,8 @@ namespace VapeRPG
             tc.Add("SkillPoints", this.skillPoints);
             tc.Add("ChaosPoints", this.chaosPoints);
 
-            tc.Add("expUIPos", this.expUIPos);
+            tc.Add("expUIPos", this.expUIPosition);
+            tc.Add("skillUIPos", this.skillUIPosition);
 
             return tc;
         }
@@ -573,20 +594,20 @@ namespace VapeRPG
 
             bool expUIOverflow = false;
 
-            if (this.expUIPos.X >= Main.screenWidth)
+            if (this.expUIPosition.X >= Main.screenWidth)
             {
-                this.expUIPos.X = Main.screenWidth - vapeMod.ExpUI.Width.Pixels;
+                this.expUIPosition.X = Main.screenWidth - vapeMod.ExpUI.Width.Pixels;
                 expUIOverflow = true;
             }
-            if (this.expUIPos.Y >= Main.screenHeight)
+            if (this.expUIPosition.Y >= Main.screenHeight)
             {
-                this.expUIPos.Y = Main.screenHeight - vapeMod.ExpUI.Height.Pixels;
+                this.expUIPosition.Y = Main.screenHeight - vapeMod.ExpUI.Height.Pixels;
                 expUIOverflow = true;
             }
 
             if (expUIOverflow)
             {
-                vapeMod.ExpUI.SetPanelPosition(this.expUIPos);
+                vapeMod.ExpUI.SetPosition(this.expUIPosition);
             }
 
         }

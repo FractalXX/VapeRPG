@@ -7,6 +7,7 @@ using Terraria.GameContent.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using VapeRPG.Util;
 
 namespace VapeRPG.UI.Elements
 {
@@ -20,12 +21,8 @@ namespace VapeRPG.UI.Elements
         private UIImage icon;
         private UIText skillLevelText;
 
-        private Texture2D skillShade;
-
         public UISkillInfo(Skill skill, float width = defaultWidth, float height = defaultHeight)
         {
-            this.skillShade = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
-
             this.skill = skill;
 
             this.Width.Set(width, 0);
@@ -67,7 +64,7 @@ namespace VapeRPG.UI.Elements
                 Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
                 int width = (int)Math.Ceiling(dimensions.Width);
                 int height = (int)Math.Ceiling(dimensions.Height);
-                spriteBatch.Draw(this.skillShade, new Rectangle(point1.X, point1.Y, width, height), Color.White);
+                spriteBatch.Draw(Textures.SKILL_SHADE, new Rectangle(point1.X, point1.Y, width, height), Color.White);
             }
         }
 

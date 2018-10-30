@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using VapeRPG.UI.States;
 using System.Reflection;
 using System.Linq;
+using VapeRPG.Util;
 
 namespace VapeRPG
 {
@@ -56,6 +57,7 @@ namespace VapeRPG
         public static List<Skill> Skills { get; private set; } // Add new skills to that list under Load()
 
         public static ModHotKey CharWindowHotKey;
+        public static ModHotKey[] SkillHotKeys;
 
         public const int MaxLevel = 200; // Self-explanatory
 
@@ -64,8 +66,10 @@ namespace VapeRPG
         public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
         public CharUIState CharUI { get; private set; } // For the character panel
         public StatHelpUIState StatHelpUI { get; private set; }
+        public SkillBarUIState SkillBarUI { get; private set; }
         private UserInterface expUserInterface;
         private UserInterface charUserInterface;
+        private UserInterface skillBarUserInterface;
 
         public static UserInterface ui;
 
@@ -219,6 +223,11 @@ namespace VapeRPG
             }
 
             CharWindowHotKey = RegisterHotKey("Character window", "C");
+            SkillHotKeys = new ModHotKey[SkillBarUIState.SKILL_SLOT_COUNT];
+            SkillHotKeys[0] = RegisterHotKey("Use skill 1", "Y");
+            SkillHotKeys[1] = RegisterHotKey("Use skill 2", "X");
+            SkillHotKeys[2] = RegisterHotKey("Use skill 3", "C");
+            SkillHotKeys[3] = RegisterHotKey("Use skill 4", "V");
 
             if (Main.netMode != NetmodeID.Server)
             {
@@ -231,6 +240,9 @@ namespace VapeRPG
                 this.StatHelpUI = new StatHelpUIState();
                 this.StatHelpUI.Activate();
 
+                this.SkillBarUI = new SkillBarUIState();
+                this.SkillBarUI.Activate();
+
                 this.expUserInterface = new UserInterface();
                 this.expUserInterface.SetState(this.ExpUI);
 
@@ -238,8 +250,14 @@ namespace VapeRPG
                 this.charUserInterface.SetState(this.CharUI);
                 ui = this.charUserInterface;
 
+                this.skillBarUserInterface = new UserInterface();
+                this.skillBarUserInterface.SetState(this.SkillBarUI);
+
                 ExpUIState.visible = true;
             }
+
+            Textures.SKILL_SHADE = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
+            Textures.SQUARE_SHADE = ModLoader.GetTexture("VapeRPG/Textures/UI/TransparentSquare");
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -249,7 +267,7 @@ namespace VapeRPG
             {
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
                     "VapeRPG: StatHelp",
-                    delegate
+                    () =>
                     {
                         if (StatHelpUIState.visible)
                         {
@@ -262,7 +280,7 @@ namespace VapeRPG
 
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
                     "VapeRPG: StatWindow",
-                    delegate
+                    () =>
                     {
                         if (CharUIState.visible)
                         {
@@ -276,12 +294,26 @@ namespace VapeRPG
 
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
                     "VapeRPG: ExperienceBar",
-                    delegate
+                    () =>
                     {
                         if (ExpUIState.visible)
                         {
                             expUserInterface.Update(Main._drawInterfaceGameTime);
                             ExpUI.Draw(Main.spriteBatch);
+                        }
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
+
+                layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
+                    "VapeRPG: SkillBar",
+                    () =>
+                    {
+                        if (SkillBarUIState.visible)
+                        {
+                            this.skillBarUserInterface.Update(Main._drawInterfaceGameTime);
+                            this.SkillBarUI.Draw(Main.spriteBatch);
                         }
                         return true;
                     },

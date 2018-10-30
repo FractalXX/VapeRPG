@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Microsoft.Xna.Framework;
+using VapeRPG.Items;
 
 namespace VapeRPG
 {
@@ -13,6 +14,7 @@ namespace VapeRPG
             TagCompound stats = tag.GetCompound("BaseStats");
             TagCompound skillLevels = tag.GetCompound("SkillLevels");
             TagCompound chaosBonuses = tag.GetCompound("ChaosBonuses");
+            TagCompound skillScrolls = tag.GetCompound("SkillScrolls");
 
             string key;
 
@@ -54,17 +56,31 @@ namespace VapeRPG
                 modPlayer.ChaosBonuses[key] = (float)chaosBonus.Value;
             }
 
+            VapeRPG vapeMod = (modPlayer.mod as VapeRPG);
+            foreach (var pair in skillScrolls)
+            {
+                Item item = skillScrolls.Get<Item>(pair.Key);
+                if(!(item.modItem is ScrollBase))
+                {
+                    item.TurnToAir();
+                }
+                vapeMod.SkillBarUI.SkillSlots[int.Parse(pair.Key)].item = item;
+            }
+
             modPlayer.chaosRank = tag.GetAsInt("ChaosRank");
             modPlayer.chaosXp = tag.GetAsLong("ChaosXp");
 
             modPlayer.xp = tag.GetAsLong("Xp");
             Vector2 expUIPos = tag.Get<Vector2>("expUIPos");
+            Vector2 skillUIPos = tag.Get<Vector2>("skillUIPos");
 
-            VapeRPG vapeMod = (modPlayer.mod as VapeRPG);
-            vapeMod.ExpUI.SetPanelPosition(expUIPos);
+            vapeMod.ExpUI.SetPosition(expUIPos);
+            vapeMod.ExpUI.Recalculate();
+            vapeMod.SkillBarUI.SetPosition(skillUIPos);
+            vapeMod.SkillBarUI.Recalculate();
         }
 
-        internal static string GetTypeNameFromOldSave(string key)
+        private static string GetTypeNameFromOldSave(string key)
         {
             if(key.Equals("Damage to Defense", StringComparison.CurrentCultureIgnoreCase))
             {

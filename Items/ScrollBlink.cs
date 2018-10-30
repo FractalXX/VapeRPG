@@ -12,9 +12,9 @@ namespace VapeRPG.Items
 {
     class ScrollBlink : ScrollBase
     {
-        public override void CastSpell(Player player, Vector2 mousePosition)
+        public override void CastSpell(Player player)
         {
-            player.position = mousePosition;
+            player.position = Main.MouseWorld;
         }
 
         public override void SetDefaults()
@@ -27,14 +27,6 @@ namespace VapeRPG.Items
         {
             DisplayName.SetDefault("Scroll (Blink)");
             Tooltip.SetDefault("Teleports the caster to the mouse's position.");
-        }
-
-        public override void AddRecipes()
-        {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.DirtBlock, 1);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
         }
     }
 }

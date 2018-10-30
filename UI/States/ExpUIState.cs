@@ -37,14 +37,6 @@ namespace VapeRPG.UI.States
             }
         }
 
-        public void SetPanelPosition(Vector2 position)
-        {
-            this.container.Left.Set(position.X, 0);
-            this.container.Top.Set(position.Y, 0);
-
-            this.Recalculate();
-        }
-
         public override void Update(GameTime gameTime)
         {
             Vector2 MousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
