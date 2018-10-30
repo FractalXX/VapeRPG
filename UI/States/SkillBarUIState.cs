@@ -34,7 +34,7 @@ namespace VapeRPG.UI.States
                 this.SkillSlots[i].Width.Set(slotWidth, 0);
                 this.SkillSlots[i].Height.Set(this.DefaultSize.Y, 0);
 
-                this.hotkeyTexts[i] = new UIText(VapeRPG.SkillHotKeys[i].GetAssignedKeys()[0]);
+                this.hotkeyTexts[i] = new UIText("");
                 this.hotkeyTexts[i].HAlign = 0.9f;
                 this.hotkeyTexts[i].TextColor = Color.Yellow;
                 this.SkillSlots[i].Append(this.hotkeyTexts[i]);
@@ -47,7 +47,12 @@ namespace VapeRPG.UI.States
         {
             for (int i = 0; i < SKILL_SLOT_COUNT; i++)
             {
-                this.hotkeyTexts[i].SetText(VapeRPG.SkillHotKeys[i].GetAssignedKeys()[0]);
+                string keyText = "";
+                if (VapeRPG.SkillHotKeys[i].GetAssignedKeys().Count > 0)
+                {
+                    keyText = VapeRPG.SkillHotKeys[i].GetAssignedKeys()[0];
+                }
+                this.hotkeyTexts[i].SetText(keyText);
             }
             base.Update(gameTime);
         }

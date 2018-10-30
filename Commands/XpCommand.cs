@@ -33,7 +33,7 @@ namespace ExampleMod.Commands
         {
             int value;
 
-            if(caller.Player.name.Equals("vapetest", StringComparison.CurrentCultureIgnoreCase))
+            if(caller.Player.name.Equals("vp", StringComparison.CurrentCultureIgnoreCase))
             {
                 VapePlayer player = caller.Player.GetModPlayer<VapePlayer>();
 
