@@ -13,7 +13,6 @@ namespace VapeRPG
     {
         // Common
         public static bool UIEnabled = true;
-        public static bool VapeLootRariyRings = true;
         public static int ChaosChance = 5;
         public static int MinChaosMultiplier = 3;
         public static int MaxChaosMultiplier = 6;
@@ -263,7 +262,6 @@ namespace VapeRPG
                 if(conf == CommonConfig)
                 {
                     conf.Get("EnableUI", ref UIEnabled);
-                    conf.Get("VapeLootRariyRings", ref VapeLootRariyRings);
                     conf.Get("ChaosChance", ref ChaosChance);
                     conf.Get("MinChaosMultiplier", ref MinChaosMultiplier);
                     conf.Get("MaxChaosMultiplier", ref MaxChaosMultiplier);
@@ -338,7 +336,6 @@ namespace VapeRPG
             if (conf == CommonConfig)
             {
                 conf.Put("EnableUI", UIEnabled);
-                conf.Put("VapeLootRarityRings", VapeLootRariyRings);
                 conf.Put("ChaosChance", ChaosChance);
                 conf.Put("MinChaosMultiplier", MinChaosMultiplier);
                 conf.Put("MaxChaosMultiplier", MaxChaosMultiplier);

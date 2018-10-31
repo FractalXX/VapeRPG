@@ -204,17 +204,17 @@ namespace VapeRPG
 
             foreach (string stat in VapeRPG.BaseStats)
             {
-                this.BaseStats.Add(stat, 1);
+                this.BaseStats[stat] = 1;
             }
 
             foreach (Skill skill in VapeRPG.Skills)
             {
-                this.skillLevels.Add(skill.GetType(), 0);
+                this.skillLevels[skill.GetType()] = 0;
             }
 
             foreach (string stat in VapeRPG.MinorStats)
             {
-                this.ChaosBonuses.Add(stat, 0);
+                this.ChaosBonuses[stat] = 0;
             }
         }
 
@@ -289,24 +289,6 @@ namespace VapeRPG
             this.energizedStacks = 0;
             this.highfiveStacks = 0;
             this.fieldCounter = 0;
-        }
-
-        public override void ProcessTriggers(TriggersSet triggersSet)
-        {
-            if (VapeRPG.CharWindowHotKey.JustPressed)
-            {
-                CharUIState.visible = !CharUIState.visible;
-                StatHelpUIState.visible = false;
-            }
-
-            VapeRPG vapeMod = this.mod as VapeRPG;
-            for(int i = 0; i < SkillBarUIState.SKILL_SLOT_COUNT; i++)
-            {
-                if(VapeRPG.SkillHotKeys[i].JustPressed)
-                {
-                    vapeMod.SkillBarUI.SkillSlots[i].UseSkill(this.player);
-                }
-            }
         }
 
         public override void PostUpdate()
@@ -504,6 +486,24 @@ namespace VapeRPG
             }
 
             return !failed;
+        }
+
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            if (VapeRPG.CharWindowHotKey.JustPressed)
+            {
+                CharUIState.visible = !CharUIState.visible;
+                StatHelpUIState.visible = false;
+            }
+
+            VapeRPG vapeMod = this.mod as VapeRPG;
+            for (int i = 0; i < SkillBarUIState.SKILL_SLOT_COUNT; i++)
+            {
+                if (VapeRPG.SkillHotKeys[i].JustPressed)
+                {
+                    vapeMod.SkillBarUI.SkillSlots[i].UseSkill(this.player);
+                }
+            }
         }
 
         public override void ResetEffects()

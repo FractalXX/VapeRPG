@@ -90,6 +90,7 @@ namespace VapeRPG.UI.Elements
                     Main.playerInventory = true;
                     Main.mouseItem = item.Clone();
                     item.TurnToAir();
+                    Main.PlaySound(7);
                 }
                 // Mouse has an item
                 // Can take mouse item
@@ -114,6 +115,7 @@ namespace VapeRPG.UI.Elements
                             item.stack = item.maxStack;
                             Main.mouseItem.stack = stackDiff;
                         }
+                        Main.PlaySound(7);
                     }
                     // Items are not the same type
                     else
@@ -123,6 +125,7 @@ namespace VapeRPG.UI.Elements
                         var tmp2 = Main.mouseItem.Clone();
                         Main.mouseItem = tmp;
                         item = tmp2;
+                        Main.PlaySound(7);
                     }
 
                 }
@@ -134,6 +137,7 @@ namespace VapeRPG.UI.Elements
                 Main.playerInventory = true;
                 item = Main.mouseItem.Clone();
                 Main.mouseItem.TurnToAir();
+                Main.PlaySound(7);
             }
 
             // PostClick

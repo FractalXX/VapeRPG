@@ -19,9 +19,10 @@ namespace VapeRPG.Items
 
         public override ModItem Clone(Item item)
         {
-            ModItem clone =  base.Clone(item);
-            (clone as ScrollBase).cooldown = this.cooldown;
-            (clone as ScrollBase).cooldownRemaining = this.cooldownRemaining;
+            ScrollBase clone =  base.Clone(item) as ScrollBase;
+            clone.cooldown = this.cooldown;
+            clone.cooldownRemaining = this.cooldownRemaining;
+            clone.damage = this.damage;
             return clone;
         }
 
