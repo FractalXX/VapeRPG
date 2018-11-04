@@ -67,9 +67,13 @@ namespace VapeRPG
         public CharUIState CharUI { get; private set; } // For the character panel
         public StatHelpUIState StatHelpUI { get; private set; }
         public SkillBarUIState SkillBarUI { get; private set; }
+
         private UserInterface expUserInterface;
         private UserInterface charUserInterface;
         private UserInterface skillBarUserInterface;
+
+        private TileUI currentTileUI;
+        private UserInterface tileUserInterface;
 
         public static UserInterface ui;
 
@@ -114,21 +118,6 @@ namespace VapeRPG
         public static Skill GetSkill(Type type)
         {
             return Skills.Find(x => x.GetType() == type);
-        }
-
-        private static Texture2D GetSkillFrame(string name)
-        {
-            Texture2D frame;
-            try
-            {
-                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/" + name);
-            }
-            catch (Exception)
-            {
-                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
-            }
-
-            return frame;
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -231,6 +220,8 @@ namespace VapeRPG
 
             if (Main.netMode != NetmodeID.Server)
             {
+                Textures.Load();
+
                 this.ExpUI = new ExpUIState();
                 this.ExpUI.Activate();
 
@@ -253,11 +244,10 @@ namespace VapeRPG
                 this.skillBarUserInterface = new UserInterface();
                 this.skillBarUserInterface.SetState(this.SkillBarUI);
 
+                this.tileUserInterface = new UserInterface();
+
                 ExpUIState.visible = true;
             }
-
-            Textures.SKILL_SHADE = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
-            Textures.SQUARE_SHADE = ModLoader.GetTexture("VapeRPG/Textures/UI/TransparentSquare");
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
@@ -319,6 +309,20 @@ namespace VapeRPG
                     },
                     InterfaceScaleType.UI)
                 );
+
+                layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
+                "VapeRPG: TileUI",
+                () =>
+                {
+                    if (this.currentTileUI != null && this.currentTileUI.visible)
+                    {
+                        this.tileUserInterface.Update(Main._drawInterfaceGameTime);
+                        this.currentTileUI.Draw(Main.spriteBatch);
+                    }
+                    return true;
+                },
+                InterfaceScaleType.UI)
+            );
             }
         }
 
@@ -328,6 +332,12 @@ namespace VapeRPG
               assembly.GetTypes()
                       .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
                       .ToArray();
+        }
+
+        public void SetTileUIState(TileUI tileUI)
+        {
+            this.tileUserInterface.SetState(tileUI);
+            this.currentTileUI = tileUI;
         }
     }
 }

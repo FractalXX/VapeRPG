@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.UI;
 
@@ -8,10 +9,16 @@ namespace VapeRPG.UI.Elements
     // Credit goes to Jofairden (from the Deconstructor mod)
     internal class UIInteractableItemPanel : UIItemPanel
     {
+        private Predicate<Item> CanTakeItem;
+
         public UIInteractableItemPanel(int netID = 0, int stack = 0, Texture2D hintTexture = null, string hintText = null)
+            : this((x) => true, netID, stack, hintTexture, hintText) { }
+
+        public UIInteractableItemPanel(Predicate<Item> CanTakeItem, int netID = 0, int stack = 0, Texture2D hintTexture = null, string hintText = null)
             : base(netID, stack, hintTexture, hintText)
         {
             base.OnClick += UIInteractableItemPanel_OnClick;
+            this.CanTakeItem = CanTakeItem;
         }
 
         public override void Update(GameTime gameTime)
@@ -75,7 +82,6 @@ namespace VapeRPG.UI.Elements
             }
         }
 
-        public virtual bool CanTakeItem(Item item) => true;
         public virtual void PostOnRightClick() { }
         public virtual void PostOnClick(UIMouseEvent evt, UIElement e) { }
 

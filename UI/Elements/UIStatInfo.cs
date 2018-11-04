@@ -6,6 +6,7 @@ using Terraria.GameContent.UI.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using VapeRPG.Util;
 
 namespace VapeRPG.UI.Elements
 {
@@ -38,7 +39,7 @@ namespace VapeRPG.UI.Elements
 
             if (button)
             {
-                this.button = new UIImageButton(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/AddButton"));
+                this.button = new UIImageButton(Textures.UI.ADD_BUTTON);
                 this.button.Width.Set(30, 0);
                 this.button.Height.Set(30, 0);
                 this.button.Top.Set(0, 0);

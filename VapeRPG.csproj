@@ -93,6 +93,7 @@
     <Compile Include="Sounds\Custom\Electricity.cs" />
     <Compile Include="Sounds\Custom\Energized.cs" />
     <Compile Include="Sounds\Custom\StaticFieldApply.cs" />
+    <Compile Include="Tiles\InteractableTile.cs" />
     <Compile Include="Tiles\Socketer.cs" />
     <Compile Include="UI\Elements\UIButton.cs" />
     <Compile Include="UI\Elements\UIInteractableItemPanel.cs" />
@@ -110,6 +111,8 @@
     <Compile Include="UI\States\ExpUIState.cs" />
     <Compile Include="UI\States\SkillBarUIState.cs" />
     <Compile Include="UI\States\StatHelpUIState.cs" />
+    <Compile Include="UI\States\TileStates\SocketerUI.cs" />
+    <Compile Include="UI\States\TileUI.cs" />
     <Compile Include="UI\TreeHelper.cs" />
     <Compile Include="Util\Textures.cs" />
     <Compile Include="VapeConfig.cs" />

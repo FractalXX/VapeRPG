@@ -23,10 +23,7 @@ namespace VapeRPG.UI.Elements
             }
         }
 
-        public override bool CanTakeItem(Item item)
-        {
-            return item.modItem is ScrollBase;
-        }
+        public UISkillScrollSlot() : base((item) => item.modItem is ScrollBase) { }
 
         public void UseSkill(Player player)
         {
@@ -42,7 +39,7 @@ namespace VapeRPG.UI.Elements
                 Point position = new Point((int)dimensions.X, (int)dimensions.Y);
                 int width = (int)Math.Ceiling(dimensions.Width);
                 int height = (int)Math.Ceiling(dimensions.Height);
-                spriteBatch.Draw(Textures.SQUARE_SHADE, new Rectangle(position.X, position.Y + (int)(height * (1 - (float)this.Scroll.cooldownRemaining / this.Scroll.cooldown)), width, (int)(height * (float)this.Scroll.cooldownRemaining / this.Scroll.cooldown)), Color.White);
+                spriteBatch.Draw(Textures.UI.SQUARE_SHADE, new Rectangle(position.X, position.Y + (int)(height * (1 - (float)this.Scroll.cooldownRemaining / this.Scroll.cooldown)), width, (int)(height * (float)this.Scroll.cooldownRemaining / this.Scroll.cooldown)), Color.White);
             }
         }
     }

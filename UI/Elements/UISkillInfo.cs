@@ -64,7 +64,7 @@ namespace VapeRPG.UI.Elements
                 Point point1 = new Point((int)dimensions.X, (int)dimensions.Y);
                 int width = (int)Math.Ceiling(dimensions.Width);
                 int height = (int)Math.Ceiling(dimensions.Height);
-                spriteBatch.Draw(Textures.SKILL_SHADE, new Rectangle(point1.X, point1.Y, width, height), Color.White);
+                spriteBatch.Draw(Textures.UI.SKILL_SHADE, new Rectangle(point1.X, point1.Y, width, height), Color.White);
             }
         }
 

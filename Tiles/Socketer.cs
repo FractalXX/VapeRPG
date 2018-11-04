@@ -6,10 +6,11 @@ using Terraria.ObjectData;
 using Terraria.ModLoader;
 
 using VapeRPG.Items;
+using VapeRPG.UI.States.TileStates;
 
 namespace VapeRPG.Tiles
 {
-    public class Socketer : ModTile
+    internal class Socketer : InteractableTile
     {
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
@@ -29,6 +30,8 @@ namespace VapeRPG.Tiles
             TileObjectData.addTile(Type);
             AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
             adjTiles = new int[] { TileID.WorkBenches };
+
+            this.ui = new SocketerUI();
         }
     }
 }

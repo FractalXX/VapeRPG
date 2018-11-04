@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using VapeRPG.UI.Elements;
+using VapeRPG.Util;
 
 namespace VapeRPG.UI.States
 {
@@ -110,7 +111,7 @@ namespace VapeRPG.UI.States
             this.levelText.Top.Set(20, 0);
             this.container.Append(this.levelText);
 
-            this.minimizeButton = new UIImageButton(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButton"));
+            this.minimizeButton = new UIImageButton(Textures.UI.MINIMIZE_BUTTON);
             this.minimizeButton.Width.Set(50, 0f);
             this.minimizeButton.Height.Set(15, 0f);
             this.minimizeButton.HAlign = 0.5f;
@@ -119,7 +120,7 @@ namespace VapeRPG.UI.States
             this.minimizeButton.OnMouseUp += (evt, element) =>
             {
                 this.minimized = !this.minimized;
-                this.minimizeButton.SetImage(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/" + (this.minimized ? "MinimizeButtonFlipped" : "MinimizeButton")));
+                this.minimizeButton.SetImage(this.minimized ? Textures.UI.MINIMIZE_BUTTON_FLIPPED : Textures.UI.MINIMIZE_BUTTON);
             };
 
             this.container.Append(this.minimizeButton);

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using VapeRPG.UI.Elements;
+using VapeRPG.Util;
 
 namespace VapeRPG.UI.States
 {
@@ -193,7 +194,7 @@ namespace VapeRPG.UI.States
                 statList.Add(this.statControls[i]);
             }
 
-            this.statHelper = new UIImage(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/HelpButton"));
+            this.statHelper = new UIImage(Textures.UI.HELP_BUTTON);
             this.statHelper.Width.Set(20, 0);
             this.statHelper.Height.Set(20, 0);
             this.statHelper.Left.Set(-25, 1f);

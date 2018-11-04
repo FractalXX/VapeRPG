@@ -30,7 +30,6 @@ namespace VapeRPG.Items
             Tooltip.SetDefault("Used for inserting gems in weapons.");
         }
 
-
         public override void AddRecipes()
         {
             /*ModRecipe recipe = new ModRecipe(mod);
