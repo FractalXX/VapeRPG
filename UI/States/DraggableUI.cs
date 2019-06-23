@@ -6,13 +6,34 @@ namespace VapeRPG.UI.States
 {
     internal abstract class DraggableUI : UIState
     {
-        protected UIElement container;
+        public enum DragMode
+        {
+            Default,
+            Header
+        }
+
+        public const int DEFAULT_HEADER_HEIGHT = 40;
+
+        public string Title { get; set; }
+
+        protected UIElement container { get; private set; }
+        protected UIElement header { get; private set; }
 
         private bool isDragging = false;
         private Vector2 dragOffset;
 
         public abstract Vector2 DefaultPosition { get; }
         public abstract Vector2 DefaultSize { get; }
+
+        public virtual bool HasHeader
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public DragMode dragMode { get; private set; }
 
         public Vector2 Position
         {
@@ -42,6 +63,16 @@ namespace VapeRPG.UI.States
             this.container.Height.Set(size.Y, 0);
         }
 
+        public void SetDragMode(DragMode dragMode)
+        {
+            if(dragMode == DragMode.Header && !this.HasHeader)
+            {
+                throw new System.Exception("DragMode.Header can only be set if the container has a header.");
+            }
+
+            this.dragMode = dragMode;
+        }
+
         public void Reset()
         {
             this.SetPosition(this.DefaultPosition);
@@ -51,7 +82,15 @@ namespace VapeRPG.UI.States
         protected virtual void DragStart(UIMouseEvent evt, UIElement listeningElement)
         {
             this.dragOffset = new Vector2(evt.MousePosition.X - this.container.Left.Pixels, evt.MousePosition.Y - this.container.Top.Pixels);
-            this.isDragging = true;
+
+            if(this.dragMode == DragMode.Default)
+            {
+                this.isDragging = true;
+            }
+            else if(this.dragMode == DragMode.Header)
+            {
+                this.isDragging = this.header.ContainsPoint(evt.MousePosition);
+            }
         }
 
         protected virtual void DragEnd(UIMouseEvent evt, UIElement listeningElement)
@@ -68,6 +107,16 @@ namespace VapeRPG.UI.States
         public override void OnInitialize()
         {
             this.container = this.CreateContainer();
+            this.header = this.CreateHeader();
+
+            if(this.header == null && this.HasHeader)
+            {
+                throw new System.Exception("A header needs to be created for the DraggableUI if its HasHeader property is set.");
+            }
+            else if(this.header != null)
+            {
+                this.container.Append(this.header);
+            }
 
             this.SetPosition(this.DefaultPosition);
             this.SetSize(this.DefaultSize);
@@ -99,5 +148,9 @@ namespace VapeRPG.UI.States
 
         protected virtual void Construct() { }
         protected abstract UIElement CreateContainer();
+        protected virtual UIElement CreateHeader()
+        {
+            return null;
+        }
     }
 }

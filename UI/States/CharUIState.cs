@@ -19,87 +19,88 @@ namespace VapeRPG.UI.States
 
         private UIPanel statPanel;
         private UIPanel miscPanel;
-        private VapeSkillPanel skillPanel;
+        private UISkillPanel skillPanel;
 
         private UIStatInfo[] statControls;
         private UIStatInfo[] miscStatControls;
         private UIText pointsText;
         private UIText chaosPointsText;
 
-        private UIVapeProgressBar xpBar;
-        private UIVapeProgressBar chaosXpBar;
+        private Elements.UIProgressBar xpBar;
+        private Elements.UIProgressBar chaosXpBar;
         private UIText levelText;
 
         private UIImage statHelper;
 
         public override Vector2 DefaultPosition => new Vector2(Main.screenWidth / 2 - this.DefaultSize.X / 2, Main.screenHeight / 2 - this.DefaultSize.Y / 2);
         public override Vector2 DefaultSize => new Vector2(800, 600);
+        public override bool HasHeader => true;
 
         public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
         {
-            foreach (UIStatInfo usi in this.miscStatControls)
+            foreach (UIStatInfo info in this.miscStatControls)
             {
-                if (usi.stat.Contains("Melee Damage"))
+                if (info.stat.Contains("Melee Damage"))
                 {
-                    usi.statValue = meleeDamage * 100;
-                    usi.TextColor = Color.Red;
+                    info.statValue = meleeDamage * 100;
+                    info.TextColor = Color.Red;
                 }
-                if (usi.stat.Contains("Ranged Damage"))
+                if (info.stat.Contains("Ranged Damage"))
                 {
-                    usi.statValue = rangedDamage * 100;
-                    usi.TextColor = Color.Orange;
+                    info.statValue = rangedDamage * 100;
+                    info.TextColor = Color.Orange;
                 }
-                if (usi.stat.Contains("Magic Damage"))
+                if (info.stat.Contains("Magic Damage"))
                 {
-                    usi.statValue = magicDamage * 100;
-                    usi.TextColor = Color.Cyan;
-                }
-
-                if (usi.stat.Contains("Melee Crit"))
-                {
-                    usi.statValue = meleeCrit;
-                    usi.TextColor = Color.Red;
-                }
-                if (usi.stat.Contains("Ranged Crit"))
-                {
-                    usi.statValue = rangedCrit;
-                    usi.TextColor = Color.Orange;
-                }
-                if (usi.stat.Contains("Magic Crit"))
-                {
-                    usi.statValue = magicCrit;
-                    usi.TextColor = Color.Cyan;
+                    info.statValue = magicDamage * 100;
+                    info.TextColor = Color.Cyan;
                 }
 
-                if (usi.stat.Contains("Minion Damage"))
+                if (info.stat.Contains("Melee Crit"))
                 {
-                    usi.statValue = minionDamage * 100;
+                    info.statValue = meleeCrit;
+                    info.TextColor = Color.Red;
+                }
+                if (info.stat.Contains("Ranged Crit"))
+                {
+                    info.statValue = rangedCrit;
+                    info.TextColor = Color.Orange;
+                }
+                if (info.stat.Contains("Magic Crit"))
+                {
+                    info.statValue = magicCrit;
+                    info.TextColor = Color.Cyan;
                 }
 
-                if (usi.stat.Contains("Max Minions"))
+                if (info.stat.Contains("Minion Damage"))
                 {
-                    usi.statValue = maxMinions;
+                    info.statValue = minionDamage * 100;
                 }
 
-                if (usi.stat.Contains("Melee Speed"))
+                if (info.stat.Contains("Max Minions"))
                 {
-                    usi.statValue = meleeSpeed * 100;
-                    usi.TextColor = Color.Red;
+                    info.statValue = maxMinions;
                 }
-                if (usi.stat.Contains("Max Run Speed"))
+
+                if (info.stat.Contains("Melee Speed"))
                 {
-                    usi.statValue = moveSpeed;
-                    usi.TextColor = Color.LimeGreen;
+                    info.statValue = meleeSpeed * 100;
+                    info.TextColor = Color.Red;
                 }
-                if (usi.stat.Contains("Dodge Chance"))
+                if (info.stat.Contains("Max Run Speed"))
                 {
-                    usi.statValue = dodgeChance * 100;
-                    usi.TextColor = Color.LimeGreen;
+                    info.statValue = moveSpeed;
+                    info.TextColor = Color.LimeGreen;
                 }
-                if (usi.stat.Contains("Block Chance"))
+                if (info.stat.Contains("Dodge Chance"))
                 {
-                    usi.statValue = blockChance * 100;
-                    usi.TextColor = Color.LimeGreen;
+                    info.statValue = dodgeChance * 100;
+                    info.TextColor = Color.LimeGreen;
+                }
+                if (info.stat.Contains("Block Chance"))
+                {
+                    info.statValue = blockChance * 100;
+                    info.TextColor = Color.LimeGreen;
                 }
 
                 this.chaosPointsText.SetText(String.Format("Chaos points: {0}", chaosPoints));
@@ -120,10 +121,10 @@ namespace VapeRPG.UI.States
 
         public void UpdateStats(IDictionary<string, int> baseStats, IDictionary<string, int> effStats, int statPoints, int skillPoints)
         {
-            foreach (UIStatInfo usi in statControls)
+            foreach (UIStatInfo info in statControls)
             {
-                usi.statValue = baseStats[usi.stat];
-                usi.bonusValue = effStats[usi.stat] - baseStats[usi.stat];
+                info.statValue = baseStats[info.stat];
+                info.bonusValue = effStats[info.stat] - baseStats[info.stat];
             }
 
             this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
@@ -144,12 +145,24 @@ namespace VapeRPG.UI.States
             return container;
         }
 
+        protected override UIElement CreateHeader()
+        {
+            UIPanel header = new UIPanel();
+            header.Width.Set(0, 1f);
+            header.Height.Set(DEFAULT_HEADER_HEIGHT, 0f);
+
+            UIText title = new UIText("Character Stats");
+            title.Left.Set(20, 0f);
+            header.Append(title);
+            return header;
+        }
+
         protected override void Construct()
         {
             this.statControls = new UIStatInfo[VapeRPG.BaseStats.Length];
             this.miscStatControls = new UIStatInfo[VapeRPG.MinorStats.Length];
 
-            this.skillPanel = new VapeSkillPanel(2 * (this.container.Width.Pixels - 2 * PANEL_PADDING) / 3, this.container.Height.Pixels - 2 * PANEL_PADDING);
+            this.skillPanel = new UISkillPanel(2 * (this.container.Width.Pixels - 2 * PANEL_PADDING) / 3, this.container.Height.Pixels - 2 * PANEL_PADDING);
             this.skillPanel.SetPadding(0);
             this.skillPanel.Left.Set(0, 0);
             this.skillPanel.Top.Set(0, 0);
@@ -219,7 +232,7 @@ namespace VapeRPG.UI.States
             this.statPanel.Append(resetXpUI);
             #endregion
 
-            this.xpBar = new UIVapeProgressBar(1, 0, 100, Color.Green, Color.Lime);
+            this.xpBar = new Elements.UIProgressBar(1, 0, 100, Color.Green, Color.Lime);
             this.xpBar.SetPadding(0);
             this.xpBar.Left.Set(0, 0.45f);
             this.xpBar.Top.Set(10, 0);
@@ -228,7 +241,7 @@ namespace VapeRPG.UI.States
             this.xpBar.strokeThickness = 2;
             this.statPanel.Append(this.xpBar);
 
-            this.chaosXpBar = new UIVapeProgressBar(0, 0, 100, Color.Purple, Color.Violet);
+            this.chaosXpBar = new Elements.UIProgressBar(0, 0, 100, Color.Purple, Color.Violet);
             this.chaosXpBar.SetPadding(0);
             this.chaosXpBar.Left.Set(0, 0.45f);
             this.chaosXpBar.Top.Set(30, 0);

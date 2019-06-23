@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace VapeRPG.UI.Elements
 {
-    class VapeSkillPanel : UIPanel
+    class UISkillPanel : UIPanel
     {
         private static Dictionary<string, SkillTree> tabNames = new Dictionary<string, SkillTree>()
         {
@@ -26,7 +26,7 @@ namespace VapeRPG.UI.Elements
 
         private byte currentTab;
 
-        public VapeSkillPanel(float width, float height)
+        public UISkillPanel(float width, float height)
         {
             this.tabs = new List<UISkillTab>();
             this.buttons = new List<UIButton>();

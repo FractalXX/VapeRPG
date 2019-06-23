@@ -23,14 +23,19 @@ namespace VapeRPG
         private static Random rnd = new Random();
 
         /// <summary>
-        /// Returns true if the mob is a chaos mob.
+        /// Returns true if this NPC is a chaos NPC.
         /// </summary>
         public bool isChaos = false;
 
         /// <summary>
-        /// Determines the stat scale of the NPC if it's a chaos mob.
+        /// Determines the stat scale of the NPC if it's a chaos NPC.
         /// </summary>
         public int chaosMultiplier = 1;
+
+        /// <summary>
+        /// Stores references to players who damaged this NPC.
+        /// </summary>
+        private List<VapePlayer> attackingPlayers { get; set; }
 
         public override bool InstancePerEntity
         {
@@ -38,6 +43,11 @@ namespace VapeRPG
             {
                 return true;
             }
+        }
+
+        public VapeGlobalNpc()
+        {
+            this.attackingPlayers = new List<VapePlayer>();
         }
 
         public void ChaosTransform(NPC npc)
@@ -70,47 +80,33 @@ namespace VapeRPG
         {
             if (!VapeConfig.IsIgnoredType(npc) && !npc.SpawnedFromStatue && !npc.friendly)
             {
-                double gainedXp;
-                if (npc.boss)
+                if (npc.lifeMax >= 10)
                 {
-                    foreach (Player player in Main.player.ToList().FindAll(x => x.active))
+                    double gainedXp;
+                    foreach (VapePlayer vp in this.attackingPlayers)
                     {
-                        VapePlayer vp = player.GetModPlayer<VapePlayer>();
-                        gainedXp = npc.lifeMax / 2;
-                        vp.GainExperience((int)gainedXp);
-                    }
-                }
-                else if(npc.lifeMax >= 10)
-                {
-                    // If it isn't a boss, only nearby players gain experience based on the npc's HP
-                    foreach (Player player in Main.player.ToList().FindAll(x => x.active))
-                    {
-                        if (Vector2.Distance(player.position, npc.position) <= VapeConfig.ExperienceGainDistance)
+                        if (VapeConfig.VanillaXpTable.ContainsKey(npc.type))
                         {
-                            VapePlayer vp = player.GetModPlayer<VapePlayer>();
-                            if(VapeConfig.VanillaXpTable.ContainsKey(npc.type))
-                            {
-                                gainedXp = VapeConfig.VanillaXpTable[npc.type];
-                            }
-                            else
-                            {
-                                gainedXp = VapeConfig.FinalMultiplierForXpGain * Math.Pow(2, Math.Sqrt((2 * (1 + npc.defDamage / (2 * npc.lifeMax)) * npc.lifeMax) / Math.Pow(npc.lifeMax, 1 / 2.6)));
-                                if (npc.lifeMax >= 1000)
-                                {
-                                    gainedXp = npc.lifeMax / 2;
-                                }
-                                else if (npc.lifeMax <= 20)
-                                {
-                                    gainedXp /= 2;
-                                }
-                            }
-                            if (this.isChaos)
-                            {
-                                vp.GainExperience(1 + (int)(gainedXp / 3), true);
-                                gainedXp *= (2 - 1 / this.chaosMultiplier);
-                            }
-                            vp.GainExperience((int)gainedXp);
+                            gainedXp = VapeConfig.VanillaXpTable[npc.type];
                         }
+                        else
+                        {
+                            gainedXp = VapeConfig.FinalMultiplierForXpGain * Math.Pow(2, Math.Sqrt((2 * (1 + npc.defDamage / (2 * npc.lifeMax)) * npc.lifeMax) / Math.Pow(npc.lifeMax, 1 / 2.6)));
+                            if (npc.lifeMax >= 1000)
+                            {
+                                gainedXp = npc.lifeMax / 2;
+                            }
+                            else if (npc.lifeMax <= 20)
+                            {
+                                gainedXp /= 2;
+                            }
+                        }
+                        if (this.isChaos)
+                        {
+                            vp.GainExperience(1 + (int)(gainedXp / 3), true);
+                            gainedXp *= (2 - 1 / this.chaosMultiplier);
+                        }
+                        vp.GainExperience((int)gainedXp);
                     }
                 }
             }
@@ -127,24 +123,33 @@ namespace VapeRPG
 
         public override void SetDefaults(NPC npc)
         {
+            // TODO: Extract Chaos NPC feature to a separate mod
             // Fix for incompatibility with other mods such as Calamity, etc.
-            if (npc != null && Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
+            /*if (npc != null && Main.netMode == NetmodeID.Server || Main.netMode == NetmodeID.SinglePlayer)
             {
                 if (!npc.boss && npc.lifeMax >= 40 && !npc.SpawnedFromStatue && !npc.friendly && !VapeConfig.IsIgnoredTypeChaos(npc) && rnd.Next(0, 101) <= VapeConfig.ChaosChance)
                 {
                     ChaosTransform(npc);
                 }
-            }
+            }*/
         }
 
         public override void SetupShop(int type, Chest shop, ref int nextSlot)
         {
-            if(type == NPCID.Merchant)
+            if (type == NPCID.Merchant)
             {
                 shop.item[nextSlot].SetDefaults(mod.ItemType<VapersGlobe>());
                 nextSlot++;
             }
             base.SetupShop(type, shop, ref nextSlot);
+        }
+
+        public void SubscribePlayer(VapePlayer player)
+        {
+            if (!this.attackingPlayers.Contains(player))
+            {
+                this.attackingPlayers.Add(player);
+            }
         }
     }
 }

@@ -669,6 +669,7 @@ namespace VapeRPG
         #region Forwarding events to skills
         public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
+            target.GetGlobalNPC<VapeGlobalNpc>().SubscribePlayer(this);
             foreach (Skill skill in VapeRPG.Skills)
             {
                 if(this.HasSkill(skill.GetType()))
@@ -702,6 +703,7 @@ namespace VapeRPG
 
         public override void ModifyHitNPC(Item item, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
+            target.GetGlobalNPC<VapeGlobalNpc>().SubscribePlayer(this);
             foreach (Skill skill in VapeRPG.Skills)
             {
                 if (this.HasSkill(skill.GetType()))
@@ -713,6 +715,7 @@ namespace VapeRPG
 
         public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
         {
+            target.GetGlobalNPC<VapeGlobalNpc>().SubscribePlayer(this);
             foreach (Skill skill in VapeRPG.Skills)
             {
                 if (this.HasSkill(skill.GetType()))
@@ -724,6 +727,7 @@ namespace VapeRPG
 
         public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            target.GetGlobalNPC<VapeGlobalNpc>().SubscribePlayer(this);
             foreach (Skill skill in VapeRPG.Skills)
             {
                 if (this.HasSkill(skill.GetType()))

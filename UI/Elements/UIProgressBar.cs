@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace VapeRPG.UI.Elements
 {
-    class UIVapeProgressBar : UIElement
+    class UIProgressBar : UIElement
     {
         private Color backgroundColor;
         private Color foregroundColor;
@@ -25,7 +25,7 @@ namespace VapeRPG.UI.Elements
         public int strokeThickness;
         public Color strokeColor;
 
-        public UIVapeProgressBar(float value, float minValue, float maxValue, Color backgroundColor, Color foregroundColor)
+        public UIProgressBar(float value, float minValue, float maxValue, Color backgroundColor, Color foregroundColor)
         {
             this.value = value;
             this.minValue = minValue;

@@ -18,8 +18,8 @@ namespace VapeRPG.UI.States
 
         private bool minimized = false;
 
-        private UIVapeProgressBar xpBar;
-        private UIVapeProgressBar chaosXpBar;
+        private Elements.UIProgressBar xpBar;
+        private Elements.UIProgressBar chaosXpBar;
         private UIImageButton minimizeButton;
         private UIText levelText;
 
@@ -86,7 +86,7 @@ namespace VapeRPG.UI.States
 
         protected override void Construct()
         {
-            this.xpBar = new UIVapeProgressBar(1, 0, 100, Color.Green, Color.Lime);
+            this.xpBar = new Elements.UIProgressBar(1, 0, 100, Color.Green, Color.Lime);
             this.xpBar.SetPadding(0);
             this.xpBar.Left.Set(10, 0);
             this.xpBar.Top.Set(this.container.Height.Pixels - 60, 0);
@@ -95,7 +95,7 @@ namespace VapeRPG.UI.States
             this.xpBar.strokeThickness = 2;
             this.container.Append(this.xpBar);
 
-            this.chaosXpBar = new UIVapeProgressBar(0, 0, 100, Color.Purple, Color.Violet);
+            this.chaosXpBar = new Elements.UIProgressBar(0, 0, 100, Color.Purple, Color.Violet);
             this.chaosXpBar.SetPadding(0);
             this.chaosXpBar.Left.Set(10, 0);
             this.chaosXpBar.Top.Set(this.container.Height.Pixels - 30, 0);

@@ -101,12 +101,12 @@
     <Compile Include="UI\Elements\UISkillScrollSlot.cs" />
     <Compile Include="UI\Elements\UISkillTooltip.cs" />
     <Compile Include="UI\Elements\UISkillTreeBranch.cs" />
-    <Compile Include="UI\Elements\VapeSkillPanel.cs" />
+    <Compile Include="UI\Elements\UISkillPanel.cs" />
     <Compile Include="UI\Elements\UISkillInfo.cs" />
     <Compile Include="UI\Elements\UISkillTab.cs" />
     <Compile Include="UI\Elements\UIStatInfo.cs" />
     <Compile Include="UI\States\CharUIState.cs" />
-    <Compile Include="UI\Elements\UIVapeProgressBar.cs" />
+    <Compile Include="UI\Elements\UIProgressBar.cs" />
     <Compile Include="UI\States\DraggableUI.cs" />
     <Compile Include="UI\States\ExpUIState.cs" />
     <Compile Include="UI\States\SkillBarUIState.cs" />
