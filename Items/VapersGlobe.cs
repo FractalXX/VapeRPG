@@ -34,7 +34,6 @@ namespace VapeRPG.Items
 
             int statPoints = 0;
             int skillPoints = 0;
-            int chaosPoints = 0;
 
             foreach (string stat in VapeRPG.BaseStats)
             {
@@ -48,29 +47,8 @@ namespace VapeRPG.Items
                 vp.SetSkillLevel(skill.GetType(), 0);
             }
 
-            foreach (string bonus in VapeRPG.MinorStats)
-            {
-                if (bonus != "Block Chance")
-                {
-                    if (bonus.Contains("Crit"))
-                    {
-                        chaosPoints += (int)vp.ChaosBonuses[bonus];
-                    }
-                    else if (bonus.Contains("Dodge"))
-                    {
-                        chaosPoints += (int)(vp.ChaosBonuses[bonus] / 0.005f);
-                    }
-                    else
-                    {
-                        chaosPoints += (int)(vp.ChaosBonuses[bonus] / 0.02f);
-                    }
-                    vp.ChaosBonuses[bonus] = 0;
-                }
-            }
-
             vp.statPoints += statPoints;
             vp.skillPoints += skillPoints;
-            vp.chaosPoints += chaosPoints;
 
             return true;
         }

@@ -167,7 +167,6 @@ namespace VapeRPG
                         VapePlayer modPlayer = player.GetModPlayer<VapePlayer>();
 
                         modPlayer.xp = reader.ReadInt32();
-                        modPlayer.chaosXp = reader.ReadInt32();
                     }
                     break;
 

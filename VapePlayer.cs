@@ -20,23 +20,18 @@ namespace VapeRPG
     public class VapePlayer : ModPlayer
     {
         private static int statPointsPerLevel;
-        private static Random rnd;
+        private static Random random;
 
         //Dictionary for the stats, and skill levels
         public IDictionary<string, int> BaseStats { get; private set; }
 
         public IDictionary<string, int> EffectiveStats { get; private set; }
 
-        public IDictionary<string, float> ChaosBonuses { get; private set; }
-
         public int level;
         public long xp;
-        public int chaosRank;
-        public long chaosXp;
 
         public int statPoints;
         public int skillPoints;
-        public int chaosPoints;
 
         public float dodgeChance;
         public float blockChance;
@@ -60,68 +55,32 @@ namespace VapeRPG
         static VapePlayer()
         {
             statPointsPerLevel = VapeConfig.StatPointsPerLevel;
-            rnd = new Random();
-        }
-
-        /// <summary>
-        /// Raises the player's chaos rank by one. (with effect)
-        /// </summary>
-        public void ChaosRankUp()
-        {
-            for (int i = 0; i < 50; i++)
-            {
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 179, rnd.Next(-10, 10), rnd.Next(-10, 10));
-            }
-            CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 100, 100), Color.Violet, "Chaos Rank Up");
-
-            this.chaosPoints++;
-
-            this.chaosRank++;
-            if (Main.netMode == 0) Main.NewText(String.Format("You have reached chaos rank {0}!", this.chaosRank), 179, 104, 255);
-            else NetMessage.SendData(25, -1, -1, NetworkText.FromLiteral(String.Format("{0} has reached chaos rank {1}!", this.player.name, this.chaosRank)), 179, 104, 255, 0, 0);
+            random = new Random();
         }
 
         /// <summary>
         /// Gives experience points for the player.
         /// </summary>
         /// <param name="value">The amount of experience given.</param>
-        /// <param name="chaos">Determines if the given xp should be chaos xp or not.</param>
-        public void GainExperience(int value, bool chaos = false)
+        public void GainExperience(int value)
         {
             long xp = this.xp;
-            long chaosXp = this.chaosXp;
 
             VapeRPG vapeMod = this.mod as VapeRPG;
 
-            if (chaos)
+            if (this.xp < vapeMod.XpNeededForLevel[VapeRPG.MaxLevel])
             {
-                if (this.chaosXp < vapeMod.XpNeededForChaosRank[VapeRPG.MaxLevel])
-                {
-                    CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 50, 50), Color.DeepPink, String.Format("+{0} Chaos XP", value));
-                    this.chaosXp += value;
-                }
+                // Fancy text above the player
+                CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
+                this.xp += (long)(value * VapeConfig.GlobalXpMultiplier);
             }
-            else
-            {
-                if (this.xp < vapeMod.XpNeededForLevel[VapeRPG.MaxLevel])
-                {
-                    // Fancy text above the player
-                    CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
-                    this.xp += (long)(value * VapeConfig.GlobalXpMultiplier);
-                }
-            }
+
 
             // For debugging
             if (this.xp < 0)
             {
                 this.xp = xp;
                 Main.NewText("[Vape RPG Warning]: Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
-                Main.NewText("[Vape RPG Warning]: Please report this bug with details in the mod's topic on the Terraria forums.", Color.Red);
-            }
-            if (this.chaosXp < 0)
-            {
-                this.chaosXp = chaosXp;
-                Main.NewText("[Vape RPG Warning]: Chaos Xp after gain would have been either negative or bigger than maximum. To avoid corruption, it remained unchanged.", Color.Red);
                 Main.NewText("[Vape RPG Warning]: Please report this bug with details in the mod's topic on the Terraria forums.", Color.Red);
             }
 
@@ -132,7 +91,6 @@ namespace VapeRPG
                 packet.Write((byte)VapeRPGMessageType.ClientSyncXp);
                 packet.Write(this.player.whoAmI);
                 packet.Write(this.xp);
-                packet.Write(this.chaosXp);
 
                 packet.Send();
             }
@@ -195,7 +153,6 @@ namespace VapeRPG
             this.BaseStats = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             this.skillLevels = new Dictionary<Type, int>();
             this.EffectiveStats = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            this.ChaosBonuses = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
 
             this.energizedStacks = 0;
             this.highfiveStacks = 0;
@@ -211,23 +168,15 @@ namespace VapeRPG
             {
                 this.skillLevels[skill.GetType()] = 0;
             }
-
-            foreach (string stat in VapeRPG.MinorStats)
-            {
-                this.ChaosBonuses[stat] = 0;
-            }
         }
 
         internal void InitializeNewPlayer()
         {
             this.level = 1;
             this.xp = 1;
-            this.chaosRank = 0;
-            this.chaosXp = 0;
 
             this.statPoints = 5;
             this.skillPoints = 1;
-            this.chaosPoints = 0;
         }
 
         /// <summary>
@@ -238,11 +187,11 @@ namespace VapeRPG
             // Level up particle effect
             for (int i = 0; i < 50; i++)
             {
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 130, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 131, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 132, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 133, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 134, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, random.Next(5, 15), random.Next(5, 15), 130, random.Next(-10, 10), random.Next(-10, 10));
+                Dust.NewDust(this.player.position, random.Next(5, 15), random.Next(5, 15), 131, random.Next(-10, 10), random.Next(-10, 10));
+                Dust.NewDust(this.player.position, random.Next(5, 15), random.Next(5, 15), 132, random.Next(-10, 10), random.Next(-10, 10));
+                Dust.NewDust(this.player.position, random.Next(5, 15), random.Next(5, 15), 133, random.Next(-10, 10), random.Next(-10, 10));
+                Dust.NewDust(this.player.position, random.Next(5, 15), random.Next(5, 15), 134, random.Next(-10, 10), random.Next(-10, 10));
             }
             CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 100, 100), Color.Cyan, "Level Up");
 
@@ -306,20 +255,10 @@ namespace VapeRPG
                 this.xp = vapeMod.XpNeededForLevel[VapeRPG.MaxLevel];
             }
 
-            if (this.chaosXp > vapeMod.XpNeededForChaosRank[VapeRPG.MaxLevel])
-            {
-                this.chaosXp = vapeMod.XpNeededForChaosRank[VapeRPG.MaxLevel];
-            }
-
             // Checking if the player has enough xp to level up
             if (this.level < VapeRPG.MaxLevel && this.xp >= vapeMod.XpNeededForLevel[this.level + 1])
             {
                 this.LevelUp();
-            }
-
-            if (this.chaosRank < VapeRPG.MaxLevel && this.chaosXp >= vapeMod.XpNeededForChaosRank[this.chaosRank + 1])
-            {
-                this.ChaosRankUp();
             }
 
             this.CheckExpUIOverflow();
@@ -373,23 +312,15 @@ namespace VapeRPG
                     nextLevel = VapeRPG.MaxLevel;
                 }
 
-                int nextRank = this.chaosRank + 1;
-                if (this.chaosRank == VapeRPG.MaxLevel)
-                {
-                    nextRank = VapeRPG.MaxLevel;
-                }
-
                 vapeMod.ExpUI.UpdateXpBar(this.xp, vapeMod.XpNeededForLevel[this.level], vapeMod.XpNeededForLevel[nextLevel]);
-                vapeMod.ExpUI.UpdateChaosXpBar(this.chaosXp, vapeMod.XpNeededForChaosRank[this.chaosRank], vapeMod.XpNeededForChaosRank[nextRank]);
-                vapeMod.ExpUI.UpdateLevel(this.level, this.chaosRank);
+                vapeMod.ExpUI.UpdateLevel(this.level);
 
                 if (CharUIState.visible)
                 {
                     vapeMod.CharUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints, this.skillPoints);
-                    vapeMod.CharUI.UpdateBonusPanel(this.chaosPoints, player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.maxRunSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
-                    vapeMod.CharUI.UpdateLevel(this.level, this.chaosRank);
+                    vapeMod.CharUI.UpdateBonusPanel(player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.maxRunSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
+                    vapeMod.CharUI.UpdateLevel(this.level);
                     vapeMod.CharUI.UpdateXpBar(this.xp, vapeMod.XpNeededForLevel[this.level], vapeMod.XpNeededForLevel[nextLevel]);
-                    vapeMod.CharUI.UpdateChaosXpBar(this.chaosXp, vapeMod.XpNeededForChaosRank[this.chaosRank], vapeMod.XpNeededForChaosRank[nextRank]);
                 }
             }
         }
@@ -422,7 +353,7 @@ namespace VapeRPG
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             bool failed = false;
-            if (rnd.NextDouble() <= this.dodgeChance)
+            if (random.NextDouble() <= this.dodgeChance)
             {
                 this.player.immune = true;
                 this.player.immuneTime = 40;
@@ -433,7 +364,7 @@ namespace VapeRPG
                 failed = true;
             }
 
-            if (rnd.NextDouble() <= this.blockChance)
+            if (random.NextDouble() <= this.blockChance)
             {
                 this.player.immune = true;
                 this.player.immuneTime = 40;
@@ -538,15 +469,12 @@ namespace VapeRPG
 
         public override TagCompound Save()
         {
-            // The TagCompound which we will return
             TagCompound tc = new TagCompound();
 
             TagCompound baseStatsTC = new TagCompound();
             TagCompound skillLevelsTC = new TagCompound();
-            TagCompound chaosBonusesTC = new TagCompound();
             TagCompound skillScrollsTC = new TagCompound();
 
-            // Boxing values into the compounds
             foreach (var x in BaseStats)
             {
                 baseStatsTC.Add(x.Key, x.Value);
@@ -557,30 +485,21 @@ namespace VapeRPG
                 skillLevelsTC.Add(x.Key.Name, x.Value);
             }
 
-            foreach (var x in ChaosBonuses)
-            {
-                chaosBonusesTC.Add(x.Key, x.Value);
-            }
-
             VapeRPG vapeMod = this.mod as VapeRPG;
-            for(int i = 0; i < vapeMod.SkillBarUI.SkillSlots.Length; i++)
+            for (int i = 0; i < vapeMod.SkillBarUI.SkillSlots.Length; i++)
             {
                 skillScrollsTC.Add(i.ToString(), vapeMod.SkillBarUI.SkillSlots[i].item);
             }
 
             tc.Add("BaseStats", baseStatsTC);
             tc.Add("SkillLevels", skillLevelsTC);
-            tc.Add("ChaosBonuses", chaosBonusesTC);
             tc.Add("SkillScrolls", skillScrollsTC);
 
             tc.Add("Level", this.level);
             tc.Add("Xp", this.xp);
-            tc.Add("ChaosRank", this.chaosRank);
-            tc.Add("ChaosXp", this.chaosXp);
 
             tc.Add("StatPoints", this.statPoints);
             tc.Add("SkillPoints", this.skillPoints);
-            tc.Add("ChaosPoints", this.chaosPoints);
 
             tc.Add("expUIPos", this.expUIPosition);
             tc.Add("skillUIPos", this.skillUIPosition);
@@ -612,29 +531,6 @@ namespace VapeRPG
 
         }
 
-        private void UpdateChaosBonuses()
-        {
-            this.player.meleeDamage += this.ChaosBonuses["Melee Damage"];
-            this.player.rangedDamage += this.ChaosBonuses["Ranged Damage"];
-            this.player.magicDamage += this.ChaosBonuses["Magic Damage"];
-
-            this.player.meleeCrit += (int)this.ChaosBonuses["Melee Crit"];
-            this.player.rangedCrit += (int)this.ChaosBonuses["Ranged Crit"];
-            this.player.magicCrit += (int)this.ChaosBonuses["Magic Crit"];
-
-            this.player.minionDamage += this.ChaosBonuses["Minion Damage"];
-            this.player.maxMinions += (int)this.ChaosBonuses["Max Minions"];
-            this.player.maxTurrets += (int)Math.Floor(this.ChaosBonuses["Max Minions"] / 2);
-
-            this.player.meleeSpeed += this.ChaosBonuses["Melee Speed"];
-            this.player.maxRunSpeed += this.ChaosBonuses["Max Run Speed"] * 3;
-            this.dodgeChance += this.ChaosBonuses["Dodge Chance"];
-            if (this.dodgeChance > VapeConfig.MaxDodgeChance)
-            {
-                this.dodgeChance = VapeConfig.MaxDodgeChance;
-            }
-        }
-
         private void UpdateStatBonuses()
         {
             this.player.statLifeMax = (int)(100 + (this.level * VapeConfig.LifePerLevel) + this.EffectiveStats["Vitality"] * VapeConfig.LifePerVitality + this.EffectiveStats["Strength"] / 2);
@@ -658,8 +554,6 @@ namespace VapeRPG
 
             this.dodgeChance += this.EffectiveStats["Haste"] / VapeConfig.DodgeDivider;
 
-            this.UpdateChaosBonuses();
-
             foreach (Skill skill in VapeRPG.Skills)
             {
                 skill.UpdateStats(this);
@@ -672,7 +566,7 @@ namespace VapeRPG
             target.GetGlobalNPC<VapeGlobalNpc>().SubscribePlayer(this);
             foreach (Skill skill in VapeRPG.Skills)
             {
-                if(this.HasSkill(skill.GetType()))
+                if (this.HasSkill(skill.GetType()))
                 {
                     skill.OnHitNPC(this, null, proj, target, damage, knockback, crit);
                 }

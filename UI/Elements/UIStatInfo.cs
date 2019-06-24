@@ -23,7 +23,19 @@ namespace VapeRPG.UI.Elements
 
         private bool isMinorStat;
 
-        public UIStatInfo(string stat, float width, float height, bool isMinorStat = false, bool button = true, float textScale = 1f)
+        public Color TextColor
+        {
+            get
+            {
+                return this.statText.TextColor;
+            }
+            set
+            {
+                this.statText.TextColor = value;
+            }
+        }
+
+        public UIStatInfo(string stat, float width, float height, bool isMinorStat = false, bool hasButton = true, float textScale = 1f)
         {
             this.stat = stat;
             this.statValue = 0;
@@ -37,66 +49,28 @@ namespace VapeRPG.UI.Elements
             this.Width.Set(width, 0);
             this.Height.Set(height, 0);
 
-            if (button)
+            if(isMinorStat && hasButton)
+            {
+                throw new Exception("UIStatInfo can not have a button if isMinorStat is true.");
+            }
+
+            if (hasButton)
             {
                 this.button = new UIImageButton(Textures.UI.ADD_BUTTON);
                 this.button.Width.Set(30, 0);
                 this.button.Height.Set(30, 0);
                 this.button.Top.Set(0, 0);
 
-                MouseEvent onMouseDown;
-
-                if (this.isMinorStat)
+                this.button.Left.Set(-80, 1f);
+                this.button.OnClick += (x, y) =>
                 {
-                    onMouseDown = (x, y) =>
+                    VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
+                    if (vp.statPoints > 0)
                     {
-                        VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-                        if (this.stat.Contains("Max Minions"))
-                        {
-                            if (vp.chaosPoints >= 5)
-                            {
-                                vp.ChaosBonuses[this.stat] += 1;
-                                vp.chaosPoints -= 5;
-                            }
-                        }
-                        else
-                        {
-                            if (vp.chaosPoints > 0)
-                            {
-                                float value = 0.02f;
-                                if (this.stat.Contains("Crit"))
-                                {
-                                    value = 1;
-                                }
-                                if (this.stat.Contains("Dodge"))
-                                {
-                                    value = 0.005f;
-                                    if(vp.dodgeChance >= 0.7f)
-                                    {
-                                        return;
-                                    }
-                                }
-                                vp.ChaosBonuses[this.stat] += value;
-                                vp.chaosPoints--;
-                            }
-                        }
-                    };
-                    this.button.Left.Set(-50, 1f);
-                }
-                else
-                {
-                    onMouseDown = (x, y) =>
-                    {
-                        VapePlayer vp = Main.player[Main.myPlayer].GetModPlayer<VapePlayer>();
-                        if (vp.statPoints > 0)
-                        {
-                            vp.BaseStats[this.stat]++;
-                            vp.statPoints--;
-                        }
-                    };
-                    this.button.Left.Set(-80, 1f);
-                }
-                this.button.OnClick += onMouseDown;
+                        vp.BaseStats[this.stat]++;
+                        vp.statPoints--;
+                    }
+                };
 
                 this.Append(this.button);
             }
@@ -114,25 +88,13 @@ namespace VapeRPG.UI.Elements
             this.Append(this.statText);
         }
 
-        public Color TextColor
-        {
-            get
-            {
-                return this.statText.TextColor;
-            }
-            set
-            {
-                this.statText.TextColor = value;
-            }
-        }
-
         public override void Update(GameTime gameTime)
         {
             if (this.stat.Contains("Max Minions"))
             {
                 this.statText.SetText(String.Format("{0}: {1}", this.stat, (int)this.statValue));
             }
-            else if(this.stat.Contains("Max Run Speed"))
+            else if (this.stat.Contains("Max Run Speed"))
             {
                 this.statText.SetText(String.Format("{0}: {1:0.00}", this.stat, this.statValue));
             }

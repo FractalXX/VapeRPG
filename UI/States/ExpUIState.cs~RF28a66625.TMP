@@ -87,7 +87,7 @@ namespace VapeRPG.UI.States
             this.xpBar.strokeThickness = 2;
             this.container.Append(this.xpBar);
 
-            this.levelText = new UIText("Level: 1");
+            this.levelText = new UIText("Level: 1\nChaos rank: 0");
             this.levelText.Width.Set(this.container.Width.Pixels / 2, 0);
             this.levelText.Height.Set(5, 0f);
             this.levelText.Left.Set(this.container.Width.Pixels / 2 - this.levelText.Width.Pixels / 2, 0);

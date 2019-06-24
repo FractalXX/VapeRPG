@@ -13,9 +13,6 @@ namespace VapeRPG
     {
         // Common
         public static bool UIEnabled = true;
-        public static int ChaosChance = 5;
-        public static int MinChaosMultiplier = 3;
-        public static int MaxChaosMultiplier = 6;
         public static float FinalMultiplierForXpGain = 0.5f;
         public static int ExperienceGainDistance = 3000;
         public static float GlobalXpMultiplier = 1f;
@@ -120,65 +117,6 @@ namespace VapeRPG
             NPCID.Firefly
         };
 
-        public static List<int> IgnoredTypesChaos = new List<int>()
-        {
-            NPCID.EaterofWorldsBody,
-            NPCID.EaterofWorldsHead,
-            NPCID.EaterofWorldsTail,
-            NPCID.DevourerBody,
-            NPCID.DevourerHead,
-            NPCID.DevourerTail,
-            NPCID.GiantWormBody,
-            NPCID.GiantWormHead,
-            NPCID.GiantWormTail,
-            NPCID.DuneSplicerBody,
-            NPCID.DuneSplicerHead,
-            NPCID.DuneSplicerTail,
-            NPCID.LeechBody,
-            NPCID.LeechHead,
-            NPCID.LeechTail,
-            NPCID.StardustWormBody,
-            NPCID.StardustWormHead,
-            NPCID.StardustWormTail,
-            NPCID.SolarCrawltipedeBody,
-            NPCID.SolarCrawltipedeHead,
-            NPCID.SolarCrawltipedeTail,
-            NPCID.SeekerBody,
-            NPCID.SeekerHead,
-            NPCID.SeekerTail,
-            NPCID.DiggerBody,
-            NPCID.DiggerHead,
-            NPCID.DiggerTail,
-            NPCID.TheDestroyerBody,
-            NPCID.TheDestroyerTail,
-            NPCID.WyvernBody,
-            NPCID.WyvernBody2,
-            NPCID.WyvernBody3,
-            NPCID.WyvernHead,
-            NPCID.WyvernLegs,
-            NPCID.WyvernTail,
-            NPCID.TombCrawlerBody,
-            NPCID.TombCrawlerHead,
-            NPCID.TombCrawlerTail,
-            NPCID.BoneSerpentBody,
-            NPCID.BoneSerpentHead,
-            NPCID.BoneSerpentTail,
-            NPCID.PrimeCannon,
-            NPCID.PrimeLaser,
-            NPCID.PrimeSaw,
-            NPCID.PrimeVice,
-            NPCID.CultistDragonBody1,
-            NPCID.CultistDragonBody2,
-            NPCID.CultistDragonBody3,
-            NPCID.CultistDragonBody4,
-            NPCID.CultistDragonHead,
-            NPCID.CultistDragonTail,
-            NPCID.GolemHead,
-            NPCID.GolemHeadFree,
-            NPCID.MoonLordHead,
-            NPCID.SkeletronHead
-        };
-
         private static readonly string CommonConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Common.json");
         private static readonly string StatConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_Stats.json");
         private static readonly string DefaultStatConfigPath = Path.Combine(Main.SavePath, "Mod Configs/VapeRPG", "VapeRPG_DefaultStats.json");
@@ -196,26 +134,6 @@ namespace VapeRPG
             return IgnoredTypesForXpGain.Contains(npc.type) ||
                 npc.TypeName.ToLower().Contains("pillar");
         }
-
-        public static bool IsIgnoredTypeChaos(NPC npc)
-        {
-            return IgnoredTypesForXpGain.Contains(npc.type) ||
-                    IgnoredTypesChaos.Contains(npc.type) ||
-                    npc.TypeName.ToLower().Contains("head") ||
-                    npc.TypeName.ToLower().Contains("body") ||
-                    npc.TypeName.ToLower().Contains("tail") ||
-                    npc.TypeName.ToLower().Contains("pillar") ||
-                    npc.FullName.ToLower().Contains("head") ||
-                    npc.FullName.ToLower().Contains("body") ||
-                    npc.FullName.ToLower().Contains("tail") ||
-                    npc.FullName.ToLower().Contains("pillar") ||
-                    npc.GivenName.ToLower().Contains("head") ||
-                    npc.GivenName.ToLower().Contains("body") ||
-                    npc.GivenName.ToLower().Contains("tail") ||
-                    npc.GivenName.ToLower().Contains("pillar") ||
-                    npc.aiStyle == 6;
-        }
-
         public static void Load()
         {
             if (!ReadConfig(CommonConfig))
@@ -262,9 +180,6 @@ namespace VapeRPG
                 if(conf == CommonConfig)
                 {
                     conf.Get("EnableUI", ref UIEnabled);
-                    conf.Get("ChaosChance", ref ChaosChance);
-                    conf.Get("MinChaosMultiplier", ref MinChaosMultiplier);
-                    conf.Get("MaxChaosMultiplier", ref MaxChaosMultiplier);
                     conf.Get("FinalMultiplierForXpGain", ref FinalMultiplierForXpGain);
                     conf.Get("ExperienceGainDistance", ref ExperienceGainDistance);
                     conf.Get("GlobalXpMultiplier", ref GlobalXpMultiplier);
@@ -318,7 +233,6 @@ namespace VapeRPG
                 else if(conf == IgnoresConfig)
                 {
                     conf.Get("IgnoredTypesForXpGain", ref IgnoredTypesForXpGain);
-                    conf.Get("IgnoredTypesChaos", ref IgnoredTypesChaos);
                 }
                 else if(conf == XpConfig)
                 {
@@ -336,9 +250,6 @@ namespace VapeRPG
             if (conf == CommonConfig)
             {
                 conf.Put("EnableUI", UIEnabled);
-                conf.Put("ChaosChance", ChaosChance);
-                conf.Put("MinChaosMultiplier", MinChaosMultiplier);
-                conf.Put("MaxChaosMultiplier", MaxChaosMultiplier);
                 conf.Put("FinalMultiplierForXpGain", FinalMultiplierForXpGain);
                 conf.Put("ExperienceGainDistance", ExperienceGainDistance);
                 conf.Put("GlobalXpMultiplier", GlobalXpMultiplier);
@@ -392,7 +303,6 @@ namespace VapeRPG
             else if(conf == IgnoresConfig)
             {
                 conf.Put("IgnoredTypesForXpGain", IgnoredTypesForXpGain);
-                conf.Put("IgnoredTypesChaos", IgnoredTypesChaos);
             }
             else if(conf == XpConfig)
             {

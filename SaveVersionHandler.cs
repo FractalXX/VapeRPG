@@ -13,14 +13,12 @@ namespace VapeRPG
         {
             TagCompound stats = tag.GetCompound("BaseStats");
             TagCompound skillLevels = tag.GetCompound("SkillLevels");
-            TagCompound chaosBonuses = tag.GetCompound("ChaosBonuses");
             TagCompound skillScrolls = tag.GetCompound("SkillScrolls");
 
             string key;
 
             modPlayer.statPoints = tag.GetAsInt("StatPoints");
             modPlayer.skillPoints = tag.GetAsInt("SkillPoints");
-            modPlayer.chaosPoints = tag.GetAsInt("ChaosPoints");
 
             // Unboxing values into the proper dictionaries
             foreach (var stat in stats)
@@ -45,17 +43,6 @@ namespace VapeRPG
                 modPlayer.SetSkillLevel(Type.GetType("VapeRPG.Skills." + GetTypeNameFromOldSave(skillLevel.Key)), (int)skillLevel.Value);
             }
 
-            foreach (var chaosBonus in chaosBonuses)
-            {
-                key = chaosBonus.Key;
-                // Movement Speed as a chaos bonus was replaced with Max Run Speed in v0.3.1
-                if (key == "Movement Speed")
-                {
-                    key = "Max Run Speed";
-                }
-                modPlayer.ChaosBonuses[key] = (float)chaosBonus.Value;
-            }
-
             VapeRPG vapeMod = (modPlayer.mod as VapeRPG);
             foreach (var pair in skillScrolls)
             {
@@ -66,9 +53,6 @@ namespace VapeRPG
                 }
                 vapeMod.SkillBarUI.SkillSlots[int.Parse(pair.Key)].item = item;
             }
-
-            modPlayer.chaosRank = tag.GetAsInt("ChaosRank");
-            modPlayer.chaosXp = tag.GetAsLong("ChaosXp");
 
             modPlayer.xp = tag.GetAsLong("Xp");
             Vector2 expUIPos = tag.Get<Vector2>("expUIPos");

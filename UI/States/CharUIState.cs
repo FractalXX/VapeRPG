@@ -24,10 +24,8 @@ namespace VapeRPG.UI.States
         private UIStatInfo[] statControls;
         private UIStatInfo[] miscStatControls;
         private UIText pointsText;
-        private UIText chaosPointsText;
 
-        private Elements.UIProgressBar xpBar;
-        private Elements.UIProgressBar chaosXpBar;
+        private UIRelativeProgressBar xpBar;
         private UIText levelText;
 
         private UIImage statHelper;
@@ -36,7 +34,7 @@ namespace VapeRPG.UI.States
         public override Vector2 DefaultSize => new Vector2(800, 600);
         public override bool HasHeader => true;
 
-        public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
+        public void UpdateBonusPanel(float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
         {
             foreach (UIStatInfo info in this.miscStatControls)
             {
@@ -102,21 +100,12 @@ namespace VapeRPG.UI.States
                     info.statValue = blockChance * 100;
                     info.TextColor = Color.LimeGreen;
                 }
-
-                this.chaosPointsText.SetText(String.Format("Chaos points: {0}", chaosPoints));
             }
         }
 
-        public void UpdateChaosXpBar(float value, float minValue, float maxValue)
+        public void UpdateLevel(int newLevel)
         {
-            this.chaosXpBar.value = value;
-            this.chaosXpBar.minValue = minValue;
-            this.chaosXpBar.maxValue = maxValue;
-        }
-
-        public void UpdateLevel(int newLevel, int newChaosRank)
-        {
-            this.levelText.SetText(String.Format("Level: {0}\nChaos rank: {1}", newLevel, newChaosRank));
+            this.levelText.SetText(String.Format("Level: {0}", newLevel));
         }
 
         public void UpdateStats(IDictionary<string, int> baseStats, IDictionary<string, int> effStats, int statPoints, int skillPoints)
@@ -232,7 +221,7 @@ namespace VapeRPG.UI.States
             this.statPanel.Append(resetXpUI);
             #endregion
 
-            this.xpBar = new Elements.UIProgressBar(1, 0, 100, Color.Green, Color.Lime);
+            this.xpBar = new UIRelativeProgressBar(1, 0, 100, Color.Green, Color.Lime);
             this.xpBar.SetPadding(0);
             this.xpBar.Left.Set(0, 0.45f);
             this.xpBar.Top.Set(10, 0);
@@ -241,16 +230,7 @@ namespace VapeRPG.UI.States
             this.xpBar.strokeThickness = 2;
             this.statPanel.Append(this.xpBar);
 
-            this.chaosXpBar = new Elements.UIProgressBar(0, 0, 100, Color.Purple, Color.Violet);
-            this.chaosXpBar.SetPadding(0);
-            this.chaosXpBar.Left.Set(0, 0.45f);
-            this.chaosXpBar.Top.Set(30, 0);
-            this.chaosXpBar.Width.Set(100, 0);
-            this.chaosXpBar.Height.Set(15, 0);
-            this.chaosXpBar.strokeThickness = 2;
-            this.statPanel.Append(this.chaosXpBar);
-
-            this.levelText = new UIText("Level: 1\nChaos rank: 0", 0.8f);
+            this.levelText = new UIText("Level: 1", 0.8f);
             this.levelText.Left.Set(0, 0);
             this.levelText.Top.Set(10, 0);
             this.statPanel.Append(this.levelText);
@@ -263,12 +243,6 @@ namespace VapeRPG.UI.States
             this.miscPanel.Height.Set((this.container.Height.Pixels - 2 * PANEL_PADDING) / 2, 0);
             this.miscPanel.BorderColor = Color.Black;
             this.miscPanel.BackgroundColor = new Color(100, 118, 183);
-
-            this.chaosPointsText = new UIText("Chaos points: 0", 0.8f);
-            this.chaosPointsText.Top.Set(-10, 1f);
-            this.chaosPointsText.HAlign = 0.5f;
-            this.chaosPointsText.TextColor = Color.Violet;
-            this.miscPanel.Append(this.chaosPointsText);
 
             UIPanel miscStatListContainer = new UIPanel();
             miscStatListContainer.Width.Set(0f, 1f);
@@ -292,7 +266,7 @@ namespace VapeRPG.UI.States
 
             for (int i = 0; i < this.miscStatControls.Length; i++)
             {
-                this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels, 20, true, !VapeRPG.MinorStats[i].Contains("Block Chance"), 0.8f);
+                this.miscStatControls[i] = new UIStatInfo(VapeRPG.MinorStats[i], this.miscPanel.Width.Pixels, 20, true, false, 0.8f);
                 this.miscStatControls[i].Top.Set(i * this.miscStatControls[i].Height.Pixels + 5, 0);
 
                 miscStatList.Add(this.miscStatControls[i]);
