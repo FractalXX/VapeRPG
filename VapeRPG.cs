@@ -18,7 +18,6 @@ namespace VapeRPG
 {
     internal enum VapeRPGMessageType : byte
     {
-        ServerTransformChaosNPC,
         ClientSyncXp,
         ClientSyncStats,
         ClientSyncLevel
@@ -26,7 +25,7 @@ namespace VapeRPG
 
     class VapeRPG : Mod
     {
-        public static Random rand = new Random();
+        public static Random random = new Random();
 
         public static string[] BaseStats =
         {
@@ -62,8 +61,7 @@ namespace VapeRPG
         public const int MaxLevel = 200; // Self-explanatory
 
         public int[] XpNeededForLevel { get; private set; }
-        public int[] XpNeededForChaosRank { get; private set; }
-        public ExpUIState ExpUI { get; private set; } // For the level/xp/chaos rank panel
+        public ExpUIState ExpUI { get; private set; } // For the level/xp panel
         public CharUIState CharUI { get; private set; } // For the character panel
         public StatHelpUIState StatHelpUI { get; private set; }
         public SkillBarUIState SkillBarUI { get; private set; }
@@ -76,11 +74,6 @@ namespace VapeRPG
         private UserInterface tileUserInterface;
 
         public static UserInterface ui;
-
-        static VapeRPG()
-        {
-            Skills = new List<Skill>();
-        }
 
         public VapeRPG()
         {
@@ -126,17 +119,6 @@ namespace VapeRPG
 
             switch (msgType)
             {
-                case VapeRPGMessageType.ServerTransformChaosNPC:
-                    int chaosMultiplier = reader.ReadInt32();
-                    int index = reader.ReadInt32();
-
-                    NPC npc = Main.npc[index];
-                    VapeGlobalNpc global = npc.GetGlobalNPC<VapeGlobalNpc>();
-
-                    global.chaosMultiplier = chaosMultiplier;
-                    global.isChaos = true;
-                    break;
-
                 case VapeRPGMessageType.ClientSyncStats:
                     Player player = Main.player[reader.ReadInt32()];
 
@@ -186,22 +168,18 @@ namespace VapeRPG
         public override void Load()
         {
             VapeConfig.Load();
+            Skills = new List<Skill>();
 
             XpNeededForLevel = new int[MaxLevel + 1];
-            XpNeededForChaosRank = new int[MaxLevel + 1];
 
             XpNeededForLevel[0] = 0;
             XpNeededForLevel[1] = 0;
-
-            XpNeededForChaosRank[0] = 0;
-            XpNeededForChaosRank[1] = 40;
 
             for (int i = 2; i < XpNeededForLevel.Length; i++)
             {
                 double value;
                 value = 2 * (12 * Math.Pow(i, 2) + 1.486 * i * Math.Pow(i, 1.6 * Math.Sqrt(1 - 1 / i)) * Math.Log(i)) + XpNeededForLevel[i - 1];
                 XpNeededForLevel[i] = (int)value;
-                XpNeededForChaosRank[i] = (int)(value / 1.5f);
             }
 
             Type[] skillTypes = GetTypesInNamespace(Assembly.GetExecutingAssembly(), "VapeRPG.Skills");
@@ -247,6 +225,14 @@ namespace VapeRPG
 
                 ExpUIState.visible = true;
             }
+        }
+
+        public override void Unload()
+        {
+            Textures.Unload();
+            ui = null;
+            SkillHotKeys = null;
+            CharWindowHotKey = null;
         }
 
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)

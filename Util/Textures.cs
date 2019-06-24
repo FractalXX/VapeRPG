@@ -15,6 +15,9 @@ namespace VapeRPG.Util
             public static Texture2D HELP_BUTTON;
             public static Texture2D MINIMIZE_BUTTON;
             public static Texture2D MINIMIZE_BUTTON_FLIPPED;
+
+            public static Texture2D SKILL_BRANCH_LINE;
+            public static Texture2D SKILL_ICON_DEFAULT;
         }
 
 
@@ -27,6 +30,21 @@ namespace VapeRPG.Util
             UI.HELP_BUTTON = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/HelpButton");
             UI.MINIMIZE_BUTTON = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButton");
             UI.MINIMIZE_BUTTON_FLIPPED = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButtonFlipped");
+            UI.SKILL_BRANCH_LINE = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/Line");
+            UI.SKILL_ICON_DEFAULT = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
+        }
+
+        public static void Unload()
+        {
+            UI.SKILL_SHADE = null;
+            UI.SQUARE_SHADE = null;
+            UI.EXIT_BUTTON = null;
+            UI.ADD_BUTTON = null;
+            UI.HELP_BUTTON = null;
+            UI.MINIMIZE_BUTTON = null;
+            UI.MINIMIZE_BUTTON_FLIPPED = null;
+            UI.SKILL_BRANCH_LINE = null;
+            UI.SKILL_ICON_DEFAULT = null;
         }
     }
 }

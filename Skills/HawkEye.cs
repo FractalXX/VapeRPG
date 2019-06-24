@@ -26,7 +26,7 @@ namespace VapeRPG.Skills
             {
                 float distance = Vector2.Distance(modPlayer.player.position, target.position);
                 float chance = distance * 0.025f;
-                if (VapeRPG.rand.Next(0, 101) <= chance)
+                if (VapeRPG.random.Next(0, 101) <= chance)
                 {
                     crit = true;
                 }

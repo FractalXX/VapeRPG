@@ -22,7 +22,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if(target.life <= 0 && VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<StaticField>() * 5 && (proj == null ? item.magic : proj.magic))
+            if(target.life <= 0 && VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<StaticField>() * 5 && (proj == null ? item.magic : proj.magic))
             {
                 int duration = 600;
                 if (modPlayer.GetSkillLevel<HighVoltageField>() > 0)

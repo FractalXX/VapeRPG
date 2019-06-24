@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
+using VapeRPG.Util;
 
 namespace VapeRPG
 {
@@ -49,7 +50,7 @@ namespace VapeRPG
             }
             catch (Exception)
             {
-                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
+                frame = Textures.UI.SKILL_ICON_DEFAULT;
             }
 
             return frame;

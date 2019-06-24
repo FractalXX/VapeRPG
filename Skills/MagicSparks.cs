@@ -22,7 +22,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if(target.life <= 0 && (proj == null ? item.magic : proj.magic) && VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<MagicSparks>() * 10)
+            if(target.life <= 0 && (proj == null ? item.magic : proj.magic) && VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<MagicSparks>() * 10)
             {
                 int dustCount = 20;
                 int sparkRange = 30;
@@ -30,7 +30,7 @@ namespace VapeRPG.Skills
                 {
                     for (int j = 0; j < dustCount; j++)
                     {
-                        double angle = VapeRPG.rand.Next(1, 360) * Math.PI / 180;
+                        double angle = VapeRPG.random.Next(1, 360) * Math.PI / 180;
                         Vector2 sparkTarget = new Vector2(target.position.X + sparkRange * (float)Math.Cos(angle), target.position.Y + sparkRange * (float)Math.Sin(angle));
                         Vector2 sparkVelocity = target.position - sparkTarget;
 

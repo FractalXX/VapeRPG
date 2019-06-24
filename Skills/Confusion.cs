@@ -22,7 +22,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if(VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<Confusion>() * 5)
+            if(VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<Confusion>() * 5)
             {
                 target.AddBuff(31, 300);
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.OrangeRed, "Confused");

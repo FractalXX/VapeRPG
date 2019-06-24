@@ -3,6 +3,7 @@ using Terraria.UI;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using VapeRPG.Util;
 
 namespace VapeRPG.UI.Elements
 {
@@ -12,7 +13,7 @@ namespace VapeRPG.UI.Elements
 
         public UISkillTreeBranch()
         {
-            this.texture = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/Line");
+            this.texture = Textures.UI.SKILL_BRANCH_LINE;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)

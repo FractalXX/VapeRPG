@@ -21,7 +21,7 @@ namespace VapeRPG.Skills
 
         public override void UseItem(VapePlayer modPlayer, Item item)
         {
-            if (item.magic && VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<LeftoverSupply>() * 2f)
+            if (item.magic && VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<LeftoverSupply>() * 2f)
             {
                 modPlayer.player.statMana += item.mana;
             }

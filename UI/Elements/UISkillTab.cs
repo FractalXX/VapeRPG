@@ -12,7 +12,6 @@ namespace VapeRPG.UI.Elements
     {
         public string name;
         private List<UISkillInfo> skillInfos;
-        private List<UIElement> bars;
 
         private UISkillTooltip tooltip;
 
@@ -26,32 +25,32 @@ namespace VapeRPG.UI.Elements
             this.SetPadding(10);
 
             this.skillInfos = new List<UISkillInfo>();
-            this.bars = new List<UIElement>();
         }
 
-        public void AddSkillInfo(UISkillInfo usi)
+        public void AddSkillInfo(UISkillInfo skillInfo)
         {
-            this.skillInfos.Add(usi);
-            this.Append(usi);
+            this.skillInfos.Add(skillInfo);
+            this.Append(skillInfo);
 
-            usi.OnMouseOver += UISkillInfo_OnMouseOver;
-            usi.OnMouseOut += UISkillInfo_OnMouseOut;
+            skillInfo.OnMouseOver += UISkillInfo_OnMouseOver;
+            skillInfo.OnMouseOut += UISkillInfo_OnMouseOut;
         }
 
-        private void CreateLineBetweenSkills(UISkillInfo parent, UISkillInfo child)
+        private void CreateLineBetweenSkills(UISkillInfo parent, UISkillInfo child, List<UISkillInfo> skillInfos)
         {
             float childX = child.Left.Pixels;
             float childY = child.Top.Pixels;
+            const int LINE_WIDTH = 4;
 
             UISkillTreeBranch verticalBranch = new UISkillTreeBranch();
-            verticalBranch.Left.Set(0, 0.5f);
-            verticalBranch.Top.Set(0, 1f);
-            verticalBranch.Width.Set(4, 0);
+            verticalBranch.Left.Set(parent.Left.Pixels + parent.Width.Pixels / 2 - LINE_WIDTH / 2, 0f);
+            verticalBranch.Top.Set(parent.Top.Pixels + parent.Height.Pixels, 0);
+            verticalBranch.Width.Set(LINE_WIDTH, 0);
             verticalBranch.MaxHeight.Set(child.Top.Pixels - (parent.Top.Pixels + parent.Height.Pixels / 2), 0);
             verticalBranch.Height.Set(verticalBranch.MaxHeight.Pixels, 0);
-            parent.Append(verticalBranch);
+            this.Append(verticalBranch);
 
-            bool underOccuppied = this.skillInfos.Find(x => x != parent && x.Left.Pixels == parent.Left.Pixels && x.Top.Pixels > parent.Top.Pixels) != null;
+            bool underOccuppied = skillInfos.Find(x => x != parent && x.Left.Pixels == parent.Left.Pixels && x.Top.Pixels > parent.Top.Pixels) != null;
 
             if (childX != parent.Left.Pixels)
             {
@@ -59,65 +58,72 @@ namespace VapeRPG.UI.Elements
                 {
                     UISkillTreeBranch branch = new UISkillTreeBranch();
                     branch.Height.Set(4, 0);
-                    branch.Top.Set(0, 0.5f);
+                    branch.Top.Set(parent.Top.Pixels + parent.Height.Pixels / 2, 0);
                     branch.MaxWidth.Set(1000, 0);
 
                     if (childX > parent.Left.Pixels)
                     {
                         branch.Width.Set((child.Left.Pixels + child.Width.Pixels / 2) - (parent.Left.Pixels + parent.Width.Pixels), 0);
-                        branch.Left.Set(0, 1f);
-                        verticalBranch.Left.Set(branch.Width.Pixels, 1f);
+                        branch.Left.Set(parent.Left.Pixels + parent.Width.Pixels, 0f);
+                        verticalBranch.Left.Set(parent.Left.Pixels + parent.Height.Pixels + branch.Width.Pixels, 0f);
                     }
                     else
                     {
                         branch.Width.Set(parent.Left.Pixels - (child.Left.Pixels + child.Width.Pixels / 2) + verticalBranch.Width.Pixels, 0);
-                        branch.Left.Set(-branch.Width.Pixels, 0f);
-                        verticalBranch.Left.Set(-branch.Width.Pixels, 0f);
+                        branch.Left.Set(parent.Left.Pixels - branch.Width.Pixels, 0f);
+                        verticalBranch.Left.Set(parent.Left.Pixels - branch.Width.Pixels, 0f);
                     }
-                    verticalBranch.Top.Set(0, 0.5f);
-                    parent.Append(branch);
+                    verticalBranch.Top.Set(parent.Top.Pixels + parent.Height.Pixels / 2, 0);
+                    this.Append(branch);
                 }
                 else
                 {
                     UISkillTreeBranch branch = new UISkillTreeBranch();
                     branch.Height.Set(4, 0);
-                    branch.Top.Set(verticalBranch.Height.Pixels, 1f);
+                    branch.Top.Set(parent.Top.Pixels + parent.Height.Pixels + verticalBranch.Height.Pixels, 0);
                     branch.MaxWidth.Set(1000, 0);
 
                     if (childX > parent.Left.Pixels)
                     {
                         branch.Width.Set(child.Left.Pixels - (parent.Left.Pixels + parent.Width.Pixels / 2), 0);
-                        branch.Left.Set(0, 0.5f);
+                        branch.Left.Set(parent.Left.Pixels + parent.Width.Pixels / 2, 0);
                     }
                     else
                     {
                         branch.Width.Set((parent.Left.Pixels + parent.Width.Pixels / 2) - (child.Left.Pixels + child.Width.Pixels) + verticalBranch.Width.Pixels, 0);
-                        branch.Left.Set(-branch.Width.Pixels + verticalBranch.Width.Pixels, 0.5f);
+                        branch.Left.Set(parent.Left.Pixels + parent.Width.Pixels / 2 - branch.Width.Pixels + verticalBranch.Width.Pixels, 0);
                     }
-                    parent.Append(branch);
+                    this.Append(branch);
                 }
             }
         }
 
         public void InitializeSkillInfos()
         {
+            // Temporary storage to ensure that the branch lines will be drawn under the icons
+            List<UISkillInfo> skillInfos = new List<UISkillInfo>();
             foreach (Skill skill in VapeRPG.Skills.FindAll(x => x.Tree == this.skillTypes))
             {
-                UISkillInfo usi = new UISkillInfo(skill);
-                this.AddSkillInfo(usi);
-                TreeHelper.AddSkillInfo(usi);
+                UISkillInfo skillInfo = new UISkillInfo(skill);
+                skillInfos.Add(skillInfo);
+                TreeHelper.AddSkillInfo(skillInfo);
             }
 
-            foreach (var x in this.skillInfos)
+            foreach (var skillInfo in skillInfos)
             {
-                var prerequisites = x.skill.GetPrerequisites();
+                var prerequisites = skillInfo.skill.GetPrerequisites();
                 if(prerequisites.Count > 0)
                 {
                     foreach(Type parentType in prerequisites)
                     {
-                        CreateLineBetweenSkills(this.skillInfos.Find(y => y.skill.GetType() == parentType), x);
+                        CreateLineBetweenSkills(skillInfos.Find(y => y.skill.GetType() == parentType), skillInfo, skillInfos);
                     }
                 }
+            }
+
+            foreach(var skillInfo in skillInfos)
+            {
+                this.AddSkillInfo(skillInfo);
             }
         }
 

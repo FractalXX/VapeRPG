@@ -23,7 +23,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if((proj == null ? item.magic : proj.magic) && VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<Bounce>() * 10)
+            if((proj == null ? item.magic : proj.magic) && VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<Bounce>() * 10)
             {
                 NPC closest = null;
                 float closestDistance = 500;

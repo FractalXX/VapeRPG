@@ -22,7 +22,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if(target.life <= 0 && (proj == null ? item.melee : proj.melee) && VapeRPG.rand.Next(101) <= modPlayer.GetSkillLevel<ExplodingRage>() * 10)
+            if(target.life <= 0 && (proj == null ? item.melee : proj.melee) && VapeRPG.random.Next(101) <= modPlayer.GetSkillLevel<ExplodingRage>() * 10)
             {
                 int dustCount = 20;
                 int bloodRange = 15;
@@ -30,7 +30,7 @@ namespace VapeRPG.Skills
                 {
                     for (int j = 0; j < dustCount; j++)
                     {
-                        double angle = VapeRPG.rand.Next(1, 360) * Math.PI / 180;
+                        double angle = VapeRPG.random.Next(1, 360) * Math.PI / 180;
                         Vector2 bloodTarget = new Vector2(target.position.X + bloodRange * (float)Math.Cos(angle), target.position.Y + bloodRange * (float)Math.Sin(angle));
                         Vector2 bloodVelocity = target.position - bloodTarget;
 

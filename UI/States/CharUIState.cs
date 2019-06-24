@@ -148,6 +148,7 @@ namespace VapeRPG.UI.States
 
         protected override void Construct()
         {
+            this.SetDragMode(DragMode.Header);
             this.statControls = new UIStatInfo[VapeRPG.BaseStats.Length];
             this.miscStatControls = new UIStatInfo[VapeRPG.MinorStats.Length];
 

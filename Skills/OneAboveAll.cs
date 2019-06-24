@@ -21,7 +21,7 @@ namespace VapeRPG.Skills
 
         public override void ModifyHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
-            if(VapeRPG.rand.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredType(target))
+            if(VapeRPG.random.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredType(target))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
                 target.StrikeNPC(target.life, 0, 0);
@@ -30,7 +30,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if (VapeRPG.rand.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredType(target))
+            if (VapeRPG.random.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredType(target))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
                 target.StrikeNPC(target.life, 0, 0);

@@ -21,7 +21,7 @@ namespace VapeRPG.Skills
 
         public override void ModifyHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, ref int damage, ref float knockback, ref bool crit)
         {
-            if(!crit && target.life >= target.lifeMax * 0.7f && VapeRPG.rand.Next(0, 101) <= modPlayer.GetSkillLevel<Kickstart>() * 5)
+            if(!crit && target.life >= target.lifeMax * 0.7f && VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<Kickstart>() * 5)
             {
                 crit = true;
             }
