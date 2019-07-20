@@ -65,10 +65,12 @@ namespace VapeRPG
         public CharUIState CharUI { get; private set; } // For the character panel
         public StatHelpUIState StatHelpUI { get; private set; }
         public SkillBarUIState SkillBarUI { get; private set; }
+        public StatMenuUIState StatMenuUI { get; private set; }
 
         private UserInterface expUserInterface;
         private UserInterface charUserInterface;
         private UserInterface skillBarUserInterface;
+        private UserInterface statWindowUserInterface;
 
         private TileUI currentTileUI;
         private UserInterface tileUserInterface;
@@ -192,8 +194,8 @@ namespace VapeRPG
             SkillHotKeys = new ModHotKey[SkillBarUIState.SKILL_SLOT_COUNT];
             SkillHotKeys[0] = RegisterHotKey("Use skill 1", "Y");
             SkillHotKeys[1] = RegisterHotKey("Use skill 2", "X");
-            SkillHotKeys[2] = RegisterHotKey("Use skill 3", "C");
-            SkillHotKeys[3] = RegisterHotKey("Use skill 4", "V");
+            SkillHotKeys[2] = RegisterHotKey("Use skill 3", "V");
+            SkillHotKeys[3] = RegisterHotKey("Use skill 4", "B");
 
             if (Main.netMode != NetmodeID.Server)
             {
@@ -211,6 +213,9 @@ namespace VapeRPG
                 this.SkillBarUI = new SkillBarUIState();
                 this.SkillBarUI.Activate();
 
+                this.StatMenuUI = new StatMenuUIState();
+                this.StatMenuUI.Activate();
+
                 this.expUserInterface = new UserInterface();
                 this.expUserInterface.SetState(this.ExpUI);
 
@@ -222,6 +227,9 @@ namespace VapeRPG
                 this.skillBarUserInterface.SetState(this.SkillBarUI);
 
                 this.tileUserInterface = new UserInterface();
+
+                this.statWindowUserInterface = new UserInterface();
+                this.statWindowUserInterface.SetState(this.StatMenuUI);
 
                 ExpUIState.visible = true;
             }
@@ -261,6 +269,11 @@ namespace VapeRPG
                         {
                             charUserInterface.Update(Main._drawInterfaceGameTime);
                             CharUI.Draw(Main.spriteBatch);
+                            if(StatMenuUIState.visible)
+                            {
+                                this.statWindowUserInterface.Update(Main._drawInterfaceGameTime);
+                                this.StatMenuUI.Draw(Main.spriteBatch);
+                            }
                         }
                         return true;
                     },

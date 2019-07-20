@@ -112,7 +112,7 @@ namespace VapeRPG.UI.Elements
                 }
                 else
                 {
-                    this.bonusText.SetText("");
+                    this.bonusText.SetText("+0");
                 }
             }
 

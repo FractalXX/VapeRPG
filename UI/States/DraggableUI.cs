@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.UI;
 
@@ -6,12 +7,6 @@ namespace VapeRPG.UI.States
 {
     internal abstract class DraggableUI : UIState
     {
-        public enum DragMode
-        {
-            Default,
-            Header
-        }
-
         public const int DEFAULT_HEADER_HEIGHT = 40;
 
         public string Title { get; set; }
@@ -25,21 +20,24 @@ namespace VapeRPG.UI.States
         public abstract Vector2 DefaultPosition { get; }
         public abstract Vector2 DefaultSize { get; }
 
-        public virtual bool HasHeader
+        public bool HasHeader
         {
             get
             {
-                return false;
+                return this.header != null;
             }
         }
-
-        public DragMode dragMode { get; private set; }
 
         public Vector2 Position
         {
             get
             {
-                return new Vector2(this.container.Left.Pixels, this.container.Top.Pixels);
+                Vector2 position = new Vector2(this.container.Left.Pixels, this.container.Top.Pixels);
+                if(this.HasHeader)
+                {
+                    position.Y -= this.header.Height.Pixels;
+                }
+                return position;
             }
         }
 
@@ -47,7 +45,12 @@ namespace VapeRPG.UI.States
         {
             get
             {
-                return new Vector2(this.container.Width.Pixels, this.container.Height.Pixels);
+                Vector2 size = new Vector2(this.container.Width.Pixels, this.container.Height.Pixels);
+                if(this.HasHeader)
+                {
+                    size.Y += this.header.Height.Pixels;
+                }
+                return size;
             }
         }
 
@@ -55,22 +58,24 @@ namespace VapeRPG.UI.States
         {
             this.container.Left.Set(position.X, 0);
             this.container.Top.Set(position.Y, 0);
+
+            if (this.HasHeader)
+            {
+                this.header.Left.Set(position.X, 0);
+                this.header.Top.Set(position.Y, 0);
+                this.container.Top.Set(this.header.Top.Pixels + this.header.Height.Pixels, 0);
+            }
         }
 
         public void SetSize(Vector2 size)
         {
             this.container.Width.Set(size.X, 0);
             this.container.Height.Set(size.Y, 0);
-        }
 
-        public void SetDragMode(DragMode dragMode)
-        {
-            if(dragMode == DragMode.Header && !this.HasHeader)
+            if (this.header != null)
             {
-                throw new System.Exception("DragMode.Header can only be set if the container has a header.");
+                this.header.Width.Set(size.X, 0);
             }
-
-            this.dragMode = dragMode;
         }
 
         public void Reset()
@@ -83,13 +88,14 @@ namespace VapeRPG.UI.States
         {
             this.dragOffset = new Vector2(evt.MousePosition.X - this.container.Left.Pixels, evt.MousePosition.Y - this.container.Top.Pixels);
 
-            if(this.dragMode == DragMode.Default)
+            if (!this.HasHeader)
             {
                 this.isDragging = true;
             }
-            else if(this.dragMode == DragMode.Header)
+            else
             {
                 this.isDragging = this.header.ContainsPoint(evt.MousePosition);
+                this.dragOffset = new Vector2(evt.MousePosition.X - this.header.Left.Pixels, evt.MousePosition.Y - this.header.Top.Pixels);
             }
         }
 
@@ -101,6 +107,13 @@ namespace VapeRPG.UI.States
             this.container.Left.Set(end.X - dragOffset.X, 0f);
             this.container.Top.Set(end.Y - dragOffset.Y, 0f);
 
+            if (this.HasHeader)
+            {
+                this.header.Left.Set(end.X - dragOffset.X, 0f);
+                this.header.Top.Set(end.Y - dragOffset.Y, 0f);
+                this.container.Top.Set(this.header.Top.Pixels + this.header.Height.Pixels, 0f);
+            }
+
             this.Recalculate();
         }
 
@@ -109,20 +122,20 @@ namespace VapeRPG.UI.States
             this.container = this.CreateContainer();
             this.header = this.CreateHeader();
 
-            if(this.header == null && this.HasHeader)
+            if (this.HasHeader)
             {
-                throw new System.Exception("A header needs to be created for the DraggableUI if its HasHeader property is set.");
+                this.Append(this.header);
+                this.header.OnMouseDown += this.DragStart;
+                this.header.OnMouseUp += this.DragEnd;
             }
-            else if(this.header != null)
+            else
             {
-                this.container.Append(this.header);
+                this.container.OnMouseDown += this.DragStart;
+                this.container.OnMouseUp += this.DragEnd;
             }
 
             this.SetPosition(this.DefaultPosition);
             this.SetSize(this.DefaultSize);
-
-            this.container.OnMouseDown += this.DragStart;
-            this.container.OnMouseUp += this.DragEnd;
 
             this.Construct();
 
@@ -131,15 +144,33 @@ namespace VapeRPG.UI.States
 
         public override void Update(GameTime gameTime)
         {
-            Vector2 mousePosition = new Vector2((float)Main.mouseX, (float)Main.mouseY);
-            if(this.container.ContainsPoint(mousePosition))
+            if (this.container.ContainsPoint(Main.MouseScreen))
             {
-                Main.LocalPlayer.mouseInterface = this.container.ContainsPoint(mousePosition);
+                Main.LocalPlayer.mouseInterface = true;
             }
 
             if (this.isDragging)
             {
-                this.SetPosition(new Vector2(mousePosition.X - this.dragOffset.X, mousePosition.Y - this.dragOffset.Y));
+                Vector2 newPosition = new Vector2(Main.MouseScreen.X - this.dragOffset.X, Main.MouseScreen.Y - this.dragOffset.Y);
+                if(newPosition.X < 0)
+                {
+                    newPosition.X = 0;
+                }
+                else if(newPosition.X >= Main.screenWidth - this.container.Width.Pixels)
+                {
+                    newPosition.X = Main.screenWidth - this.container.Width.Pixels;
+                }
+
+                if(newPosition.Y < 0)
+                {
+                    newPosition.Y = 0;
+                }
+                else if(newPosition.Y >= Main.screenHeight - this.container.Height.Pixels - (this.HasHeader ? this.header.Height.Pixels : 0))
+                {
+                    newPosition.Y = Main.screenHeight - this.container.Height.Pixels - (this.HasHeader ? this.header.Height.Pixels : 0);
+                }
+
+                this.SetPosition(newPosition);
                 this.Recalculate();
             }
 

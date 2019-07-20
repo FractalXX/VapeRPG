@@ -317,10 +317,14 @@ namespace VapeRPG
 
                 if (CharUIState.visible)
                 {
-                    vapeMod.CharUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints, this.skillPoints);
+                    vapeMod.CharUI.UpdateSkillPoints(this.skillPoints);
                     vapeMod.CharUI.UpdateBonusPanel(player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.maxRunSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
                     vapeMod.CharUI.UpdateLevel(this.level);
                     vapeMod.CharUI.UpdateXpBar(this.xp, vapeMod.XpNeededForLevel[this.level], vapeMod.XpNeededForLevel[nextLevel]);
+                    if(StatMenuUIState.visible)
+                    {
+                        vapeMod.StatMenuUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints);
+                    }
                 }
             }
         }
@@ -425,6 +429,7 @@ namespace VapeRPG
             {
                 CharUIState.visible = !CharUIState.visible;
                 StatHelpUIState.visible = false;
+                StatMenuUIState.visible = false;
             }
 
             VapeRPG vapeMod = this.mod as VapeRPG;

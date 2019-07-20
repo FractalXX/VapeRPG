@@ -72,7 +72,7 @@ namespace VapeRPG.UI.Elements
             }
             this.foregroundWidth = relativeValue * this.Width.Pixels;
             this.statusText.SetText(String.Format("{0}/{1}", (decimal)this.value, (decimal)this.maxValue));
-            this.statusText.Left.Set(this.Width.Pixels / 2 - this.statusText.MinWidth.Pixels / 2, 0);
+            this.statusText.Left.Set((this.HAlign + 1) * (this.Width.Pixels / 2 - this.statusText.MinWidth.Pixels / 2), 0);
 
             base.Update(gameTime);
         }

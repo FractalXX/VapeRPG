@@ -21,18 +21,14 @@ namespace VapeRPG.UI.States
         private UIPanel miscPanel;
         private UISkillPanel skillPanel;
 
-        private UIStatInfo[] statControls;
         private UIStatInfo[] miscStatControls;
         private UIText pointsText;
 
         private UIRelativeProgressBar xpBar;
         private UIText levelText;
 
-        private UIImage statHelper;
-
         public override Vector2 DefaultPosition => new Vector2(Main.screenWidth / 2 - this.DefaultSize.X / 2, Main.screenHeight / 2 - this.DefaultSize.Y / 2);
         public override Vector2 DefaultSize => new Vector2(800, 600);
-        public override bool HasHeader => true;
 
         public void UpdateBonusPanel(float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
         {
@@ -108,15 +104,9 @@ namespace VapeRPG.UI.States
             this.levelText.SetText(String.Format("Level: {0}", newLevel));
         }
 
-        public void UpdateStats(IDictionary<string, int> baseStats, IDictionary<string, int> effStats, int statPoints, int skillPoints)
+        public void UpdateSkillPoints(int skillPoints)
         {
-            foreach (UIStatInfo info in statControls)
-            {
-                info.statValue = baseStats[info.stat];
-                info.bonusValue = effStats[info.stat] - baseStats[info.stat];
-            }
-
-            this.pointsText.SetText(String.Format("Stat points: {0}\nSkill points: {1}", statPoints, skillPoints));
+            this.pointsText.SetText(String.Format("Skill points: {0}", skillPoints));
         }
 
         public void UpdateXpBar(float value, float minValue, float maxValue)
@@ -139,6 +129,7 @@ namespace VapeRPG.UI.States
             UIPanel header = new UIPanel();
             header.Width.Set(0, 1f);
             header.Height.Set(DEFAULT_HEADER_HEIGHT, 0f);
+            header.BackgroundColor.A = 255;
 
             UIText title = new UIText("Character Stats");
             title.Left.Set(20, 0f);
@@ -148,8 +139,6 @@ namespace VapeRPG.UI.States
 
         protected override void Construct()
         {
-            this.SetDragMode(DragMode.Header);
-            this.statControls = new UIStatInfo[VapeRPG.BaseStats.Length];
             this.miscStatControls = new UIStatInfo[VapeRPG.MinorStats.Length];
 
             this.skillPanel = new UISkillPanel(2 * (this.container.Width.Pixels - 2 * PANEL_PADDING) / 3, this.container.Height.Pixels - 2 * PANEL_PADDING);
@@ -166,74 +155,44 @@ namespace VapeRPG.UI.States
             this.statPanel.BorderColor = Color.Black;
             this.statPanel.BackgroundColor = new Color(100, 118, 183);
 
-            UIPanel statListContainer = new UIPanel();
-            statListContainer.Width.Set(0f, 1f);
-            statListContainer.Height.Set(this.statPanel.Height.Pixels - 140, 0);
-            statListContainer.Top.Set(70, 0f);
-
-            UIList statList = new UIList();
-            statList.ListPadding = 5f;
-            statList.Width.Set(0f, 1f);
-            statList.Height.Set(0f, 1f);
-
-            statListContainer.Append(statList);
-            this.statPanel.Append(statListContainer);
-
-            UIScrollbar statScrollBar = new UIScrollbar();
-            statScrollBar.SetView(100f, 1000f);
-            statScrollBar.Height.Set(0f, 1f);
-            statScrollBar.HAlign = 1f;
-
-            statListContainer.Append(statScrollBar);
-            statList.SetScrollbar(statScrollBar);
-
-            #region statPanel texts
-
-            for (int i = 0; i < statControls.Length; i++)
+            UIButton statListButton = new UIButton("Open Stats");
+            statListButton.Width.Set(0, 0.66f);
+            statListButton.Height.Set(30, 0f);
+            statListButton.Top.Set(-statListButton.Height.Pixels / 2, 0.5f);
+            statListButton.HAlign = 0.5f;
+            statListButton.OnClick += (obj, args) =>
             {
-                this.statControls[i] = new UIStatInfo(VapeRPG.BaseStats[i], this.statPanel.Width.Pixels, 20);
-                this.statControls[i].Top.Set(70 + 1.2f * i * this.statControls[i].Height.Pixels + 5, 0);
-                this.statControls[i].TextColor = Color.Yellow;
-                statList.Add(this.statControls[i]);
-            }
+                StatMenuUIState.visible = true;
+            };
+            this.statPanel.Append(statListButton);
 
-            this.statHelper = new UIImage(Textures.UI.HELP_BUTTON);
-            this.statHelper.Width.Set(20, 0);
-            this.statHelper.Height.Set(20, 0);
-            this.statHelper.Left.Set(-25, 1f);
-            this.statHelper.Top.Set(0, 0);
-            this.statHelper.OnMouseOver += (x, y) => StatHelpUIState.visible = true;
-            this.statHelper.OnMouseOut += (x, y) => StatHelpUIState.visible = false;
-
-            this.statPanel.Append(this.statHelper);
-
-            this.pointsText = new UIText("Stat points: 0\nSkill points: 0", 0.8f);
-            this.pointsText.Top.Set(-this.pointsText.MinHeight.Pixels * 2 - 10, 1f);
+            this.pointsText = new UIText("Skill points: 0", 0.8f);
+            this.pointsText.HAlign = 0.5f;
+            this.pointsText.Top.Set(-80, 1f);
             this.statPanel.Append(this.pointsText);
 
             UIButton resetXpUI = new UIButton("Reset status bar", false, 0.8f);
             resetXpUI.Top.Set(-40, 1f);
-            resetXpUI.Left.Set(-resetXpUI.MinWidth.Pixels, 1f);
+            resetXpUI.HAlign = 0.5f;
             resetXpUI.OnClick += (evt, element) =>
             {
                 VapeRPG vapeMod = ModLoader.GetMod("VapeRPG") as VapeRPG;
                 vapeMod.ExpUI.Reset();
             };
             this.statPanel.Append(resetXpUI);
-            #endregion
 
             this.xpBar = new UIRelativeProgressBar(1, 0, 100, Color.Green, Color.Lime);
             this.xpBar.SetPadding(0);
-            this.xpBar.Left.Set(0, 0.45f);
-            this.xpBar.Top.Set(10, 0);
-            this.xpBar.Width.Set(100, 0);
-            this.xpBar.Height.Set(15, 0);
+            this.xpBar.Top.Set(30, 0);
+            this.xpBar.Width.Set(0, 0.8f);
+            this.xpBar.Height.Set(20, 0);
+            this.xpBar.HAlign = 0.5f;
             this.xpBar.strokeThickness = 2;
             this.statPanel.Append(this.xpBar);
 
             this.levelText = new UIText("Level: 1", 0.8f);
-            this.levelText.Left.Set(0, 0);
             this.levelText.Top.Set(10, 0);
+            this.levelText.HAlign = 0.5f;
             this.statPanel.Append(this.levelText);
 
             this.miscPanel = new UIPanel();

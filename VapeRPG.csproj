@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -108,6 +108,7 @@
     <Compile Include="UI\States\ExpUIState.cs" />
     <Compile Include="UI\States\SkillBarUIState.cs" />
     <Compile Include="UI\States\StatHelpUIState.cs" />
+    <Compile Include="UI\States\StatMenuUIState.cs" />
     <Compile Include="UI\States\TileStates\SocketerUI.cs" />
     <Compile Include="UI\States\TileUI.cs" />
     <Compile Include="UI\TreeHelper.cs" />
