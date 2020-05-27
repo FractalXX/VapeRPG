@@ -38,7 +38,7 @@ namespace VapeRPG
             this.tree = tree;
         }
 
-        public Skill(string name, string description, int maxLevel, SkillTree type) : this(name, description, maxLevel, type, ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame")) { }
+        public Skill(string name, string description, int maxLevel, SkillTree type) : this(name, description, maxLevel, type, ModContent.GetTexture("VapeRPG/Textures/UI/SkillFrame")) { }
 
         internal void AddPrerequisites()
         {

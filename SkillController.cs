@@ -166,7 +166,7 @@ namespace VapeRPG
                 }
                 if (modPlayer.HasSkill("Rage"))
                 {
-                    modPlayer.player.AddBuff(modPlayer.mod.BuffType<Rage>(), 600);
+                    modPlayer.player.AddBuff(ModContent.BuffType<Rage>(), 600);
                 }
                 if (modPlayer.HasSkill("Mana Addict"))
                 {
@@ -212,7 +212,7 @@ namespace VapeRPG
                     {
                         modPlayer.energizedStacks = 1;
                     }
-                    modPlayer.player.AddBuff(modPlayer.mod.BuffType<Energized>(), 60);
+                    modPlayer.player.AddBuff(ModContent.BuffType<Energized>(), 60);
                 }
                 if(modPlayer.HasSkill("Static Field") && rnd.Next(0, 101) <= modPlayer.SkillLevels["Static Field"] * 5 && (proj == null ? item.magic : proj.magic))
                 {
@@ -223,7 +223,7 @@ namespace VapeRPG
                         modPlayer.player.AddBuff(12, duration);
                     }
                     Main.PlaySound(modPlayer.mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/StaticFieldApply"), modPlayer.player.position);
-                    modPlayer.player.AddBuff(modPlayer.mod.BuffType<StaticField>(), duration);
+                    modPlayer.player.AddBuff(ModContent.BuffType<StaticField>(), duration);
                 }
 
 
@@ -278,7 +278,7 @@ namespace VapeRPG
                     sparkVelocity.Y = speedMul * sparkVelocity.Y;
 
                     float sparkDamage = (proj == null ? item.damage : proj.damage) * modPlayer.SkillLevels["Bounce"] * 0.1f;
-                    Projectile spark = Projectile.NewProjectileDirect(new Vector2(target.position.X + target.width / 2, target.position.Y + target.height / 2), sparkVelocity, modPlayer.mod.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(sparkDamage), 20, modPlayer.player.whoAmI);
+                    Projectile spark = Projectile.NewProjectileDirect(new Vector2(target.position.X + target.width / 2, target.position.Y + target.height / 2), sparkVelocity, ModContent.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(sparkDamage), 20, modPlayer.player.whoAmI);
                     Main.PlaySound(modPlayer.mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Electricity"), modPlayer.player.position);
                 }
             }
@@ -304,7 +304,7 @@ namespace VapeRPG
             {
                 if (modPlayer.highfiveStacks > 0)
                 {
-                    modPlayer.player.ClearBuff(modPlayer.mod.BuffType<HighFive>());
+                    modPlayer.player.ClearBuff(ModContent.BuffType<HighFive>());
                     modPlayer.highfiveStacks = 0;
                 }
             }
@@ -316,7 +316,7 @@ namespace VapeRPG
                     {
                         modPlayer.highfiveStacks = 1;
                     }
-                    modPlayer.player.AddBuff(modPlayer.mod.BuffType<HighFive>(), 60);
+                    modPlayer.player.AddBuff(ModContent.BuffType<HighFive>(), 60);
                 }
             }
         }

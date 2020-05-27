@@ -332,45 +332,6 @@ namespace VapeRPG
             return itemTC;
         }
 
-        public override void Update(Item item, ref float gravity, ref float maxFallSpeed)
-        {
-            if(IsQualifiable(item))
-            {
-                int dustType = 63;
-                switch (this.quality)
-                {
-                    case ItemQuality.Uncommon:
-                        dustType = 61;
-                        break;
-
-                    case ItemQuality.Rare:
-                        dustType = 59;
-                        break;
-
-                    case ItemQuality.Epic:
-                        dustType = 62;
-                        break;
-
-                    case ItemQuality.Unique:
-                        dustType = 64;
-                        break;
-                }
-
-                if(VapeConfig.VapeLootRariyRings)
-                {
-                    int dustCount = 360;
-                    for (int i = 0; i < dustCount; i += 2)
-                    {
-                        double angle = i * Math.PI / 180;
-                        Vector2 dustPosition = new Vector2(item.position.X + item.width / 2 + item.width * (float)Math.Cos(angle), item.position.Y + item.height / 2 + item.height * (float)Math.Sin(angle));
-
-                        Dust dust = Dust.NewDustPerfect(dustPosition, dustType, Vector2.Zero);
-                        dust.noGravity = true;
-                    }
-                }
-            }
-        }
-
         public override void UpdateInventory(Item item, Player player)
         {
             this.tooltipVisible = true;

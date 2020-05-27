@@ -324,7 +324,7 @@ namespace VapeRPG
         {
             if(type == NPCID.Merchant)
             {
-                shop.item[nextSlot].SetDefaults(mod.ItemType<VapersGlobe>());
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<VapersGlobe>());
                 nextSlot++;
             }
             base.SetupShop(type, shop, ref nextSlot);

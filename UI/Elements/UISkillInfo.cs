@@ -24,7 +24,7 @@ namespace VapeRPG.UI.Elements
 
         public UISkillInfo(Skill skill, float width = defaultWidth, float height = defaultHeight)
         {
-            this.skillShade = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
+            this.skillShade = ModContent.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
 
             this.skill = skill;
 

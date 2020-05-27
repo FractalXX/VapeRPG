@@ -13,7 +13,7 @@ namespace VapeRPG.Tiles
     {
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
-            Item.NewItem(i * 16, j * 16, 36, 30, mod.ItemType<Items.Socketer>());
+            Item.NewItem(i * 16, j * 16, 36, 30, ModContent.ItemType<Items.Socketer>());
         }
 
         public override void SetDefaults()
@@ -25,7 +25,7 @@ namespace VapeRPG.Tiles
             Main.tileLavaDeath[Type] = true;
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.Width = 3;
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 18 };
+            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
             TileObjectData.addTile(Type);
             AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
             adjTiles = new int[] { TileID.WorkBenches };

@@ -37,7 +37,7 @@ namespace VapeRPG.UI.Elements
             this.strokeThickness = 0;
             this.strokeColor = Color.Black;
 
-            this.backgroundTexture = ModLoader.GetTexture("VapeRPG/Textures/UI/Blank");
+            this.backgroundTexture = ModContent.GetTexture("VapeRPG/Textures/UI/Blank");
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)

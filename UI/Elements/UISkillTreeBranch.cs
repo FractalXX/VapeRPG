@@ -12,7 +12,7 @@ namespace VapeRPG.UI.Elements
 
         public UISkillTreeBranch()
         {
-            this.texture = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/Line");
+            this.texture = ModContent.GetTexture("VapeRPG/Textures/UI/Skills/Line");
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)

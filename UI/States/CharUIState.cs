@@ -141,7 +141,7 @@ namespace VapeRPG.UI.States
                 statList.Add(this.statControls[i]);
             }
 
-            this.statHelper = new UIImage(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/HelpButton"));
+            this.statHelper = new UIImage(ModContent.GetTexture("VapeRPG/Textures/UI/Button/HelpButton"));
             this.statHelper.Width.Set(20, 0);
             this.statHelper.Height.Set(20, 0);
             this.statHelper.Left.Set(-25, 1f);

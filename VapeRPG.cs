@@ -102,11 +102,11 @@ namespace VapeRPG
             Texture2D frame;
             try
             {
-                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/" + name);
+                frame = ModContent.GetTexture("VapeRPG/Textures/UI/Skills/" + name);
             }
             catch (Exception)
             {
-                frame = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
+                frame = ModContent.GetTexture("VapeRPG/Textures/UI/SkillFrame");
             }
 
             return frame;
@@ -259,7 +259,7 @@ namespace VapeRPG
                 skill.AddPrerequisites();
             }
 
-            //itemQualityFrame = ModLoader.GetTexture("VapeRPG/Textures/UI/QualityFrame");
+            //itemQualityFrame = ModContent.GetTexture("VapeRPG/Textures/UI/QualityFrame");
 
             CharWindowHotKey = RegisterHotKey("Character window", "C");
 

@@ -23,7 +23,7 @@ namespace VapeRPG.Buffs
             vp.energizedStacks++;
             if (vp.energizedStacks >= maxStacks)
             {
-                player.AddBuff(mod.BuffType<FullyEnergized>(), 600);
+                player.AddBuff(ModContent.BuffType<FullyEnergized>(), 600);
                 Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Energized"), player.position);
                 vp.energizedStacks = 0;
                 player.ClearBuff(Type);

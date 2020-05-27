@@ -108,7 +108,7 @@ namespace VapeRPG.UI.States
             this.levelText.Top.Set(20, 0);
             this.levelPanel.Append(this.levelText);
 
-            this.minimizeButton = new UIImageButton(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButton"));
+            this.minimizeButton = new UIImageButton(ModContent.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButton"));
             this.minimizeButton.Width.Set(50, 0f);
             this.minimizeButton.Height.Set(15, 0f);
             this.minimizeButton.HAlign = 0.5f;
@@ -117,7 +117,7 @@ namespace VapeRPG.UI.States
             this.minimizeButton.OnMouseUp += (evt, element) =>
             {
                 this.minimized = !this.minimized;
-                this.minimizeButton.SetImage(ModLoader.GetTexture("VapeRPG/Textures/UI/Button/" + (this.minimized ? "MinimizeButtonFlipped" : "MinimizeButton")));
+                this.minimizeButton.SetImage(ModContent.GetTexture("VapeRPG/Textures/UI/Button/" + (this.minimized ? "MinimizeButtonFlipped" : "MinimizeButton")));
             };
 
             this.levelPanel.Append(this.minimizeButton);
