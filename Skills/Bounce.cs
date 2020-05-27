@@ -23,7 +23,7 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if((proj == null ? item.magic : proj.magic) && VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<Bounce>() * 10)
+            if ((proj == null ? item.magic : proj.magic) && VapeRPG.random.Next(0, 101) <= modPlayer.GetSkillLevel<Bounce>() * 10)
             {
                 NPC closest = null;
                 float closestDistance = 500;
@@ -51,7 +51,7 @@ namespace VapeRPG.Skills
                     sparkVelocity.Y = speedMul * sparkVelocity.Y;
 
                     float sparkDamage = (proj == null ? item.damage : proj.damage) * modPlayer.GetSkillLevel<Bounce>() * 10 * 0.1f;
-                    Projectile spark = Projectile.NewProjectileDirect(new Vector2(target.position.X + target.width / 2, target.position.Y + target.height / 2), sparkVelocity, modPlayer.mod.ProjectileType<Projectiles.ElectricSpark>(), (int)Math.Ceiling(sparkDamage), 20, modPlayer.player.whoAmI);
+                    Projectile spark = Projectile.NewProjectileDirect(new Vector2(target.position.X + target.width / 2, target.position.Y + target.height / 2), sparkVelocity, ModContent.ProjectileType<Projectiles.ElectricSpark>(), (int)Math.Ceiling(sparkDamage), 20, modPlayer.player.whoAmI);
                     Main.PlaySound(modPlayer.mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/Electricity"), modPlayer.player.position);
                 }
             }

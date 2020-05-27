@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace VapeRPG.Skills
 {
@@ -25,7 +26,7 @@ namespace VapeRPG.Skills
             {
                 if (modPlayer.highfiveStacks > 0)
                 {
-                    modPlayer.player.ClearBuff(modPlayer.mod.BuffType<Buffs.HighFive>());
+                    modPlayer.player.ClearBuff(ModContent.BuffType<Buffs.HighFive>());
                     modPlayer.highfiveStacks = 0;
                 }
             }
@@ -35,7 +36,7 @@ namespace VapeRPG.Skills
                 {
                     modPlayer.highfiveStacks = 1;
                 }
-                modPlayer.player.AddBuff(modPlayer.mod.BuffType<Buffs.HighFive>(), 60);
+                modPlayer.player.AddBuff(ModContent.BuffType<Buffs.HighFive>(), 60);
             }
         }
     }

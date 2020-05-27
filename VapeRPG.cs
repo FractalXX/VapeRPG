@@ -269,7 +269,7 @@ namespace VapeRPG
                         {
                             charUserInterface.Update(Main._drawInterfaceGameTime);
                             CharUI.Draw(Main.spriteBatch);
-                            if(StatMenuUIState.visible)
+                            if (StatMenuUIState.visible)
                             {
                                 this.statWindowUserInterface.Update(Main._drawInterfaceGameTime);
                                 this.StatMenuUI.Draw(Main.spriteBatch);
@@ -309,18 +309,18 @@ namespace VapeRPG
                 );
 
                 layers.Insert(MouseTextIndex, new LegacyGameInterfaceLayer(
-                "VapeRPG: TileUI",
-                () =>
-                {
-                    if (this.currentTileUI != null && this.currentTileUI.visible)
+                    "VapeRPG: TileUI",
+                    () =>
                     {
-                        this.tileUserInterface.Update(Main._drawInterfaceGameTime);
-                        this.currentTileUI.Draw(Main.spriteBatch);
-                    }
-                    return true;
-                },
-                InterfaceScaleType.UI)
-            );
+                        if (this.currentTileUI != null && this.currentTileUI.visible)
+                        {
+                            this.tileUserInterface.Update(Main._drawInterfaceGameTime);
+                            this.currentTileUI.Draw(Main.spriteBatch);
+                        }
+                        return true;
+                    },
+                    InterfaceScaleType.UI)
+                );
             }
         }
 

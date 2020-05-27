@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -321,7 +321,7 @@ namespace VapeRPG
                     vapeMod.CharUI.UpdateBonusPanel(player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.maxRunSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
                     vapeMod.CharUI.UpdateLevel(this.level);
                     vapeMod.CharUI.UpdateXpBar(this.xp, vapeMod.XpNeededForLevel[this.level], vapeMod.XpNeededForLevel[nextLevel]);
-                    if(StatMenuUIState.visible)
+                    if (StatMenuUIState.visible)
                     {
                         vapeMod.StatMenuUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints);
                     }
@@ -339,7 +339,7 @@ namespace VapeRPG
                     this.player.meleeSpeed += this.GetSkillLevel<Skills.Rage>() * 0.03f;
                 }
             }
-            if (this.player.FindBuffIndex(mod.BuffType<StaticField>()) != -1)
+            if (this.player.FindBuffIndex(ModContent.BuffType<StaticField>()) != -1)
             {
                 this.fieldCounter++;
             }
@@ -379,12 +379,12 @@ namespace VapeRPG
                 failed = true;
             }
 
-            if (this.player.statLife - damage <= 0 && this.player.FindBuffIndex(mod.BuffType<StaticField>()) != -1 && this.HasSkill<Skills.HighVoltageField>() && this.player.FindBuffIndex(mod.BuffType<FieldSickness>()) == -1)
+            if (this.player.statLife - damage <= 0 && this.player.FindBuffIndex(ModContent.BuffType<StaticField>()) != -1 && this.HasSkill<Skills.HighVoltageField>() && this.player.FindBuffIndex(ModContent.BuffType<FieldSickness>()) == -1)
             {
                 this.player.immune = true;
                 this.player.immuneTime = 120;
                 this.player.statLife = 50;
-                this.player.AddBuff(mod.BuffType<FieldSickness>(), 18000);
+                this.player.AddBuff(ModContent.BuffType<FieldSickness>(), 18000);
                 CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y + 10, 100, 100), Color.Lime, "Defibrillated");
                 Main.PlaySound(37, this.player.position);
                 failed = true;
@@ -392,13 +392,13 @@ namespace VapeRPG
 
             if (failed && this.GetSkillLevel<Skills.Strengthen>() > 0)
             {
-                this.player.AddBuff(mod.BuffType<Strengthened>(), 18000);
+                this.player.AddBuff(ModContent.BuffType<Strengthened>(), 18000);
             }
 
             if (this.strengthened)
             {
                 damage -= (int)(damage * 0.15f * this.GetSkillLevel<Skills.Strengthen>());
-                this.player.ClearBuff(this.mod.BuffType<Strengthened>());
+                this.player.ClearBuff(ModContent.BuffType<Strengthened>());
             }
 
             if (this.energized)
@@ -415,7 +415,7 @@ namespace VapeRPG
                     float speedMul = v / sparkVelocity.Length();
                     sparkVelocity.X = speedMul * sparkVelocity.X;
                     sparkVelocity.Y = speedMul * sparkVelocity.Y;
-                    Projectile spark = Projectile.NewProjectileDirect(this.player.position, sparkVelocity, mod.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(10 * this.level * 0.05f), 40, this.player.whoAmI);
+                    Projectile spark = Projectile.NewProjectileDirect(this.player.position, sparkVelocity, ModContent.ProjectileType<ElectricSpark>(), (int)Math.Ceiling(10 * this.level * 0.05f), 40, this.player.whoAmI);
                     spark.penetrate = 1;
                 }
             }

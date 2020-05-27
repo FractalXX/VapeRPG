@@ -23,15 +23,15 @@ namespace VapeRPG.Util
 
         public static void Load()
         {
-            UI.SKILL_SHADE = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
-            UI.SQUARE_SHADE = ModLoader.GetTexture("VapeRPG/Textures/UI/TransparentSquare");
-            UI.EXIT_BUTTON = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/ExitButton");
-            UI.ADD_BUTTON = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/AddButton");
-            UI.HELP_BUTTON = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/HelpButton");
-            UI.MINIMIZE_BUTTON = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButton");
-            UI.MINIMIZE_BUTTON_FLIPPED = ModLoader.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButtonFlipped");
-            UI.SKILL_BRANCH_LINE = ModLoader.GetTexture("VapeRPG/Textures/UI/Skills/Line");
-            UI.SKILL_ICON_DEFAULT = ModLoader.GetTexture("VapeRPG/Textures/UI/SkillFrame");
+            UI.SKILL_SHADE = ModContent.GetTexture("VapeRPG/Textures/UI/Skills/SkillShade");
+            UI.SQUARE_SHADE = ModContent.GetTexture("VapeRPG/Textures/UI/TransparentSquare");
+            UI.EXIT_BUTTON = ModContent.GetTexture("VapeRPG/Textures/UI/Button/ExitButton");
+            UI.ADD_BUTTON = ModContent.GetTexture("VapeRPG/Textures/UI/Button/AddButton");
+            UI.HELP_BUTTON = ModContent.GetTexture("VapeRPG/Textures/UI/Button/HelpButton");
+            UI.MINIMIZE_BUTTON = ModContent.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButton");
+            UI.MINIMIZE_BUTTON_FLIPPED = ModContent.GetTexture("VapeRPG/Textures/UI/Button/MinimizeButtonFlipped");
+            UI.SKILL_BRANCH_LINE = ModContent.GetTexture("VapeRPG/Textures/UI/Skills/Line");
+            UI.SKILL_ICON_DEFAULT = ModContent.GetTexture("VapeRPG/Textures/UI/SkillFrame");
         }
 
         public static void Unload()

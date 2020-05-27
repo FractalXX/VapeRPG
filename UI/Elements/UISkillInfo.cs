@@ -46,10 +46,10 @@ namespace VapeRPG.UI.Elements
                 if (vp.HasPrerequisiteForSkill(this.skill) && vp.skillPoints > 0 && vp.GetSkillLevel(this.skill.GetType()) < this.skill.MaxLevel)
                 {
                     vp.SetSkillLevel(this.skill.GetType(), vp.GetSkillLevel(this.skill.GetType()) + 1);
-                    if(vp.player.name != "vp") vp.skillPoints--;
+                    if (vp.player.name != "vp") vp.skillPoints--;
                 }
             };
-            
+
             this.Append(this.icon);
             this.Append(this.skillLevelText);
         }

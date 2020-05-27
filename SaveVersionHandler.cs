@@ -47,7 +47,7 @@ namespace VapeRPG
             foreach (var pair in skillScrolls)
             {
                 Item item = skillScrolls.Get<Item>(pair.Key);
-                if(!(item.modItem is ScrollBase))
+                if (!(item.modItem is ScrollBase))
                 {
                     item.TurnToAir();
                 }
@@ -66,7 +66,7 @@ namespace VapeRPG
 
         private static string GetTypeNameFromOldSave(string key)
         {
-            if(key.Equals("Damage to Defense", StringComparison.CurrentCultureIgnoreCase))
+            if (key.Equals("Damage to Defense", StringComparison.CurrentCultureIgnoreCase))
             {
                 return "DamageToDefense";
             }

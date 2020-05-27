@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace VapeRPG.Skills
 {
@@ -21,9 +22,9 @@ namespace VapeRPG.Skills
 
         public override void OnHitNPC(VapePlayer modPlayer, Item item, Projectile proj, NPC target, int damage, float knockback, bool crit)
         {
-            if(target.life <= 0)
+            if (target.life <= 0)
             {
-                modPlayer.player.AddBuff(modPlayer.mod.BuffType<Buffs.Rage>(), 600);
+                modPlayer.player.AddBuff(ModContent.BuffType<Buffs.Rage>(), 600);
             }
         }
     }

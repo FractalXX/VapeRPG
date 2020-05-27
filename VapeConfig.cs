@@ -5,7 +5,6 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
-using Terraria.ModLoader;
 
 namespace VapeRPG
 {
@@ -138,27 +137,22 @@ namespace VapeRPG
         {
             if (!ReadConfig(CommonConfig))
             {
-                ErrorLogger.Log("Failed to read config file: VapeRPG_Common.json! Recreating config...");
                 CreateConfig(CommonConfig);
             }
             if (!ReadConfig(StatConfig))
             {
-                ErrorLogger.Log("Failed to read config file: VapeRPG_Stats.json! Recreating config...");
                 CreateConfig(StatConfig);
             }
             if (!ReadConfig(DefaultStatsConfig))
             {
-                ErrorLogger.Log("Failed to read config file: VapeRPG_StartingStats.json! Recreating config...");
                 CreateConfig(DefaultStatsConfig);
             }
             if (!ReadConfig(IgnoresConfig))
             {
-                ErrorLogger.Log("Failed to read config file: VapeRPG_Ignores.json! Recreating config...");
                 CreateConfig(IgnoresConfig);
             }
             if (!ReadConfig(XpConfig))
             {
-                ErrorLogger.Log("Failed to read config file: VapeRPG_ExperienceTable.json! Recreating config...");
                 CreateConfig(XpConfig);
             }
         }
@@ -177,14 +171,14 @@ namespace VapeRPG
                         fields[i].SetValue(null, conf.Get(fields[i].Name, def));
                     }
                 }*/
-                if(conf == CommonConfig)
+                if (conf == CommonConfig)
                 {
                     conf.Get("EnableUI", ref UIEnabled);
                     conf.Get("FinalMultiplierForXpGain", ref FinalMultiplierForXpGain);
                     conf.Get("ExperienceGainDistance", ref ExperienceGainDistance);
                     conf.Get("GlobalXpMultiplier", ref GlobalXpMultiplier);
                 }
-                else if(conf == StatConfig)
+                else if (conf == StatConfig)
                 {
                     conf.Get("StatPointsPerLevel", ref StatPointsPerLevel);
                     conf.Get("LifePerLevel", ref LifePerLevel);
@@ -214,7 +208,7 @@ namespace VapeRPG
 
                     conf.Get("MaxDodgeChance", ref MaxDodgeChance);
                 }
-                else if(conf == DefaultStatsConfig)
+                else if (conf == DefaultStatsConfig)
                 {
                     conf.Get("DefMeleeDamage", ref DefMeleeDamage);
                     conf.Get("DefMagicDamage", ref DefMagicDamage);
@@ -230,11 +224,11 @@ namespace VapeRPG
                     conf.Get("DefDodge", ref DefDodge);
                     conf.Get("DefMeleeSpeed", ref DefMeleeSpeed);
                 }
-                else if(conf == IgnoresConfig)
+                else if (conf == IgnoresConfig)
                 {
                     conf.Get("IgnoredTypesForXpGain", ref IgnoredTypesForXpGain);
                 }
-                else if(conf == XpConfig)
+                else if (conf == XpConfig)
                 {
                     conf.Get("VanillaXpTable", ref VanillaXpTable);
                 }
@@ -254,7 +248,7 @@ namespace VapeRPG
                 conf.Put("ExperienceGainDistance", ExperienceGainDistance);
                 conf.Put("GlobalXpMultiplier", GlobalXpMultiplier);
             }
-            else if(conf == StatConfig)
+            else if (conf == StatConfig)
             {
                 conf.Put("StatPointsPerLevel", StatPointsPerLevel);
                 conf.Put("LifePerLevel", LifePerLevel);
@@ -300,11 +294,11 @@ namespace VapeRPG
                 conf.Put("DefDodge", DefDodge);
                 conf.Put("DefMeleeSpeed", DefMeleeSpeed);
             }
-            else if(conf == IgnoresConfig)
+            else if (conf == IgnoresConfig)
             {
                 conf.Put("IgnoredTypesForXpGain", IgnoredTypesForXpGain);
             }
-            else if(conf == XpConfig)
+            else if (conf == XpConfig)
             {
                 conf.Put("VanillaXpTable", VanillaXpTable);
             }

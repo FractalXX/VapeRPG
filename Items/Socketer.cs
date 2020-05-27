@@ -21,7 +21,7 @@ namespace VapeRPG.Items
             item.consumable = true;
             item.rare = 5;
             item.value = 150;
-            item.createTile = mod.TileType<Tiles.Socketer>();
+            item.createTile = ModContent.TileType<Tiles.Socketer>();
         }
 
         public override void SetStaticDefaults()

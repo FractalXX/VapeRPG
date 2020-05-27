@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
+using Terraria.DataStructures;
 using VapeRPG.Util;
 
 namespace VapeRPG
@@ -34,7 +34,7 @@ namespace VapeRPG
         }
 
         public void AddPrerequisite<T>()
-            where T: Skill
+            where T : Skill
         {
             this.prerequisites.Add(typeof(T));
         }
@@ -46,7 +46,7 @@ namespace VapeRPG
             Texture2D frame;
             try
             {
-                frame = ModLoader.GetTexture("VapeRPG/Skills/" + this.GetType().Name);
+                frame = ModContent.GetTexture("VapeRPG/Skills/" + this.GetType().Name);
             }
             catch (Exception)
             {

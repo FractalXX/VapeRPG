@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.UI;
@@ -49,7 +49,7 @@ namespace VapeRPG.UI.Elements
             this.Width.Set(width, 0);
             this.Height.Set(height, 0);
 
-            if(isMinorStat && hasButton)
+            if (isMinorStat && hasButton)
             {
                 throw new Exception("UIStatInfo can not have a button if isMinorStat is true.");
             }
@@ -120,3 +120,4 @@ namespace VapeRPG.UI.Elements
         }
     }
 }
+

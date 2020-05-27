@@ -17,7 +17,7 @@ namespace VapeRPG.Items
             Vector2 speed = new Vector2(Main.mouseX - Main.screenWidth / 2, Main.mouseY - Main.screenHeight / 2);
             speed *= 30 / speed.Length();
 
-            Projectile projectile = Projectile.NewProjectileDirect(player.position, speed, mod.ProjectileType<Projectiles.AssassinScythe>(), (int)(damage * player.meleeDamage), 1f, Main.myPlayer);
+            Projectile projectile = Projectile.NewProjectileDirect(player.position, speed, ModContent.ProjectileType<Projectiles.AssassinScythe>(), (int)(damage * player.meleeDamage), 1f, Main.myPlayer);
             projectile.scale = 2.5f;
 
             player.velocity = speed;
