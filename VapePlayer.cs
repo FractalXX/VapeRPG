@@ -196,7 +196,11 @@ namespace VapeRPG
             CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 100, 100), Color.Cyan, "Level Up");
 
             this.statPoints += statPointsPerLevel;
-            if (this.level % 5 == 0) this.skillPoints++;
+            if (this.level % 5 == 0)
+            {
+                // TODO add popup
+                this.skillPoints++;
+            }
 
             this.level++;
             if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(String.Format("You have reached level {0}!", this.level), 127, 255, 0);
