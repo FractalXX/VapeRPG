@@ -12,11 +12,11 @@ namespace VapeRPG.Items
         {
             item.width = 32;
             item.height = 32;
-            item.rare = 10;
+            item.rare = ItemRarityID.Red;
             item.maxStack = 1;
             item.useAnimation = 15;
             item.useTime = 15;
-            item.useStyle = 2;
+            item.useStyle = ItemUseStyleID.EatingUsing;
             item.consumable = true;
             item.UseSound = SoundID.Item29;
             item.value = 1000000;
