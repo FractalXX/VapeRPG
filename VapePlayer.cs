@@ -17,7 +17,6 @@ namespace VapeRPG
 {
     class VapePlayer : ModPlayer
     {
-        private static int statPointsPerLevel;
         private static Random rnd;
 
         //Dictionary for the stats, and skill levels
@@ -53,9 +52,7 @@ namespace VapeRPG
 
         private Vector2 expUIPos;
 
-        static VapePlayer()
-        {
-            statPointsPerLevel = VapeConfig.StatPointsPerLevel;
+        static VapePlayer(){
             rnd = new Random();
         }
 
@@ -66,14 +63,14 @@ namespace VapeRPG
         {
             for (int i = 0; i < 50; i++)
             {
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 179, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), DustID.BubbleBurst_Purple, rnd.Next(-10, 10), rnd.Next(-10, 10));
             }
             CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 100, 100, 100), Color.Violet, "Chaos Rank Up");
 
             this.chaosPoints++;
 
             this.chaosRank++;
-            if (Main.netMode == 0) Main.NewText(String.Format("You have reached chaos rank {0}!", this.chaosRank), 179, 104, 255);
+            if (Main.netMode == NetmodeID.SinglePlayer) Main.NewText(String.Format("You have reached chaos rank {0}!", this.chaosRank), 179, 104, 255);
             else NetMessage.SendData(25, -1, -1, NetworkText.FromLiteral(String.Format("{0} has reached chaos rank {1}!", this.player.name, this.chaosRank)), 179, 104, 255, 0, 0);
         }
 
@@ -103,7 +100,7 @@ namespace VapeRPG
                 {
                     // Fancy text above the player
                     CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 50, 50), Color.LightGreen, String.Format("+{0} XP", value));
-                    this.xp += (long)(value * VapeConfig.GlobalXpMultiplier);
+                    this.xp += (long)(value);
                 }
             }
 
@@ -206,15 +203,15 @@ namespace VapeRPG
             // Level up particle effect
             for (int i = 0; i < 50; i++)
             {
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 130, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 131, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 132, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 133, rnd.Next(-10, 10), rnd.Next(-10, 10));
-                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), 134, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), DustID.Firework_Red, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), DustID.Firework_Green, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), DustID.Firework_Blue, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), DustID.Firework_Yellow, rnd.Next(-10, 10), rnd.Next(-10, 10));
+                Dust.NewDust(this.player.position, rnd.Next(5, 15), rnd.Next(5, 15), DustID.Firework_Pink, rnd.Next(-10, 10), rnd.Next(-10, 10));
             }
             CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y - 50, 100, 100), Color.Cyan, "Level Up");
 
-            this.statPoints += statPointsPerLevel;
+            this.statPoints += ModContent.GetInstance<VapeConfig>().StatPointsPerLevel;
             if (this.level % 5 == 0) this.skillPoints++;
 
             this.level++;
@@ -403,7 +400,7 @@ namespace VapeRPG
                 this.player.immune = true;
                 this.player.immuneTime = 40;
                 CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y + 10, 100, 100), Color.Lime, "Dodged");
-                Main.PlaySound(2, this.player.position);
+                Main.PlaySound(SoundID.Item, this.player.position);
                 playSound = false;
                 genGore = false;
                 failed = true;
@@ -415,7 +412,7 @@ namespace VapeRPG
                 this.player.immune = true;
                 this.player.immuneTime = 40;
                 CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y + 10, 100, 100), Color.Lime, "Blocked");
-                Main.PlaySound(37, this.player.position);
+                Main.PlaySound(SoundID.Meowmere, this.player.position);
                 playSound = false;
                 genGore = false;
                 failed = true;
@@ -429,7 +426,7 @@ namespace VapeRPG
                 this.player.statLife = 50;
                 this.player.AddBuff(ModContent.BuffType<FieldSickness>(), 18000);
                 CombatText.NewText(new Rectangle((int)this.player.position.X, (int)this.player.position.Y + 10, 100, 100), Color.Lime, "Defibrillated");
-                Main.PlaySound(37, this.player.position);
+                Main.PlaySound(SoundID.Meowmere, this.player.position);
                 failed = true;
                 return false;
             }
@@ -469,19 +466,19 @@ namespace VapeRPG
 
         public override void ResetEffects()
         {
-            this.player.meleeDamage = VapeConfig.DefMeleeDamage;
-            this.player.magicDamage = VapeConfig.DefMagicDamage;
-            this.player.rangedDamage = VapeConfig.DefRangedDamage;
-            this.player.minionDamage = VapeConfig.DefMinionDamage;
-            this.player.thrownDamage = VapeConfig.DefThrownDamage;
+            this.player.meleeDamage = ModContent.GetInstance<VapeConfig>().DefMeleeDamage;
+            this.player.magicDamage = ModContent.GetInstance<VapeConfig>().DefMagicDamage;
+            this.player.rangedDamage = ModContent.GetInstance<VapeConfig>().DefRangedDamage;
+            this.player.minionDamage = ModContent.GetInstance<VapeConfig>().DefMinionDamage;
+            this.player.thrownDamage = ModContent.GetInstance<VapeConfig>().DefThrownDamage;
 
-            this.player.meleeCrit = VapeConfig.DefMeleeCrit;
-            this.player.magicCrit = VapeConfig.DefMagicCrit;
-            this.player.rangedCrit = VapeConfig.DefRangedCrit;
-            this.player.thrownCrit = VapeConfig.DefThrownCrit;
+            this.player.meleeCrit = ModContent.GetInstance<VapeConfig>().DefMeleeCrit;
+            this.player.magicCrit = ModContent.GetInstance<VapeConfig>().DefMagicCrit;
+            this.player.rangedCrit = ModContent.GetInstance<VapeConfig>().DefRangedCrit;
+            this.player.thrownCrit = ModContent.GetInstance<VapeConfig>().DefThrownCrit;
 
-            this.player.meleeSpeed = VapeConfig.DefMeleeSpeed;
-            this.dodgeChance = VapeConfig.DefDodge;
+            this.player.meleeSpeed = ModContent.GetInstance<VapeConfig>().DefMeleeSpeed;
+            this.dodgeChance = ModContent.GetInstance<VapeConfig>().DefDodge;
             this.blockChance = 0;
 
             this.rageBuff = false;
@@ -581,34 +578,34 @@ namespace VapeRPG
             this.player.meleeSpeed += this.ChaosBonuses["Melee Speed"];
             this.player.maxRunSpeed += this.ChaosBonuses["Max Run Speed"] * 3;
             this.dodgeChance += this.ChaosBonuses["Dodge Chance"];
-            if (this.dodgeChance > VapeConfig.MaxDodgeChance)
+            if (this.dodgeChance > ModContent.GetInstance<VapeConfig>().MaxDodgeChance)
             {
-                this.dodgeChance = VapeConfig.MaxDodgeChance;
+                this.dodgeChance = ModContent.GetInstance<VapeConfig>().MaxDodgeChance;
             }
         }
 
         private void UpdateStatBonuses()
         {
-            this.player.statLifeMax = (int)(100 + (this.level * VapeConfig.LifePerLevel) + this.EffectiveStats["Vitality"] * VapeConfig.LifePerVitality + this.EffectiveStats["Strength"] / 2);
-            this.player.statManaMax = (int)(20 + this.level * VapeConfig.ManaPerLevel + this.EffectiveStats["Magic power"] * VapeConfig.ManaPerMagicPower);
-            this.player.statDefense += (int)(this.EffectiveStats["Vitality"] / VapeConfig.VitalityPerDefense);
+            this.player.statLifeMax = (int)(100 + (this.level * ModContent.GetInstance<VapeConfig>().LifePerLevel) + this.EffectiveStats["Vitality"] * ModContent.GetInstance<VapeConfig>().LifePerVitality + this.EffectiveStats["Strength"] / 2);
+            this.player.statManaMax = (int)(20 + this.level * ModContent.GetInstance<VapeConfig>().ManaPerLevel + this.EffectiveStats["Magic power"] * ModContent.GetInstance<VapeConfig>().ManaPerMagicPower);
+            this.player.statDefense += (int)(this.EffectiveStats["Vitality"] / ModContent.GetInstance<VapeConfig>().VitalityPerDefense);
 
-            this.player.meleeDamage += this.EffectiveStats["Strength"] / VapeConfig.MeleeDamageDivider;
-            this.player.magicDamage += this.EffectiveStats["Magic power"] / VapeConfig.MagicDamageDivider + this.EffectiveStats["Spirit"] / VapeConfig.MagicDamageBySpiritDivider;
-            this.player.rangedDamage += this.EffectiveStats["Dexterity"] / VapeConfig.RangedDamageDivider;
+            this.player.meleeDamage += this.EffectiveStats["Strength"] / ModContent.GetInstance<VapeConfig>().MeleeDamageDivider;
+            this.player.magicDamage += this.EffectiveStats["Magic power"] / ModContent.GetInstance<VapeConfig>().MagicDamageDivider + this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().MagicDamageBySpiritDivider;
+            this.player.rangedDamage += this.EffectiveStats["Dexterity"] / ModContent.GetInstance<VapeConfig>().RangedDamageDivider;
 
-            this.player.meleeCrit += (int)(this.EffectiveStats["Strength"] / VapeConfig.MeleeCritDivider);
-            this.player.magicCrit += (int)(this.EffectiveStats["Magic power"] / VapeConfig.MagicCritDivider);
-            this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / VapeConfig.RangedCritDivider);
+            this.player.meleeCrit += (int)(this.EffectiveStats["Strength"] / ModContent.GetInstance<VapeConfig>().MeleeCritDivider);
+            this.player.magicCrit += (int)(this.EffectiveStats["Magic power"] / ModContent.GetInstance<VapeConfig>().MagicCritDivider);
+            this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / ModContent.GetInstance<VapeConfig>().RangedCritDivider);
 
-            this.player.minionDamage += this.EffectiveStats["Spirit"] / VapeConfig.MinionDamageDivider;
-            this.player.maxMinions += (int)(this.EffectiveStats["Spirit"] / VapeConfig.SpiritPerMaxMinion);
-            this.player.maxTurrets += (int)(this.EffectiveStats["Spirit"] / VapeConfig.SpiritPerMaxTurret);
+            this.player.minionDamage += this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().MinionDamageDivider;
+            this.player.maxMinions += (int)(this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().SpiritPerMaxMinion);
+            this.player.maxTurrets += (int)(this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().SpiritPerMaxTurret);
 
-            this.player.meleeSpeed += this.EffectiveStats["Haste"] / VapeConfig.MeleeSpeedDivider;
-            this.player.moveSpeed += this.EffectiveStats["Haste"] / VapeConfig.MoveSpeedDivider;
+            this.player.meleeSpeed += this.EffectiveStats["Haste"] / ModContent.GetInstance<VapeConfig>().MeleeSpeedDivider;
+            this.player.moveSpeed += this.EffectiveStats["Haste"] / ModContent.GetInstance<VapeConfig>().MoveSpeedDivider;
 
-            this.dodgeChance += this.EffectiveStats["Haste"] / VapeConfig.DodgeDivider;
+            this.dodgeChance += this.EffectiveStats["Haste"] / ModContent.GetInstance<VapeConfig>().DodgeDivider;
 
             this.UpdateChaosBonuses();
 

@@ -176,10 +176,7 @@ namespace VapeRPG
             }
         }
 
-        public override void Load()
-        {
-            VapeConfig.Load();
-
+        public override void Load(){
             XpNeededForLevel = new int[MaxLevel + 1];
             XpNeededForChaosRank = new int[MaxLevel + 1];
 
@@ -192,7 +189,7 @@ namespace VapeRPG
             for (int i = 2; i < XpNeededForLevel.Length; i++)
             {
                 double value;
-                value = 2 * (12 * Math.Pow(i, 2) + 1.486 * i * Math.Pow(i, 1.6 * Math.Sqrt(1 - 1 / i)) * Math.Log(i)) + XpNeededForLevel[i - 1];
+                value = 2 * (12 * Math.Pow(i, 2) + ModContent.GetInstance<VapeConfig>().ExperienceCurveMultiplier * i * Math.Pow(i, 1.6 * Math.Sqrt(1 - 1 / i)) * Math.Log(i)) + XpNeededForLevel[i - 1];
                 XpNeededForLevel[i] = (int)value;
                 XpNeededForChaosRank[i] = (int)(value / 1.5f);
             }

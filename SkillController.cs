@@ -116,7 +116,7 @@ namespace VapeRPG
                 target.life -= amount;
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 50, 100, 100), Color.Cyan, amount);
             }
-            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredTypeChaos(target))
+            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !ModContent.GetInstance<VapeConfig>().IsIgnoredTypeChaos(target))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
                 target.StrikeNPC(target.life / 2, 0, 0);
@@ -153,7 +153,7 @@ namespace VapeRPG
                             bloodVelocity.X = speedMul * bloodVelocity.X;
                             bloodVelocity.Y = speedMul * bloodVelocity.Y;
                             //Dust.NewDustPerfect(target.position, 5, bloodVelocity, Scale: 3.0f).noGravity = true; //perfect circle
-                            Main.dust[Dust.NewDust(target.position, 60, 30, 5, bloodVelocity.X, bloodVelocity.Y, Scale: 3.0f)].noGravity = true;
+                            Main.dust[Dust.NewDust(target.position, 60, 30, DustID.Blood, bloodVelocity.X, bloodVelocity.Y, Scale: 3.0f)].noGravity = true;
                         }
                     }
                     foreach (NPC npc in Main.npc)
@@ -245,7 +245,7 @@ namespace VapeRPG
                 }
             }
             //On Hit
-            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !VapeConfig.IsIgnoredTypeChaos(target))
+            if (modPlayer.HasSkill("One Above All") && rnd.Next(0, 101) <= 2 && target.type != NPCID.TargetDummy && !target.boss && !ModContent.GetInstance<VapeConfig>().IsIgnoredTypeChaos(target))
             {
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y - 20, 50, 50), Color.Red, "One Above All");
                 target.StrikeNPC(target.life * 2, 0, 0);
