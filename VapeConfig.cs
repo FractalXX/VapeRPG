@@ -11,6 +11,7 @@ namespace VapeRPG
 {
     public class VapeConfig : ModConfig{
         public override ConfigScope Mode => ConfigScope.ServerSide;
+        //THIS SUPPORT IS ONLY IN SINGLEPLAYER, HAVEN'T TESTED ON MULTIPLAYER AND I THINK IT WONT WORK
         //Common
         [Header("Vape RPG Module")]
         [Label("Chaos Chance")]
