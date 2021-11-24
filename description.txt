@@ -4,7 +4,7 @@ ATTENTION: Don't use it in conjunction with Vape Loot as this mod has it integra
 Current features:
  A simple RPG-like level system, XP can be gained from mob kills (the XP gain is determined by a function of the mob's HP, Defense, Damage)
  On every level-up you get 5 stat points and 1 skill point. These can be spent on the Character Panel (default hotkey: C, set it in the options if it's not set).
- Base stats: Strength (+Melee Damage, Crit), Magic Power (+Magic Damage, Crit), Dexterity (+Ranged Damage, Crit), Agility (+Melee Speed), Vitality (+HP), Intellect (+Mana).
+ Base stats: Strength (+Melee Damage, Crit), Magic Power (+Magic Damage, Crit), Agility (+Ranged Damage, Crit),Dexterity (+Thrown Damage, Crit), Haste (+Melee Speed), Vitality (+HP), Intellect (+Mana).
  Chaos mobs: When a hostile NPC spawns (if it's not a boss) it has a 10% chance of transforming to a Chaos mob. Killing these grants Chaos Experience.
  Chaos rank: If you gain enough experience, you'll rank up and get 1 Chaos Point. These can be spent for minor bonuses ad the character panel.
  Skills: They're all passive skills and I don't really intend to introduce active skills to the mod (they doesn't fit Terraria, imo). They are also on the character panel.

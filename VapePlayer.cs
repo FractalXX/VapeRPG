@@ -359,7 +359,7 @@ namespace VapeRPG
                 if (CharUIState.visible)
                 {
                     vapeMod.CharUI.UpdateStats(this.BaseStats, this.EffectiveStats, this.statPoints, this.skillPoints);
-                    vapeMod.CharUI.UpdateBonusPanel(this.chaosPoints, player.meleeDamage, player.magicDamage, player.rangedDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, 1f / player.meleeSpeed, player.maxRunSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
+                    vapeMod.CharUI.UpdateBonusPanel(this.chaosPoints, player.meleeDamage, player.magicDamage, player.rangedDamage, player.thrownDamage, player.meleeCrit, player.magicCrit, player.rangedCrit, player.thrownCrit, 1f / player.meleeSpeed, player.maxRunSpeed, this.dodgeChance, this.blockChance, player.maxMinions, player.minionDamage);
                     vapeMod.CharUI.UpdateLevel(this.level, this.chaosRank);
                     vapeMod.CharUI.UpdateXpBar(this.xp, vapeMod.XpNeededForLevel[this.level], vapeMod.XpNeededForLevel[nextLevel]);
                     vapeMod.CharUI.UpdateChaosXpBar(this.chaosXp, vapeMod.XpNeededForChaosRank[this.chaosRank], vapeMod.XpNeededForChaosRank[nextRank]);
@@ -566,10 +566,12 @@ namespace VapeRPG
             this.player.meleeDamage += this.ChaosBonuses["Melee Damage"];
             this.player.rangedDamage += this.ChaosBonuses["Ranged Damage"];
             this.player.magicDamage += this.ChaosBonuses["Magic Damage"];
+            this.player.thrownDamage += this.ChaosBonuses["Thrown Damage"];
 
             this.player.meleeCrit += (int)this.ChaosBonuses["Melee Crit"];
             this.player.rangedCrit += (int)this.ChaosBonuses["Ranged Crit"];
             this.player.magicCrit += (int)this.ChaosBonuses["Magic Crit"];
+            this.player.thrownCrit += (int)this.ChaosBonuses["Thrown Crit"];
 
             this.player.minionDamage += this.ChaosBonuses["Minion Damage"];
             this.player.maxMinions += (int)this.ChaosBonuses["Max Minions"];
@@ -592,11 +594,12 @@ namespace VapeRPG
 
             this.player.meleeDamage += this.EffectiveStats["Strength"] / ModContent.GetInstance<VapeConfig>().MeleeDamageDivider;
             this.player.magicDamage += this.EffectiveStats["Magic power"] / ModContent.GetInstance<VapeConfig>().MagicDamageDivider + this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().MagicDamageBySpiritDivider;
-            this.player.rangedDamage += this.EffectiveStats["Dexterity"] / ModContent.GetInstance<VapeConfig>().RangedDamageDivider;
+            this.player.rangedDamage += this.EffectiveStats["Agility"] / ModContent.GetInstance<VapeConfig>().RangedDamageDivider;
+            this.player.thrownDamage += this.EffectiveStats["Dexterity"] / ModContent.GetInstance<VapeConfig>().ThrowerDamageDivider;
 
             this.player.meleeCrit += (int)(this.EffectiveStats["Strength"] / ModContent.GetInstance<VapeConfig>().MeleeCritDivider);
             this.player.magicCrit += (int)(this.EffectiveStats["Magic power"] / ModContent.GetInstance<VapeConfig>().MagicCritDivider);
-            this.player.rangedCrit += (int)(this.EffectiveStats["Dexterity"] / ModContent.GetInstance<VapeConfig>().RangedCritDivider);
+            this.player.rangedCrit += (int)(this.EffectiveStats["Agility"] / ModContent.GetInstance<VapeConfig>().RangedCritDivider);
 
             this.player.minionDamage += this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().MinionDamageDivider;
             this.player.maxMinions += (int)(this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().SpiritPerMaxMinion);

@@ -27,6 +27,7 @@ namespace VapeRPG
 {
             "Strength",
             "Magic power",
+            "Agility",
             "Dexterity",
             "Haste",
             "Vitality",
@@ -40,6 +41,8 @@ namespace VapeRPG
             "Melee Speed",
             "Ranged Damage",
             "Ranged Crit",
+            "Thrown Damage",
+            "Thrown Crit",
             "Magic Damage",
             "Magic Crit",
             "Minion Damage",
@@ -320,8 +323,11 @@ namespace VapeRPG
                     {
                         if (ExpUIState.visible)
                         {
-                            expUserInterface.Update(Main._drawInterfaceGameTime);
-                            ExpUI.Draw(Main.spriteBatch);
+                            if(ModContent.GetInstance<VapeConfig>().EnableUI == true)
+                            {
+                                expUserInterface.Update(Main._drawInterfaceGameTime);
+                                ExpUI.Draw(Main.spriteBatch);
+                            }
                         }
                         return true;
                     },
