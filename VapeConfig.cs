@@ -92,6 +92,9 @@ namespace VapeRPG
         [DefaultValue(8.5f)]
         [JsonIgnore]
         public float RangedCritDivider = 8.5f;
+        [DefaultValue(8.5f)]
+        [JsonIgnore]
+        public float ThrowerCritDivider = 8.5f;
 
         [DefaultValue(900)]
         [JsonIgnore]

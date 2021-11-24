@@ -600,6 +600,7 @@ namespace VapeRPG
             this.player.meleeCrit += (int)(this.EffectiveStats["Strength"] / ModContent.GetInstance<VapeConfig>().MeleeCritDivider);
             this.player.magicCrit += (int)(this.EffectiveStats["Magic power"] / ModContent.GetInstance<VapeConfig>().MagicCritDivider);
             this.player.rangedCrit += (int)(this.EffectiveStats["Agility"] / ModContent.GetInstance<VapeConfig>().RangedCritDivider);
+            this.player.thrownCrit += (int)(this.EffectiveStats["Dexterity"] / ModContent.GetInstance<VapeConfig>().ThrowerCritDivider);
 
             this.player.minionDamage += this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().MinionDamageDivider;
             this.player.maxMinions += (int)(this.EffectiveStats["Spirit"] / ModContent.GetInstance<VapeConfig>().SpiritPerMaxMinion);
