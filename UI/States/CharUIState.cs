@@ -237,11 +237,10 @@ namespace VapeRPG.UI.States
             this.mainPanel.Append(this.statPanel);
             this.mainPanel.Append(this.miscPanel);
             this.mainPanel.Append(this.skillPanel);
-
             base.Append(this.mainPanel);
         }
 
-        public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, int meleeCrit, int magicCrit, int rangedCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
+        public void UpdateBonusPanel(int chaosPoints, float meleeDamage, float magicDamage, float rangedDamage, float thrownDamage, int meleeCrit, int magicCrit, int rangedCrit,int thrownCrit, float meleeSpeed, float moveSpeed, float dodgeChance, float blockChance, int maxMinions, float minionDamage)
         {
             foreach (UIStatInfo usi in this.miscStatControls)
             {
@@ -260,6 +259,11 @@ namespace VapeRPG.UI.States
                     usi.statValue = magicDamage * 100;
                     usi.TextColor = Color.Cyan;
                 }
+                if (usi.stat.Contains("Thrown Damage"))
+                {
+                    usi.statValue = thrownDamage * 100;
+                    usi.TextColor = Color.GreenYellow;
+                }
 
                 if (usi.stat.Contains("Melee Crit"))
                 {
@@ -275,6 +279,11 @@ namespace VapeRPG.UI.States
                 {
                     usi.statValue = magicCrit;
                     usi.TextColor = Color.Cyan;
+                }
+                if (usi.stat.Contains("Thrown Crit"))
+                {
+                    usi.statValue = thrownCrit;
+                    usi.TextColor = Color.GreenYellow;
                 }
 
                 if (usi.stat.Contains("Minion Damage"))

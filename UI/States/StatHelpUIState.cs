@@ -42,9 +42,13 @@ namespace VapeRPG.UI.States
                 {
                     description = "Increases magic damage and magic crit.";
                 }
-                else if(stat.Contains("Dexterity"))
+                else if (stat.Contains("Agility"))
                 {
                     description = "Increases ranged damage and ranged crit.";
+                }
+                else if (stat.Contains("Dexterity"))
+                {
+                    description = "Increases thrown damage and thrown crit.";
                 }
                 else if(stat.Contains("Haste"))
                 {
